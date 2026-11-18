@@ -1,0 +1,1284 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>教科书 · Python、深度学习、机器学习中文速查</title>
+<meta name="description" content="零基础中文学习笔记：Python 与 NumPy、深度学习（对照《深度学习入门：基于Python的理论与实现》鱼书）、机器学习（对照吴恩达机器学习课程），每个知识点一句话讲清，附代码例子和自测题，可写自己的笔记。">
+<style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif}img{max-width:100%}[hidden]{display:none!important}</style>
+</head>
+<body>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@600;900&family=Noto+Sans+SC:wght@400;500;700&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: a study textbook. Board tabs on top, chapter index (sidebar on wide screens, chips on phones), topic entries that open into a lesson + margin notebook. */
+:root{
+  --bg:#f4f6f5; --paper:#ffffff; --ink:#1b2430; --muted:#5f6b78; --line:#dce2e0; --soft:#eef2f1;
+  --py:#0e7c74; --py-soft:#e2f2ef; --dl:#4b45c4; --dl-soft:#ebeafb; --ml:#b0571b; --ml-soft:#f8ebe0;
+  --acc:var(--py); --acc-soft:var(--py-soft);
+  --done:#1f8a5b; --done-soft:#e1f2e9; --rev:#b7791f; --rev-soft:#fbf0d9; --todo:#7a8794; --todo-soft:#eef1f4; --today:#c2364b; --today-soft:#fbe6ea;
+  --code-bg:#f1f4f3; --note-bg:#fffdf3; --note-line:#efe6bf;
+  --display:"Noto Serif SC","Songti SC","STSong",serif; --body:"Noto Sans SC","PingFang SC","Microsoft YaHei",sans-serif; --mono:"JetBrains Mono",ui-monospace,Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#11161b; --paper:#181f26; --ink:#e5eaee; --muted:#9aa6b2; --line:#2a333d; --soft:#1e262e;
+  --py:#45c2b5; --py-soft:#173330; --dl:#9a95ff; --dl-soft:#25244a; --ml:#eb9a5e; --ml-soft:#3a2617;
+  --done:#5cc995; --done-soft:#173226; --rev:#e7b65a; --rev-soft:#3a2e15; --todo:#8d99a6; --todo-soft:#232b33; --today:#f07f8f; --today-soft:#3d1d24;
+  --code-bg:#11171d; --note-bg:#1f1d14; --note-line:#3b3620; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#11161b; --paper:#181f26; --ink:#e5eaee; --muted:#9aa6b2; --line:#2a333d; --soft:#1e262e;
+  --py:#45c2b5; --py-soft:#173330; --dl:#9a95ff; --dl-soft:#25244a; --ml:#eb9a5e; --ml-soft:#3a2617;
+  --done:#5cc995; --done-soft:#173226; --rev:#e7b65a; --rev-soft:#3a2e15; --todo:#8d99a6; --todo-soft:#232b33; --today:#f07f8f; --today-soft:#3d1d24;
+  --code-bg:#11171d; --note-bg:#1f1d14; --note-line:#3b3620; color-scheme:dark}
+body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:15.5px;line-height:1.7}
+body[data-b="py"]{--acc:var(--py);--acc-soft:var(--py-soft)}
+body[data-b="dl"]{--acc:var(--dl);--acc-soft:var(--dl-soft)}
+body[data-b="ml"]{--acc:var(--ml);--acc-soft:var(--ml-soft)}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--bg)}
+.wrap{max-width:1120px;margin:0 auto;padding-block:20px 64px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+header.top{display:grid;gap:6px;padding-bottom:14px}
+.brand{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap}
+h1{font-family:var(--display);font-weight:900;font-size:clamp(30px,6vw,44px);margin:0;letter-spacing:.08em}
+.brand .sub{color:var(--muted);font-size:14px}
+.sync{font-size:12.5px;color:var(--muted)}
+.sync b{font-weight:500}
+.todaybox{background:var(--paper);border:1px solid var(--line);border-radius:12px;padding:12px 14px;display:grid;gap:8px;margin-top:6px}
+.todaybox h2{margin:0;font-size:14px;font-weight:700;color:var(--today);letter-spacing:.04em}
+.todaylist{display:flex;flex-wrap:wrap;gap:6px}
+.chip{font:inherit;font-size:13px;border:1px solid var(--line);background:var(--paper);color:var(--ink);border-radius:999px;padding:3px 10px;cursor:pointer;line-height:1.5}
+.chip:hover{border-color:var(--acc)}
+.chip[aria-pressed="true"]{background:var(--acc);border-color:var(--acc);color:var(--paper)}
+.chip .dot{display:inline-block;width:7px;height:7px;border-radius:50%;margin-right:5px;vertical-align:1px}
+.bar-sticky{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg);padding-block:8px;display:grid;gap:8px;border-bottom:1px solid var(--line)}
+.boards{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.board{font:inherit;border:1px solid var(--line);background:var(--paper);color:var(--ink);border-radius:10px;padding:8px 10px;cursor:pointer;text-align:left;display:grid;gap:4px;min-width:0}
+.board strong{font-family:var(--display);font-size:17px;font-weight:900;letter-spacing:.04em}
+.board small{font-size:12px;color:var(--muted);font-variant-numeric:tabular-nums}
+.board .mini{height:4px;background:var(--soft);border-radius:2px;overflow:hidden}
+.board .mini i{display:block;height:100%}
+.board[data-k="py"] .mini i{background:var(--py)} .board[data-k="dl"] .mini i{background:var(--dl)} .board[data-k="ml"] .mini i{background:var(--ml)}
+.board[aria-selected="true"][data-k="py"]{border-color:var(--py);background:var(--py-soft)}
+.board[aria-selected="true"][data-k="dl"]{border-color:var(--dl);background:var(--dl-soft)}
+.board[aria-selected="true"][data-k="ml"]{border-color:var(--ml);background:var(--ml-soft)}
+.tools{display:flex;flex-wrap:wrap;gap:6px 8px;align-items:center}
+.search{flex:1 1 200px;min-width:0;font:inherit;font-size:14px;color:var(--ink);background:var(--paper);border:1px solid var(--line);border-radius:8px;padding:6px 10px}
+.filters{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;flex:1 1 100%}
+.filters::-webkit-scrollbar{display:none}
+.filters .chip{flex:0 0 auto}
+.layout{display:grid;grid-template-columns:1fr;gap:20px;padding-top:16px}
+@media (min-width:960px){.layout{grid-template-columns:240px minmax(0,1fr)}.filters{flex:0 1 auto}}
+nav.toc{display:flex;gap:6px;overflow-x:auto;scrollbar-width:thin;padding-bottom:2px}
+nav.toc a{flex:0 0 auto;font-size:13px;color:var(--ink);text-decoration:none;border:1px solid var(--line);background:var(--paper);border-radius:8px;padding:4px 10px;white-space:nowrap}
+nav.toc a .n{color:var(--muted);font-size:11.5px;margin-left:6px;font-variant-numeric:tabular-nums}
+@media (min-width:960px){
+  nav.toc{flex-direction:column;overflow:visible;position:sticky;top:calc(env(safe-area-inset-top,0px) + 150px);align-self:start;max-height:calc(100vh - 170px);overflow-y:auto;gap:2px}
+  nav.toc a{white-space:normal;border:0;background:none;border-left:2px solid var(--line);border-radius:0;padding:5px 10px}
+  nav.toc a:hover{border-left-color:var(--acc);color:var(--acc)}
+}
+main{min-width:0;display:grid;gap:28px}
+.intro{margin:0;color:var(--muted);font-size:14px}
+.chapter{display:grid;gap:10px;scroll-margin-top:170px}
+.chead{display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 12px;border-bottom:2px solid var(--acc);padding-bottom:6px}
+.chead h2{font-family:var(--display);font-weight:900;font-size:21px;margin:0;text-wrap:balance}
+.chead .src{font-size:12.5px;color:var(--muted)}
+.chead .cnt{margin-left:auto;font-size:12.5px;color:var(--muted);font-variant-numeric:tabular-nums}
+.topic{background:var(--paper);border:1px solid var(--line);border-radius:10px;scroll-margin-top:170px}
+.topic.is-today{border-color:var(--today);box-shadow:0 0 0 1px var(--today)}
+.thead{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:4px 10px;align-items:start;padding:11px 14px;cursor:pointer;width:100%;background:none;border:0;font:inherit;color:inherit;text-align:left}
+.thead:focus-visible{outline:2px solid var(--acc);outline-offset:-2px;border-radius:10px}
+.st{font-size:11.5px;font-weight:700;border-radius:4px;padding:1px 6px;margin-top:3px;white-space:nowrap}
+.st-done{color:var(--done);background:var(--done-soft)} .st-review{color:var(--rev);background:var(--rev-soft)} .st-todo{color:var(--todo);background:var(--todo-soft)} .st-today{color:var(--today);background:var(--today-soft)}
+.ttl{min-width:0;display:grid;gap:2px}
+.ttl b{font-size:16px;font-weight:700}
+.ttl .one{font-size:14px;color:var(--muted)}
+.meta{display:grid;justify-items:end;gap:2px;font-size:11.5px;color:var(--muted);white-space:nowrap;padding-top:3px}
+.meta .pen{color:var(--acc);font-weight:700}
+.tbody{padding:0 14px 14px;display:grid;gap:12px;border-top:1px dashed var(--line);padding-top:12px}
+.tbody[hidden]{display:none}
+.lesson{display:grid;gap:10px;min-width:0}
+.lesson p{margin:0}
+.lesson ul{margin:0;padding-left:1.2em}
+code{font-family:var(--mono);font-size:.9em;background:var(--code-bg);border:1px solid var(--line);border-radius:4px;padding:0 4px}
+pre{margin:0;font-family:var(--mono);font-size:13px;line-height:1.6;background:var(--code-bg);border:1px solid var(--line);border-radius:8px;padding:10px 12px;overflow-x:auto;tab-size:4}
+pre .cm{color:var(--muted)}
+.box{border-radius:8px;padding:8px 12px;font-size:14px}
+.box .lb{font-weight:700;font-size:12.5px;letter-spacing:.05em;margin-right:6px}
+.box.warn{background:var(--rev-soft)} .box.warn .lb{color:var(--rev)}
+.box.try{background:var(--acc-soft)} .box.try .lb{color:var(--acc)}
+.notes{display:grid;gap:6px}
+.nhead{display:flex;flex-wrap:wrap;align-items:center;gap:6px 10px}
+.nhead label{font-weight:700;font-size:13px}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:8px;overflow:hidden;margin-left:auto}
+.seg button{font:inherit;font-size:12.5px;border:0;background:var(--paper);color:var(--muted);padding:3px 9px;cursor:pointer}
+.seg button+button{border-left:1px solid var(--line)}
+.seg button[aria-pressed="true"][data-s="done"]{background:var(--done-soft);color:var(--done);font-weight:700}
+.seg button[aria-pressed="true"][data-s="review"]{background:var(--rev-soft);color:var(--rev);font-weight:700}
+.seg button[aria-pressed="true"][data-s="todo"]{background:var(--todo-soft);color:var(--ink);font-weight:700}
+.seg button:focus-visible,.chip:focus-visible,.board:focus-visible,nav.toc a:focus-visible,.linkbtn:focus-visible{outline:2px solid var(--acc);outline-offset:1px}
+.linkbtn{font:inherit;font-size:12px;border:0;background:none;color:var(--muted);text-decoration:underline;cursor:pointer;padding:0}
+textarea.note{font:inherit;font-size:14.5px;line-height:28px;color:var(--ink);width:100%;box-sizing:border-box;min-height:118px;resize:vertical;border:1px solid var(--note-line);border-radius:8px;padding:2px 12px;
+  background-color:var(--note-bg);background-image:linear-gradient(transparent 27px,var(--note-line) 27px);background-size:100% 28px;background-attachment:local}
+textarea.note:focus{outline:2px solid var(--acc);outline-offset:0}
+.nstate{font-size:12px;color:var(--muted)}
+.empty{color:var(--muted);font-size:14px;padding:20px 0}
+.legend{display:flex;flex-wrap:wrap;gap:6px 12px;font-size:12.5px;color:var(--muted);align-items:center}
+footer{margin-top:40px;font-size:13px;color:var(--muted)}
+@media (max-width:520px){
+  .thead{grid-template-columns:auto minmax(0,1fr)}
+  .meta{grid-column:2;justify-items:start;display:flex;gap:10px}
+  .board strong{font-size:15px}
+  .board small span{display:none}
+}
+@media (prefers-reduced-motion:no-preference){.topic{transition:box-shadow .2s}}
+</style>
+
+<div class="wrap">
+  <header class="top">
+    <div class="brand"><h1>教科书</h1><span class="sub" id="sub">Python · 深度学习 · 机器学习</span></div>
+    <div class="sync" id="sync">笔记：正在连接云端…</div>
+    <section class="todaybox" id="todaybox" hidden>
+      <h2 id="todayTitle">今天要学</h2>
+      <div class="todaylist" id="todaylist"></div>
+    </section>
+  </header>
+
+  <div class="bar-sticky">
+    <div class="boards" role="tablist" aria-label="板块" id="boards"></div>
+    <div class="tools">
+      <input class="search" id="q" type="search" placeholder="搜索知识点或我的笔记" aria-label="搜索">
+      <div class="filters" id="filters" role="group" aria-label="筛选"></div>
+    </div>
+  </div>
+
+  <div class="layout">
+    <nav class="toc" id="toc" aria-label="章节"></nav>
+    <main id="main"></main>
+  </div>
+
+  <footer>
+    <div class="legend">
+      <span class="st st-done">已学</span>计划里已经学过的日期
+      <span class="st st-today">今天</span>今天的内容
+      <span class="st st-todo">未学</span>还没到，适合预习
+      <span class="st st-review">要复习</span>你自己标的
+    </div>
+    <p>状态默认按 50 天冲刺的日程自动判断（11/2 开始，11/16 起重排）。实际进度不一样时，展开知识点在“我的笔记”旁边改状态。笔记和状态登录后保存在云端，手机和电脑都能看到。</p>
+  </footer>
+</div>
+
+<script>
+const BOOK=[];
+BOOK.push({key:"py",name:"Python",full:"Python 与 NumPy",intro:"先会读、再会改、最后会写。每节都配了最小例子，自己敲一遍比看十遍有用。",chapters:[
+{id:"py1",t:"起步：数据和变量",s:"鱼书 1.1–1.3",topics:[
+{id:"py-run",t:"运行 Python 的三种方式",s:"鱼书 1.2",d:"11-02",
+one:"交互模式边敲边看结果，脚本文件一次跑完整程序，Jupyter/Colab 介于两者之间。",
+x:"终端输入 `python` 出现 `>>>` 就进了**交互模式**，适合试一行代码。把代码存成 `hello.py`，用 `python hello.py` 运行，这是**脚本**。Colab/Jupyter 把代码分成一个个格子，一格一格运行，最适合学习和做实验。",
+c:">>> 1 + 2\n3\n>>> print(\"hello\")\nhello",
+w:"交互模式会自动显示结果，脚本里要显示结果必须写 `print()`。"},
+{id:"py-var",t:"变量与算术",s:"鱼书 1.3.1–1.3.3",d:"11-02",
+one:"变量就是贴在数据上的名字标签，`=` 是“把右边的值贴上左边的名字”。",
+x:"`x = 10` 不是“x 等于 10”的数学判断，而是赋值。常用运算：`+ - * /`，`//` 整除，`%` 取余，`**` 乘方。",
+c:"x = 10\ny = 3\nprint(x / y)   # 3.333...\nprint(x // y)  # 3\nprint(x % y)   # 1\nprint(x ** 2)  # 100\nx = x + 1      # 先算右边，再贴回 x",
+w:"`/` 的结果永远是小数（float），即使能整除：`4 / 2` 得 `2.0`。"},
+{id:"py-type",t:"数据类型 type()",s:"鱼书 1.3.2",d:"11-02",
+one:"每个值都有类型：整数 int、小数 float、字符串 str、布尔 bool。",
+x:"类型决定能做什么运算。`type(x)` 查看类型。`int()`、`float()`、`str()` 用来转换类型，比如 `input()` 读到的永远是字符串，要算数先 `int()`。",
+c:"type(10)      # <class 'int'>\ntype(2.5)     # <class 'float'>\ntype(\"hi\")    # <class 'str'>\nint(\"42\") + 1 # 43",
+w:"`\"3\" + 4` 会报 TypeError：字符串和数字不能直接相加。"},
+{id:"py-str",t:"字符串与 f-string",s:"补充",d:"11-02",
+one:"字符串是一串字符，f-string 用 `{}` 把变量直接塞进句子里。",
+x:"单引号双引号都行。`len(s)` 求长度，`s[0]` 取第一个字符，`s.split()` 按空格切开。训练时打印日志最常用 f-string，`:.4f` 表示保留 4 位小数。",
+c:"name = \"Cedric\"\nloss = 0.123456\nprint(f\"{name} 的 loss = {loss:.4f}\")\n# Cedric 的 loss = 0.1235\n\"a b c\".split()   # ['a', 'b', 'c']",
+q:"把 \"I love deep learning\" 切成单词列表，并打印有几个单词。"},
+{id:"py-list",t:"列表 list 与切片",s:"鱼书 1.3.4",d:"11-02",
+one:"列表是一排有顺序的格子，可以装任何东西，用下标取值。",
+x:"下标从 **0** 开始，`a[-1]` 是最后一个。切片 `a[起:止]` 取“起”到“止”前一个（左闭右开）。`append` 在末尾追加，`len` 求长度。",
+c:"a = [1, 2, 3, 4, 5]\na[0]     # 1\na[-1]    # 5\na[0:2]   # [1, 2]  不含下标 2\na[:3]    # [1, 2, 3]\na.append(6)\nlen(a)   # 6",
+w:"切片左闭右开：`a[1:3]` 只有下标 1 和 2 两个元素。",
+q:"不用循环，取出列表里除第一个和最后一个以外的所有元素。"},
+{id:"py-dict",t:"字典 dict",s:"鱼书 1.3.5",d:"11-02",
+one:"字典是“键 → 值”的查找表，像通讯录：用名字查电话。",
+x:"用 `{键: 值}` 创建，`d[键]` 取值，`d[新键] = 值` 添加。鱼书里网络的参数就存在字典里：`params['W1']`。`d.items()` 同时遍历键和值。",
+c:"me = {\"name\": \"Cedric\", \"age\": 20}\nme[\"age\"]          # 20\nme[\"major\"] = \"AI\"  # 新增\nfor k, v in me.items():\n    print(k, v)",
+w:"取不存在的键会报 KeyError，可以用 `d.get(键, 默认值)` 避免。",
+q:"统计一句话里每个单词出现的次数（提示：字典 + for 循环）。"},
+{id:"py-bool",t:"布尔与比较",s:"鱼书 1.3.6",d:"11-02",
+one:"`True`/`False` 是判断的结果，用 `and`、`or`、`not` 组合。",
+x:"比较运算 `== != > < >= <=` 的结果都是布尔值。`=` 是赋值，`==` 才是比较是否相等。",
+c:"x = 5\nx > 3 and x < 10   # True\nnot (x == 5)       # False",
+w:"把 `==` 写成 `=` 是新手最常见的错误之一。"}
+]},
+{id:"py2",t:"控制流程：判断、循环、函数",s:"鱼书 1.3.7–1.3.8",topics:[
+{id:"py-if",t:"if / elif / else",s:"鱼书 1.3.7",d:"11-03",
+one:"根据条件选择走哪条路，Python 用**缩进**表示“属于这个条件的代码”。",
+x:"条件后面加冒号 `:`，下一行缩进 4 个空格。`elif` 是“否则如果”，可以有多个。",
+c:"score = 85\nif score >= 90:\n    print(\"优秀\")\nelif score >= 60:\n    print(\"及格\")\nelse:\n    print(\"不及格\")",
+w:"漏冒号或缩进不一致会报 SyntaxError / IndentationError。",
+q:"输入一个年份，判断是不是闰年（能被 4 整除但不能被 100 整除，或能被 400 整除）。"},
+{id:"py-for",t:"for 循环与 range",s:"鱼书 1.3.7",d:"11-03",
+one:"for 把一个序列里的东西逐个拿出来处理。",
+x:"`range(n)` 生成 0 到 n−1；`range(a, b)` 生成 a 到 b−1。训练神经网络就是一个大 for 循环：`for i in range(迭代次数):`。",
+c:"for i in range(3):\n    print(i)        # 0 1 2\n\nfor x in [10, 20, 30]:\n    print(x * 2)\n\nfor i, x in enumerate(['a','b']):\n    print(i, x)     # 0 a / 1 b",
+q:"打印九九乘法表（提示：两层 for 循环，`print(..., end=\" \")` 不换行）。"},
+{id:"py-while",t:"while、break、continue",s:"补充",d:"11-03",
+one:"while 在条件成立时一直重复；break 跳出循环，continue 跳过本次。",
+x:"不知道要循环几次时用 while，比如“一直训练直到误差小于 0.01”。注意条件最终要变成 False，否则会死循环。",
+c:"n = 0\nwhile n < 5:\n    n += 1\n    if n == 2:\n        continue   # 跳过 2\n    if n == 4:\n        break      # 到 4 结束\n    print(n)        # 1 3",
+w:"死循环时在 Colab 点停止按钮，终端按 Ctrl+C。"},
+{id:"py-func",t:"函数 def 与 return",s:"鱼书 1.3.8",d:"11-03",
+one:"函数是给一段代码起个名字，输入参数、输出结果，写一次到处用。",
+x:"`def 名字(参数):` 定义，`return` 返回结果。没写 return 的函数返回 `None`。参数可以有默认值。鱼书里 `sigmoid(x)`、`softmax(x)` 都是函数。",
+c:"def is_prime(n):\n    if n < 2:\n        return False\n    for i in range(2, int(n ** 0.5) + 1):\n        if n % i == 0:\n            return False\n    return True\n\ndef greet(name, word=\"你好\"):\n    return f\"{word}，{name}\"\n\nprint([n for n in range(20) if is_prime(n)])",
+w:"`print` 是显示给人看，`return` 是交给程序继续用，两者不一样。",
+q:"写 `fib(n)` 返回斐波那契数列前 n 项组成的列表。"},
+{id:"py-comp",t:"列表推导式",s:"补充",d:null,
+one:"一行生成列表：`[对x做什么 for x in 序列 if 条件]`。",
+x:"等价于“建空列表 + for 循环 + append”，但更短。课程代码里到处都是，至少要能读懂。",
+c:"squares = [x * x for x in range(5)]\n# [0, 1, 4, 9, 16]\nevens = [x for x in range(10) if x % 2 == 0]",
+q:"用列表推导式取出 1–100 里能被 3 和 5 同时整除的数。"}
+]},
+{id:"py3",t:"组织代码：类、模块、文件",s:"鱼书 1.4 + 补充",topics:[
+{id:"py-class",t:"类与对象：__init__ 和 self",s:"鱼书 1.4.2",d:"11-04",
+one:"类是模板（图纸），对象是按图纸造出来的东西；self 指“这个对象自己”。",
+x:"`__init__` 是创建对象时自动执行的初始化函数，把数据存进 `self.xxx`。类里的函数叫**方法**，第一个参数永远是 self。鱼书每一层（`Relu`、`Affine`）和 PyTorch 每个网络都是一个类。",
+c:"class Student:\n    def __init__(self, name):\n        self.name = name\n        self.scores = []\n\n    def add(self, s):\n        self.scores.append(s)\n\n    def mean(self):\n        return sum(self.scores) / len(self.scores)\n\nst = Student(\"Cedric\")\nst.add(90); st.add(80)\nprint(st.mean())   # 85.0",
+w:"定义方法时忘写 self，调用时会报“takes 0 positional arguments but 1 was given”。",
+q:"写一个 `Counter` 类：有 `add()` 让计数加 1，`get()` 返回当前计数。"},
+{id:"py-module",t:"模块 import",s:"鱼书 1.5.1",d:"11-16",
+one:"模块是别人（或自己）写好的 .py 文件，import 进来就能用里面的函数。",
+x:"`import numpy as np` 导入并起简称；`from a import b` 只拿某个东西。鱼书代码用 `from common.functions import softmax` 引用自己写的模块，所以运行时要在正确的文件夹里。",
+c:"import numpy as np\nimport matplotlib.pyplot as plt\nfrom math import sqrt\nprint(sqrt(16))",
+w:"ModuleNotFoundError：要么没安装（`pip install 包名`），要么当前目录不对。"},
+{id:"py-file",t:"文件读写与 json",s:"补充",d:null,
+one:"`with open()` 打开文件读写，json 把列表、字典存成文本，下次还能读回来。",
+x:"`'r'` 读，`'w'` 写（覆盖），`'a'` 追加。`with` 会在结束时自动关闭文件。中文要加 `encoding='utf-8'`。",
+c:"import json\ndata = [{\"日期\": \"11-18\", \"金额\": 25}]\nwith open(\"book.json\", \"w\", encoding=\"utf-8\") as f:\n    json.dump(data, f, ensure_ascii=False)\n\nwith open(\"book.json\", encoding=\"utf-8\") as f:\n    data = json.load(f)",
+q:"做一个命令行记账本：能添加一条记录、显示全部、保存到文件。"},
+{id:"py-except",t:"异常处理 try / except",s:"补充",d:null,
+one:"预料到可能出错的地方用 try 包起来，出错时执行 except 而不是让程序崩溃。",
+x:"比如用户输入了字母而不是数字，`int()` 会报 ValueError。",
+c:"try:\n    n = int(input(\"金额：\"))\nexcept ValueError:\n    print(\"请输入数字\")",
+w:"不要写空的 `except:` 把所有错误都吞掉，会让 bug 很难找。"}
+]},
+{id:"py4",t:"NumPy：深度学习的计算器",s:"鱼书 1.5",topics:[
+{id:"np-why",t:"为什么要用 NumPy",s:"鱼书 1.5",d:"11-16",
+one:"NumPy 一次处理一整批数，比 Python for 循环快几十到上百倍。",
+x:"神经网络里全是矩阵运算。Python 列表 `[1,2]*2` 得到 `[1,2,1,2]`，而 NumPy 数组 `np.array([1,2])*2` 得到 `[2,4]`，这才是数学上的运算。NumPy 底层用 C 写，还能利用 CPU 的并行指令。"},
+{id:"np-create",t:"创建数组",s:"鱼书 1.5.2",d:"11-16",
+one:"`np.array()` 把列表变成数组，还有一批快捷函数生成常用数组。",
+c:"import numpy as np\nx = np.array([1.0, 2.0, 3.0])\nnp.zeros((2, 3))       # 2行3列全 0\nnp.ones(3)             # [1. 1. 1.]\nnp.arange(0, 1, 0.25)  # [0. 0.25 0.5 0.75]\nnp.random.randn(2, 2)  # 标准正态随机数",
+x:"`np.arange` 像 range 但能用小数步长，画函数曲线时用来生成 x 轴。`np.random.randn` 用于初始化权重。"},
+{id:"np-shape",t:"shape、ndim、dtype",s:"鱼书 1.5.4",d:"11-16",
+one:"shape 是数组的形状（几行几列），深度学习里 80% 的 bug 都是形状对不上。",
+x:"`A.shape` 返回元组，如 `(2, 3)` 表示 2 行 3 列。`ndim` 是维数，`dtype` 是元素类型。一批 100 张 28×28 的图片，形状是 `(100, 784)`（展平）或 `(100, 1, 28, 28)`。",
+c:"A = np.array([[1, 2], [3, 4], [5, 6]])\nA.shape   # (3, 2)\nA.ndim    # 2\nA.dtype   # int64",
+w:"`(3,)` 是一维数组，`(3,1)` 是 3 行 1 列的二维数组，两者不一样。"},
+{id:"np-elem",t:"逐元素运算",s:"鱼书 1.5.3",d:"11-16",
+one:"形状相同的数组做 `+ - * /`，是对应位置一一计算。",
+c:"x = np.array([1.0, 2.0, 3.0])\ny = np.array([2.0, 4.0, 6.0])\nx + y      # [3. 6. 9.]\nx * y      # [ 2.  8. 18.]  不是矩阵乘法\nnp.exp(x)  # 每个元素求 e 的次方",
+x:"`np.exp`、`np.log`、`np.maximum(0, x)`（ReLU）也都是逐元素的。"},
+{id:"np-dot",t:"矩阵乘法 np.dot 和 @",s:"鱼书 1.5.4、3.3",d:"11-16",
+one:"`A @ B`（或 `np.dot(A, B)`）是矩阵乘法：A 的列数必须等于 B 的行数。",
+x:"形状规则：`(a, b) @ (b, c) → (a, c)`，中间的 b 要对齐并“消掉”。神经网络一层的计算就是 `X @ W + b`。`*` 是逐元素乘，不要混。",
+c:"X = np.random.randn(100, 784)  # 100 张图\nW = np.random.randn(784, 50)\nb = np.zeros(50)\nA = X @ W + b   # (100, 50)",
+w:"报错 “shapes (2,3) and (2,3) not aligned” 就是中间维度没对上，先 print 两边的 shape。",
+q:"手算 [[1,2],[3,4]] @ [[5,6],[7,8]]，再用 NumPy 验证。"},
+{id:"np-bc",t:"广播 broadcasting",s:"鱼书 1.5.5",d:"11-17",
+one:"形状不同的数组运算时，NumPy 自动把小的“复制扩展”成大的形状。",
+x:"矩阵 × 标量：标量扩展成同形状。矩阵 `(2,2)` + 向量 `(2,)`：向量被复制到每一行。`X @ W + b` 里的 `+ b` 就靠广播把偏置加到每个样本上。规则：从最后一维往前比，维度相等或其中一个是 1 才能广播。",
+c:"A = np.array([[1, 2], [3, 4]])\nA * 10                  # [[10 20] [30 40]]\nA + np.array([10, 20])  # [[11 22] [13 24]]",
+w:"广播很方便但也会悄悄算错：`(3,)` 和 `(3,1)` 相加会得到 `(3,3)`，不会报错。"},
+{id:"np-index",t:"索引与切片",s:"鱼书 1.5.6",d:"11-17",
+one:"`A[行, 列]` 取元素，`:` 表示“这一维全要”。",
+c:"X = np.array([[51, 55], [14, 19], [0, 4]])\nX[0]        # [51 55] 第 0 行\nX[0, 1]     # 55\nX[:, 0]     # [51 14 0] 第 0 列\nX[1:, :]    # 第 1 行之后的所有行\nX.flatten() # 展平成一维",
+x:"取一个 mini-batch：`x_train[batch_mask]`，用一个下标数组一次取多行。"},
+{id:"np-bool",t:"布尔索引",s:"鱼书 1.5.6",d:"11-17",
+one:"用条件生成 True/False 数组，再用它把满足条件的元素挑出来。",
+c:"X = np.array([51, 55, 14, 19, 0, 4])\nX > 15      # [ True  True False  True False False]\nX[X > 15]   # [51 55 19]\nmask = (X <= 0)\nX[mask] = 0 # ReLU 反向传播就这么写",
+x:"鱼书 ReLU 层用 `self.mask = (x <= 0)` 记住哪些位置是负数。"},
+{id:"np-axis",t:"axis：按行还是按列",s:"补充",d:"11-17",
+one:"`axis=0` 沿着行的方向压缩（每列算一个），`axis=1` 沿列的方向压缩（每行算一个）。",
+x:"记法：axis 写几，那一维就“消失”。`(3, 4)` 的数组 `sum(axis=0)` 得到 `(4,)`，`sum(axis=1)` 得到 `(3,)`。`np.argmax(y, axis=1)` 取每个样本得分最高的类别，算准确率天天用。",
+c:"A = np.array([[1, 2, 3], [4, 5, 6]])\nA.sum(axis=0)     # [5 7 9]\nA.sum(axis=1)     # [ 6 15]\nnp.argmax(A, axis=1)  # [2 2]\nA.mean()          # 3.5 全部平均",
+w:"加 `keepdims=True` 可以保留被压缩的那一维，方便后面广播，softmax 里常用。"},
+{id:"np-reshape",t:"reshape 与转置 .T",s:"补充",d:"11-17",
+one:"reshape 改变形状但不改数据，`.T` 把行列互换。",
+c:"x = np.arange(6)       # [0 1 2 3 4 5]\nx.reshape(2, 3)        # [[0 1 2] [3 4 5]]\nx.reshape(3, -1)       # -1 让 NumPy 自己算\nA = np.ones((2, 3))\nA.T.shape              # (3, 2)",
+x:"反向传播里 `dW = X.T @ dout` 就要用转置让形状对齐。图片 `(28,28)` 展平成 `(784,)` 也是 reshape。"},
+{id:"np-vec",t:"向量化思维：不写 for 循环",s:"补充",d:"11-17",
+one:"能用数组整体运算就不用 for 循环，代码更短、速度快百倍。",
+x:"把“对每个元素做 X”改写成“对整个数组做 X”。吴恩达课里的“向量化”就是这个意思。",
+c:"# 慢：for 循环\ntotal = 0\nfor i in range(len(x)):\n    total += w[i] * x[i]\n# 快：向量化\ntotal = np.dot(w, x)",
+q:"不用 for 循环，用 NumPy 写出均方误差 MSE = 平均((y − t)²)。"}
+]},
+{id:"py5",t:"Matplotlib：把结果画出来",s:"鱼书 1.6",topics:[
+{id:"plt-line",t:"画函数曲线",s:"鱼书 1.6.1–1.6.2",d:"11-18",
+one:"准备 x 和 y 两个数组，`plt.plot(x, y)` 连成线，`plt.show()` 显示。",
+c:"import numpy as np\nimport matplotlib.pyplot as plt\nx = np.arange(0, 6, 0.1)\nplt.plot(x, np.sin(x), label=\"sin\")\nplt.plot(x, np.cos(x), linestyle=\"--\", label=\"cos\")\nplt.xlabel(\"x\"); plt.ylabel(\"y\")\nplt.title(\"sin & cos\")\nplt.legend()\nplt.show()",
+x:"x 取得越密，曲线越平滑。`label` 配合 `legend()` 显示图例。",
+q:"画出 sigmoid、阶跃函数、ReLU 三条曲线放在同一张图里。"},
+{id:"plt-loss",t:"画损失曲线",s:"补充",d:"11-18",
+one:"把每次迭代的 loss 存进列表，最后画出来，就能看出训练是否正常。",
+c:"losses = []\nfor i in range(1000):\n    ...  # 训练一步\n    losses.append(loss)\nplt.plot(losses)\nplt.xlabel(\"iteration\"); plt.ylabel(\"loss\")\nplt.show()",
+x:"平稳下降说明正常；上下乱跳通常是学习率太大；几乎不动是学习率太小或代码有错。"},
+{id:"plt-img",t:"显示图片 imshow",s:"鱼书 1.6.3",d:"11-18",
+one:"`plt.imshow(数组)` 把二维数组当作图片显示。",
+c:"img = x_train[0].reshape(28, 28)\nplt.imshow(img, cmap=\"gray\")\nplt.show()",
+x:"MNIST 每张图是 784 个数，要先 reshape 回 28×28 才能显示。"}
+]},
+{id:"py6",t:"怎么写代码：方法比语法更重要",s:"写代码的思路",topics:[
+{id:"how-split",t:"先拆问题，再写代码",s:"方法",d:null,
+one:"拿到题目不要直接敲代码：先用中文写出步骤，再把每一步翻译成代码。",
+x:"例：“统计词频”= ①把句子切成单词 ②准备一个空字典 ③逐个单词：在字典里就 +1，不在就设为 1 ④打印。每一步都很小，就不会卡住。写成代码前，可以先把步骤写成注释，再在每条注释下面补代码。",
+c:"# 1. 切单词\nwords = text.split()\n# 2. 空字典\ncount = {}\n# 3. 逐个计数\nfor w in words:\n    count[w] = count.get(w, 0) + 1\n# 4. 输出\nprint(count)"},
+{id:"how-small",t:"从最小的例子开始",s:"方法",d:null,
+one:"先让代码在 3 个数据上跑对，再换成 60000 个数据。",
+x:"用小数据你能手算出正确答案，对比就知道代码对不对。写神经网络时，先用 2 个样本、2 个特征检查形状和结果，再上 MNIST。每写几行就运行一次，不要写完 100 行才第一次运行。"},
+{id:"how-err",t:"读懂报错信息",s:"方法",d:"11-02",
+one:"报错不是失败，是 Python 在告诉你哪里错了：从最后一行往上看。",
+x:"最后一行是错误类型和原因，上面是出错的位置（行号）。常见类型：\n- `SyntaxError`：语法错，漏了冒号、括号\n- `IndentationError`：缩进不对\n- `NameError`：变量名写错或没定义\n- `TypeError`：类型不对，比如字符串加数字\n- `IndexError`：下标超出范围\n- `KeyError`：字典里没这个键\n- `ValueError: shapes not aligned`：矩阵形状对不上",
+w:"把完整报错（含最后一行）复制给我或搜索引擎，比描述“它报错了”有用得多。"},
+{id:"how-print",t:"print 调试法：看值、看形状",s:"方法",d:null,
+one:"不知道哪里错了，就在关键位置 print 变量的值和 shape，看它是不是你以为的样子。",
+c:"print(\"x:\", x.shape)\nprint(\"W1:\", W1.shape)\na1 = x @ W1 + b1\nprint(\"a1:\", a1.shape, a1[:2])",
+x:"深度学习代码最常见的问题是形状不对和数值变成 nan，两样都靠 print 抓出来。读别人的代码时也这么做：每一步 print 一下 shape，代码就看懂一半了。"},
+{id:"how-read",t:"怎么读懂一段陌生代码",s:"方法",d:null,
+one:"先看整体结构，再逐行；先找输入和输出，再看中间怎么变。",
+x:"步骤：①看 import 知道用了哪些工具 ②找函数和类的名字，猜它们做什么 ③找程序入口（最下面的代码）④跑一遍，在中间打印形状 ⑤给每行加中文注释。鱼书代码都按这个顺序读。"},
+{id:"how-style",t:"写别人（和三天后的你）看得懂的代码",s:"方法",d:null,
+one:"变量起有意义的名字，重复的代码抽成函数，复杂的地方写一句注释说“为什么”。",
+x:"`lr` 比 `a` 好，`train_loss_list` 比 `l` 好。同一段代码复制了 3 次，就该写成函数。注释写“为什么这么做”，不要写“这行把 x 加 1”这种代码本身已经说明的事。"},
+{id:"how-ask",t:"查文档和提问的方法",s:"方法",d:null,
+one:"不会的函数先查官方文档的例子，提问时带上代码、报错和你已经试过什么。",
+x:"在 Jupyter 里函数名后加 `?`（如 `np.sum?`）可以直接看说明。提问三要素：①想做什么 ②代码和完整报错 ③自己试了什么。这样别人（包括我）能最快帮你。"}
+]}
+]});
+BOOK.push({key:"dl",name:"深度学习",full:"深度学习（鱼书 + 吴恩达深度学习专项课）",intro:"前 7 章按鱼书章节排列，标出对应的吴恩达课程（“DL 2-1”表示《深度学习》第 2 门第 1 周）。后面是鱼书没讲、课程里有的：项目策略、PyTorch、序列模型和 Transformer。",chapters:[
+{id:"dl2",t:"第 2 章 感知机",s:"鱼书 第 2 章",topics:[
+{id:"dl-perc",t:"感知机是什么",s:"鱼书 2.1",d:"11-18",
+one:"接收多个输入，加权求和，超过阈值就输出 1，否则输出 0。",
+x:"权重 w 表示每个输入有多重要，偏置 b 表示神经元有多容易被激活（门槛高低）。它是神经网络的祖先。",
+c:"y = 1  如果 w₁x₁ + w₂x₂ + b > 0\ny = 0  否则"},
+{id:"dl-gate",t:"用感知机实现逻辑门",s:"鱼书 2.2–2.3",d:"11-18",
+one:"只改权重和偏置，同一个结构就能变成与门、与非门、或门。",
+c:"def AND(x1, x2):\n    x = np.array([x1, x2])\n    w = np.array([0.5, 0.5])\n    b = -0.7\n    return 1 if np.sum(w * x) + b > 0 else 0",
+x:"这里的参数是人手调的；机器学习要做的，就是让电脑自己找到这些参数。",
+q:"把上面的代码改成与非门（NAND）和或门（OR），只需改 w 和 b。"},
+{id:"dl-xor",t:"感知机的局限：异或",s:"鱼书 2.4",d:"11-18",
+one:"单层感知机只能用一条直线分开两类，异或（XOR）的点用一条直线分不开。",
+x:"能用直线分开的叫**线性可分**。XOR 的四个点交叉排列，需要曲线才能分开。"},
+{id:"dl-mlp",t:"多层感知机",s:"鱼书 2.5",d:"11-18",
+one:"把与非门、或门、与门叠成两层，就能实现异或：叠加层数能表达更复杂的东西。",
+c:"XOR(x1, x2) = AND( NAND(x1, x2), OR(x1, x2) )",
+x:"理论上叠够多层能表示任何计算（连计算机都能造出来）。这就是“深度”的意义。"}
+]},
+{id:"dl3",t:"第 3 章 神经网络（前向传播）",s:"鱼书 第 3 章 · ML 2-1/2-2 · DL 1-3",topics:[
+{id:"dl-p2nn",t:"从感知机到神经网络",s:"鱼书 3.1",d:"11-18",
+one:"神经网络 = 多层感知机，但把“阶跃”换成了平滑的激活函数，这样参数才能自动学习。",
+x:"结构：输入层（第 0 层）→ 中间层（隐藏层）→ 输出层。鱼书按“有权重的层数”数，输入 → 隐藏 → 输出叫 2 层网络。"},
+{id:"dl-step",t:"阶跃函数与 sigmoid",s:"鱼书 3.2.1–3.2.5",d:"11-18",
+one:"阶跃函数输出只有 0/1，sigmoid 是它的平滑版，输出 0–1 之间的连续值。",
+c:"def step(x):\n    return np.array(x > 0, dtype=int)\n\ndef sigmoid(x):\n    return 1 / (1 + np.exp(-x))",
+x:"平滑很关键：阶跃函数几乎处处导数为 0，没法用梯度下降学习；sigmoid 处处有斜率。"},
+{id:"dl-relu",t:"ReLU 函数",s:"鱼书 3.2.7",d:"11-18",
+one:"输入大于 0 原样输出，小于 0 输出 0：`max(0, x)`。",
+c:"def relu(x):\n    return np.maximum(0, x)",
+x:"计算简单，正半边斜率恒为 1、不会饱和，所以训练快，是现在隐藏层的默认选择。"},
+{id:"dl-nonlin",t:"为什么激活函数必须非线性",s:"鱼书 3.2.6",d:"11-18",
+one:"用线性激活，叠多少层都等价于一层，“深”就没有意义了。",
+x:"例：h(x) = cx，三层后 y = c·c·c·x = c³x，一层就能做到。"},
+{id:"dl-matmul",t:"多维数组运算与一层的计算",s:"鱼书 3.3",d:"11-19",
+one:"一层神经网络的计算就是一次矩阵乘法：`A = X @ W + B`。",
+x:"X 形状 (样本数, 输入数)，W 形状 (输入数, 神经元数)，结果 (样本数, 神经元数)。对齐中间那一维是写对代码的关键。",
+c:"X = np.array([1.0, 0.5])          # (2,)\nW1 = np.array([[0.1, 0.3, 0.5],\n               [0.2, 0.4, 0.6]])  # (2, 3)\nB1 = np.array([0.1, 0.2, 0.3])\nA1 = X @ W1 + B1                   # (3,)\nZ1 = sigmoid(A1)"},
+{id:"dl-3layer",t:"三层网络的前向传播",s:"鱼书 3.4",d:"11-19",
+one:"把“乘权重 + 加偏置 + 激活”重复三次，输出层不用 sigmoid 而用恒等或 softmax。",
+c:"def forward(network, x):\n    W1, W2, W3 = network['W1'], network['W2'], network['W3']\n    b1, b2, b3 = network['b1'], network['b2'], network['b3']\n    z1 = sigmoid(x @ W1 + b1)\n    z2 = sigmoid(z1 @ W2 + b2)\n    y = z2 @ W3 + b3   # 输出层\n    return y",
+x:"参数放在字典 network 里，这是鱼书的写法习惯。"},
+{id:"dl-output",t:"输出层：恒等函数与 softmax",s:"鱼书 3.5",d:"11-19",
+one:"回归问题输出层用恒等函数（原样输出），分类问题用 softmax 输出概率。",
+c:"yₖ = exp(aₖ) / Σᵢ exp(aᵢ)",
+x:"softmax 输出都在 0–1 之间且加起来等于 1，可以当概率看。它不改变大小顺序，所以只做预测（推理）时可以省掉，直接取最大的那个。"},
+{id:"dl-smoverflow",t:"softmax 防溢出",s:"鱼书 3.5.2",d:"11-19",
+one:"先减去输入里的最大值再算 exp，结果不变，但不会因为数太大变成 inf。",
+c:"def softmax(a):\n    c = np.max(a)\n    exp_a = np.exp(a - c)\n    return exp_a / np.sum(exp_a)",
+x:"e¹⁰⁰⁰ 会溢出成 inf，inf/inf 得 nan。分子分母同乘一个常数，比值不变。面试常考的小细节。"},
+{id:"dl-mnist",t:"手写数字识别与批处理",s:"鱼书 3.6",d:"11-19",
+one:"用训练好的权重对 MNIST 做前向传播，一次喂 100 张图（批处理）比一张张算快很多。",
+x:"MNIST：6 万张训练图、1 万张测试图，每张 28×28 灰度，展平成 784 个数。**正规化**：像素值除以 255 变成 0–1。网络形状 784 → 50 → 100 → 10。批处理时 x 的形状是 (100, 784)，输出 (100, 10)，用 `np.argmax(y, axis=1)` 取每张图的预测。",
+c:"for i in range(0, len(x), 100):\n    y = predict(network, x[i:i+100])\n    p = np.argmax(y, axis=1)\n    acc += np.sum(p == t[i:i+100])"}
+]},
+{id:"dl4",t:"第 4 章 神经网络的学习",s:"鱼书 第 4 章 · DL 1-2",topics:[
+{id:"dl-datadriven",t:"从数据中学习",s:"鱼书 4.1",d:"11-21",
+one:"不人工设计特征和规则，让网络端到端地直接从原始数据（像素）学到答案。",
+x:"数据分**训练数据**和**测试数据**：用训练数据找参数，用测试数据检验**泛化能力**。只在训练数据上好、换数据就差，叫过拟合。"},
+{id:"dl-mse",t:"损失函数：均方误差",s:"鱼书 4.2.1",d:"11-21",
+one:"预测和正确答案每一项差的平方和，再乘 1/2。",
+c:"E = ½ Σₖ (yₖ − tₖ)²\n\ndef mean_squared_error(y, t):\n    return 0.5 * np.sum((y - t) ** 2)",
+x:"t 是 one-hot 标签：正确类是 1，其余是 0，例如 [0,0,1,0,…]。"},
+{id:"dl-ce",t:"损失函数：交叉熵",s:"鱼书 4.2.2",d:"11-21",
+one:"只看正确类别的预测概率，E = −log(y正确)：概率越接近 1，损失越接近 0。",
+c:"def cross_entropy_error(y, t):\n    delta = 1e-7   # 防止 log(0) = -inf\n    return -np.sum(t * np.log(y + delta))",
+x:"和机器学习板块的逻辑损失、softmax 损失是同一个东西。分类任务的标准损失。"},
+{id:"dl-minibatch",t:"mini-batch 学习",s:"鱼书 4.2.3–4.2.4",d:"11-21",
+one:"每次随机抽一小批（如 100 个）样本算损失和梯度，代替用全部 6 万个。",
+x:"像民意调查：抽样就能大致代表整体，而且快得多。批量版交叉熵要除以批大小 N，得到平均损失。",
+c:"batch_mask = np.random.choice(60000, 100)\nx_batch = x_train[batch_mask]\nt_batch = t_train[batch_mask]"},
+{id:"dl-whyloss",t:"为什么用损失函数而不是准确率",s:"鱼书 4.2.5",d:"11-21",
+one:"准确率对参数的微小变化几乎没反应（导数大多为 0），损失函数是连续变化的，才能指引参数调整。",
+x:"100 张对 32 张，参数稍微动一下还是 32 张，准确率不变也就不知道往哪调。这和阶跃函数不能当激活函数是同一个道理。"},
+{id:"dl-numdiff",t:"数值微分",s:"鱼书 4.3",d:"11-21",
+one:"把 x 往两边各挪一点点 h，看函数值变化多少，近似出导数。",
+c:"def numerical_diff(f, x):\n    h = 1e-4\n    return (f(x + h) - f(x - h)) / (2 * h)",
+x:"用中心差分（两边各挪）比只往一边挪更准。h 不能太小（如 1e-50），否则浮点数舍入误差会让结果变成 0。缺点是慢，第 5 章用反向传播代替。"},
+{id:"dl-grad",t:"偏导数与梯度",s:"鱼书 4.3.3–4.4",d:"11-21",
+one:"梯度是由所有偏导数组成的向量，指向函数值**增加**最快的方向。",
+x:"偏导数：只动一个变量、其他固定时的导数。梯度的反方向就是下降最快的方向，梯度下降就是沿着它走。",
+c:"∇f = ( ∂f/∂x₀ , ∂f/∂x₁ , … )"},
+{id:"dl-gd",t:"梯度下降法与学习率",s:"鱼书 4.4.1",d:"11-21",
+one:"参数 = 参数 − 学习率 × 梯度，重复很多次。",
+c:"def gradient_descent(f, init_x, lr=0.01, step_num=100):\n    x = init_x\n    for i in range(step_num):\n        x -= lr * numerical_gradient(f, x)\n    return x",
+x:"学习率是**超参数**：人来设，不是网络学出来的。太大会发散，太小几乎不动。"},
+{id:"dl-nngrad",t:"神经网络的梯度",s:"鱼书 4.4.2",d:"11-21",
+one:"求损失 L 对每个权重的偏导 ∂L/∂W，形状和 W 完全一样。",
+x:"∂L/∂w₁₁ 表示“w₁₁ 稍微变大一点，损失变化多少”。正就把 w₁₁ 调小，负就调大。"},
+{id:"dl-train",t:"学习算法的实现：两层网络训练",s:"鱼书 4.5",d:"11-21",
+one:"四步循环：①抽 mini-batch ②算梯度 ③更新参数 ④重复。这叫随机梯度下降（SGD）。",
+x:"`TwoLayerNet` 类保存参数，有 `predict`、`loss`、`accuracy`、`gradient` 方法。**epoch**：所有训练数据都被用过一遍的单位，6 万张、批大小 100，则 600 次迭代 = 1 个 epoch。每个 epoch 记录一次训练和测试准确率，两条线接近说明没有过拟合。",
+c:"for i in range(iters_num):\n    batch_mask = np.random.choice(train_size, batch_size)\n    grad = network.gradient(x_batch, t_batch)\n    for key in ('W1', 'b1', 'W2', 'b2'):\n        network.params[key] -= lr * grad[key]",
+q:"跑通鱼书 ch04 的 train_neuralnet.py，画出损失曲线和准确率曲线。"}
+]},
+{id:"dl5",t:"第 5 章 误差反向传播",s:"鱼书 第 5 章 · DL 1-2/1-4",topics:[
+{id:"dl-cg",t:"计算图",s:"鱼书 5.1",d:"11-22",
+one:"把计算过程画成节点和箭头的图，每个节点只做一个简单运算。",
+x:"例：买 2 个 100 元的苹果，加 10% 税：100 →(×2)→ 200 →(×1.1)→ 220。从左往右算是**正向传播**，从右往左传导数是**反向传播**。"},
+{id:"dl-local",t:"局部计算",s:"鱼书 5.1.2",d:"11-22",
+one:"每个节点只管自己那一小步，不用关心整张图多复杂。",
+x:"像流水线上的工人，只做自己的工序。所以再复杂的网络，也能拆成简单节点来求导。"},
+{id:"dl-chain",t:"链式法则",s:"鱼书 5.2",d:"11-22",
+one:"复合函数的导数 = 各层导数相乘。",
+c:"z = (x + y)²，令 t = x + y\n∂z/∂x = ∂z/∂t · ∂t/∂x = 2t · 1",
+x:"齿轮比喻：大齿轮转 1 圈带中齿轮转 2 圈，中齿轮带小齿轮转 3 圈，那大齿轮转 1 圈小齿轮转 2 × 3 = 6 圈。反向传播就是把每个节点的局部导数一路乘回去。",
+q:"面试题：用一句话解释什么是反向传播。"},
+{id:"dl-addmul",t:"加法节点和乘法节点的反向传播",s:"鱼书 5.3–5.4",d:"11-22",
+one:"加法节点：上游梯度原样往下传；乘法节点：上游梯度乘以“另一个输入”再传。",
+c:"class MulLayer:\n    def forward(self, x, y):\n        self.x, self.y = x, y\n        return x * y\n    def backward(self, dout):\n        dx = dout * self.y   # 交换\n        dy = dout * self.x\n        return dx, dy",
+x:"乘法节点要在正向时把输入存起来，反向时要用。苹果例子：苹果单价的梯度是 2.2，意思是单价涨 1 元，总价涨 2.2 元。"},
+{id:"dl-relulayer",t:"ReLU 层",s:"鱼书 5.5.1",d:"11-22",
+one:"正向时 x > 0 的地方，反向梯度原样通过；x ≤ 0 的地方，梯度被挡住变成 0。",
+c:"class Relu:\n    def forward(self, x):\n        self.mask = (x <= 0)\n        out = x.copy()\n        out[self.mask] = 0\n        return out\n    def backward(self, dout):\n        dout[self.mask] = 0\n        return dout",
+x:"像开关：电流（梯度）只能从打开的地方流过。"},
+{id:"dl-siglayer",t:"Sigmoid 层",s:"鱼书 5.5.2",d:"11-22",
+one:"sigmoid 的导数可以只用它的输出 y 表示：y(1 − y)。",
+c:"backward:  dx = dout * y * (1 - y)",
+x:"y(1 − y) 最大才 0.25，层数多时一路相乘会越来越小，这就是 sigmoid 网络**梯度消失**的原因。"},
+{id:"dl-affine",t:"Affine 层（全连接层）",s:"鱼书 5.6",d:"11-22",
+one:"正向 Y = X·W + B；反向 dX = dY·Wᵀ，dW = Xᵀ·dY，dB = dY 按行求和。",
+c:"def backward(self, dout):\n    dx = dout @ self.W.T\n    self.dW = self.x.T @ dout\n    self.db = np.sum(dout, axis=0)\n    return dx",
+x:"记不住公式时靠**形状**推：dW 必须和 W 同形状，只有 Xᵀ·dY 能拼出这个形状。dB 要求和，是因为偏置被广播加到了每个样本上。"},
+{id:"dl-smloss",t:"Softmax-with-Loss 层",s:"鱼书 5.6.3",d:"11-22",
+one:"softmax 和交叉熵合在一起，反向传播结果非常简洁：(y − t) / 批大小。",
+x:"y 是预测概率，t 是正确标签。误差直接就是“预测减答案”，预测越离谱，往回传的梯度越大。这不是巧合，交叉熵就是为了让 softmax 有这个好性质而选的（回归里的“恒等 + 均方误差”也一样）。",
+c:"def backward(self, dout=1):\n    batch_size = self.t.shape[0]\n    return (self.y - self.t) / batch_size"},
+{id:"dl-assemble",t:"组装两层网络",s:"鱼书 5.7",d:"11-22",
+one:"把各层按顺序放进有序字典，正向依次调用 forward，反向倒序调用 backward。",
+c:"self.layers = OrderedDict()\nself.layers['Affine1'] = Affine(W1, b1)\nself.layers['Relu1'] = Relu()\nself.layers['Affine2'] = Affine(W2, b2)\nself.lastLayer = SoftmaxWithLoss()",
+x:"像搭积木：想加深网络，只要多加几层。PyTorch 的 `nn.Sequential` 就是同一个思路。"},
+{id:"dl-gradcheck",t:"梯度确认",s:"鱼书 5.7.3 · DL 2-1",d:"11-22",
+one:"用慢但简单的数值微分，检查快但容易写错的反向传播算得对不对。",
+x:"两者误差应该非常小（如 1e-10 量级）。只在调试时用，训练时关掉。"},
+{id:"dl-handderive",t:"手推两层网络的梯度（面试必备）",s:"综合",d:"11-22",
+one:"按“Affine → ReLU → Affine → Softmax+交叉熵”的顺序反着推一遍。",
+c:"正向：z1 = X W1 + b1,  a1 = relu(z1),  z2 = a1 W2 + b2,  y = softmax(z2)\n反向：dz2 = (y − t) / N\n      dW2 = a1ᵀ dz2,  db2 = Σ dz2\n      da1 = dz2 W2ᵀ\n      dz1 = da1 ⊙ (z1 > 0)\n      dW1 = Xᵀ dz1,  db1 = Σ dz1",
+x:"⊙ 表示逐元素相乘。推完后用形状检查每一步。",
+q:"合上书，在白纸上把这 6 行推出来，拍照发我。"}
+]},
+{id:"dl1x",t:"吴恩达 DL 第 1 门补充",s:"DL 1-1 至 1-4",topics:[
+{id:"dl-why",t:"深度学习为什么现在才火",s:"DL 1-1",d:"11-21",
+one:"数据变多、算力变强（GPU）、算法改进（如 ReLU）三者同时到位。",
+x:"数据少时传统算法和神经网络差不多；数据越多，大网络的优势越明显。"},
+{id:"dl-lrnn",t:"逻辑回归就是最小的神经网络",s:"DL 1-2",d:"11-21",
+one:"一个 sigmoid 神经元 + 交叉熵损失 = 逻辑回归，可以用计算图求梯度。",
+x:"吴恩达用 dz = a − y 记反向传播的起点，和鱼书的 y − t 是一回事。符号习惯不同：吴恩达把样本按**列**排（X 是 n×m），鱼书按**行**排，所以公式里的转置位置不一样。"},
+{id:"dl-init0",t:"为什么权重不能全初始化为 0",s:"DL 1-3",d:"11-21",
+one:"全为 0 时同一层所有神经元算的完全一样、更新也一样，永远学不出不同的特征。",
+x:"这叫**对称性**问题，要用小的随机数打破。偏置可以设为 0。"},
+{id:"dl-dims",t:"深层网络与维度检查",s:"DL 1-4",d:"11-21",
+one:"W^[l] 的形状是 (n^[l], n^[l−1])，b^[l] 是 (n^[l], 1)，写代码前先把形状写出来。",
+x:"深层网络的直觉：浅层学边缘，中层学形状部件，深层学整体物体。有些函数用深而窄的网络表示，比浅而宽的网络省很多神经元。"},
+{id:"dl-hyper",t:"参数与超参数",s:"DL 1-4",d:"11-21",
+one:"参数（W、b）是网络学出来的；超参数（学习率、层数、神经元数、迭代次数）是人来定的。",
+x:"调超参数是经验活，要反复试验，所以有“炼丹”之称。"}
+]},
+{id:"dl6",t:"第 6 章 与学习相关的技巧",s:"鱼书 第 6 章 · DL 2-1/2-2/2-3",topics:[
+{id:"dl-sgd",t:"SGD 的缺点",s:"鱼书 6.1.2",d:"11-24",
+one:"梯度方向不一定指向最低点，在“细长山谷”里会之字形来回走，效率很低。",
+x:"SGD：W ← W − η·∂L/∂W。后面的优化器都在解决它的这个问题。"},
+{id:"dl-ewa",t:"指数加权平均",s:"DL 2-2",d:"11-24",
+one:"把新值和旧的平均值按比例混合，得到平滑的“移动平均”。",
+c:"v = β·v + (1 − β)·θ    （β = 0.9 约等于平均最近 10 个值）",
+x:"像看气温趋势而不是每天的波动。β 越大越平滑但反应越慢。**偏差修正**：一开始 v 从 0 开始偏小，除以 (1 − βᵗ) 补回来。动量和 Adam 都建立在它上面。"},
+{id:"dl-momentum",t:"Momentum（动量）",s:"鱼书 6.1.4 · DL 2-2",d:"11-24",
+one:"给参数加上“速度”和“惯性”：方向一致就越走越快，来回震荡的方向互相抵消。",
+c:"v = α·v − η·∂L/∂W\nW = W + v",
+x:"像小球滚下山坡，会积累速度，不会被小坑卡住。"},
+{id:"dl-adagrad",t:"AdaGrad 与 RMSprop",s:"鱼书 6.1.5 · DL 2-2",d:"11-24",
+one:"给每个参数单独调学习率：过去梯度大的参数，学习率自动变小。",
+x:"AdaGrad 累加所有历史梯度的平方，学习率会越来越小直到几乎为 0。RMSprop 改成指数加权平均，只看最近的，解决了这个问题。"},
+{id:"dl-adam",t:"Adam",s:"鱼书 6.1.6 · DL 2-2",d:"11-24",
+one:"Adam = Momentum（看梯度方向的平均）+ RMSprop（看梯度大小的平均）+ 偏差修正。",
+x:"常用超参数：学习率 0.001，β₁ = 0.9，β₂ = 0.999。几乎是现在的默认优化器。没有一种优化器在所有问题上都最好，但 Adam 通常稳。",
+q:"面试题：Adam 和普通 SGD 有什么区别？"},
+{id:"dl-lrdecay",t:"学习率衰减",s:"DL 2-2",d:"11-24",
+one:"训练初期步子大、走得快，后期逐渐减小学习率，在谷底附近走得更稳。"},
+{id:"dl-saddle",t:"局部最优与鞍点",s:"DL 2-2",d:"11-24",
+one:"高维空间里真正麻烦的不是局部最低点，而是鞍点和平坦的高原。",
+x:"几百万个参数时，所有方向同时都是“坑底”的概率极小，更常见的是某些方向上坡、某些方向下坡（鞍点），以及梯度接近 0 的平台，动量和 Adam 能帮助走出来。"},
+{id:"dl-init",t:"权重初始值：Xavier 与 He",s:"鱼书 6.2 · DL 2-1",d:"11-23",
+one:"初始权重的大小要和上一层神经元数匹配：sigmoid/tanh 用 Xavier，ReLU 用 He。",
+c:"Xavier: 标准差 = 1 / √n\nHe:     标准差 = √(2 / n)     （n 是上一层的节点数）",
+x:"太大：sigmoid 输出挤在 0 和 1 两头，梯度消失；太小：所有神经元输出都差不多，表现力不足。鱼书用激活值的直方图展示了这个现象。"},
+{id:"dl-vanish",t:"梯度消失与梯度爆炸",s:"DL 2-1",d:"11-23",
+one:"层数很多时梯度一路相乘，小于 1 会越乘越接近 0（消失），大于 1 会越乘越大（爆炸）。",
+x:"后果：前面的层学不动，或者参数变成 nan。应对：合适的初始化、ReLU、BatchNorm、残差连接、梯度裁剪。"},
+{id:"dl-bn",t:"Batch Normalization",s:"鱼书 6.3 · DL 2-3",d:"11-24",
+one:"在每一层把一个 mini-batch 的数据调整成均值 0、方差 1，再用可学习的 γ、β 缩放平移。",
+c:"x̂ = (x − μ_B) / √(σ²_B + ε)\ny = γ·x̂ + β",
+x:"好处：可以用更大的学习率、训练更快；对初始值不敏感；有一点正则化效果。测试时用训练时累计的均值和方差。"},
+{id:"dl-normin",t:"输入归一化",s:"DL 2-1",d:"11-23",
+one:"把输入特征减去均值、除以标准差，让代价函数更“圆”，梯度下降更快。",
+x:"和机器学习板块的特征缩放是同一件事。测试集要用训练集的均值和方差。"},
+{id:"dl-of",t:"过拟合",s:"鱼书 6.4.1",d:"11-23",
+one:"训练准确率很高、测试准确率低很多：网络把训练数据背下来了。",
+x:"主要原因：参数太多、表现力太强；训练数据太少。鱼书用 300 个样本训练 7 层网络复现了这个现象。"},
+{id:"dl-l2",t:"权值衰减（L2 正则化）",s:"鱼书 6.4.2 · DL 2-1",d:"11-23",
+one:"损失里加上 ½λ‖W‖²，惩罚大权重，梯度里就多出一项 λW。",
+x:"直觉：权重小，网络更接近“简单的线性函数”，不容易拟合噪声。"},
+{id:"dl-dropout",t:"Dropout",s:"鱼书 6.4.3 · DL 2-1",d:"11-23",
+one:"训练时每次随机关掉一部分神经元，逼网络不依赖某几个神经元。",
+x:"像一个团队每天随机有人请假，每个人都得能顶上，团队更稳。也可以理解为同时训练了很多个小网络再取平均（集成学习）。测试时所有神经元都用上（输出按比例缩放）。",
+c:"训练：mask = np.random.rand(*x.shape) > ratio;  return x * mask\n测试：return x * (1 - ratio)",
+q:"面试题：Dropout 为什么能防止过拟合？测试时要不要 Dropout？"},
+{id:"dl-hp",t:"超参数的验证与搜索",s:"鱼书 6.5 · DL 2-3",d:"11-24",
+one:"用验证集评估超参数，随机搜索比网格搜索好，学习率在对数尺度上取样。",
+x:"随机搜索：重要的超参数能被试到更多不同的值。学习率在 0.0001–1 之间应该按 10⁻⁴、10⁻³…均匀取，而不是线性取。先粗搜大范围，再在好的区域细搜。按吴恩达的说法：资源少就“照看一个熊猫”（盯着一个模型调），资源多就“鱼子酱”（同时训练很多个）。"},
+{id:"dl-minibatch2",t:"mini-batch 大小怎么选",s:"DL 2-2",d:"11-23",
+one:"batch = 全部数据叫批量梯度下降（慢），batch = 1 叫随机梯度下降（抖、不能向量化），中间常用 64、128、256、512。",
+x:"选 2 的幂方便硬件计算，batch 要能放进 GPU 内存。"}
+]},
+{id:"dl7",t:"第 7 章 卷积神经网络",s:"鱼书 第 7 章 · DL 4-1/4-2",topics:[
+{id:"dl-whycnn",t:"为什么需要卷积",s:"鱼书 7.1–7.2.1",d:"11-26",
+one:"全连接层把图片拍扁成一维，丢掉了“哪些像素挨在一起”的空间信息。",
+x:"卷积的两个好处：①**参数共享**：同一个检测“竖边”的卷积核在整张图上都能用；②**稀疏连接**：每个输出只看一小块。所以参数少得多，也更不容易过拟合。"},
+{id:"dl-conv",t:"卷积运算",s:"鱼书 7.2.2",d:"11-26",
+one:"卷积核（滤波器）在图上滑动，每个位置做“对应相乘再求和”，得到特征图。",
+x:"同一个图案出现在图上哪个位置都能被识别出来（平移不变性）。卷积核里的数是学出来的，不同的核学会检测边缘、纹理等不同特征。"},
+{id:"dl-pad",t:"填充 padding",s:"鱼书 7.2.3",d:"11-26",
+one:"在图片四周补一圈 0，让输出尺寸不缩小，边缘像素也能被充分利用。",
+x:"“same” 填充：输出和输入一样大；“valid”：不填充。"},
+{id:"dl-stride",t:"步幅 stride",s:"鱼书 7.2.4",d:"11-26",
+one:"卷积核每次滑动的格数，步幅越大输出越小。"},
+{id:"dl-outsize",t:"输出大小公式",s:"鱼书 7.2.4",d:"11-26",
+one:"输出边长 = (输入 + 2 × 填充 − 卷积核) / 步幅 + 1。",
+c:"OH = (H + 2P − FH) / S + 1\n例：H = 7, P = 0, FH = 3, S = 2 → OH = 3",
+q:"输入 32×32，卷积核 5×5，填充 2，步幅 1，输出多大？"},
+{id:"dl-channel",t:"多通道与多个卷积核",s:"鱼书 7.2.5–7.2.7",d:"11-26",
+one:"彩色图有 RGB 3 个通道，卷积核也有 3 层；用 N 个卷积核就得到 N 个通道的输出。",
+x:"数据形状写成 (N, C, H, W)：批大小、通道、高、宽。卷积层参数 = 核数 × (C × FH × FW + 1)，和图片大小无关。"},
+{id:"dl-pool",t:"池化层",s:"鱼书 7.3",d:"11-26",
+one:"在小区域里取最大值（Max 池化），缩小尺寸，对微小位移不敏感。",
+x:"没有要学习的参数，不改变通道数。2×2、步幅 2 的池化把长宽各减半。"},
+{id:"dl-im2col",t:"im2col：卷积的实现技巧",s:"鱼书 7.4",d:"11-26",
+one:"把每个卷积窗口展开成一行，卷积就变成了一次大矩阵乘法，速度快很多。",
+x:"知道思路即可，代码可以只读不写。"},
+{id:"dl-cnnarch",t:"CNN 的典型结构",s:"鱼书 7.5–7.7",d:"11-26",
+one:"“卷积 → ReLU →（池化）”重复几次，最后接全连接层和 softmax。",
+x:"越往后，空间尺寸越小、通道越多。可视化发现：第一层学边缘和颜色块，越深的层学越抽象的东西（纹理 → 部件 → 物体）。"},
+{id:"dl-classic",t:"经典网络：LeNet、AlexNet、VGG",s:"鱼书 7.7 · DL 4-2",d:"11-26",
+one:"LeNet（1998）识别手写数字；AlexNet（2012）引爆深度学习；VGG 全用 3×3 小卷积核堆深。",
+x:"AlexNet 用了 ReLU、Dropout、GPU，是转折点。"},
+{id:"dl-resnet",t:"ResNet 残差网络",s:"鱼书 8.1.4 · DL 4-2",d:"11-26",
+one:"加一条“捷径”把输入直接加到几层之后的输出上：输出 = F(x) + x。",
+x:"网络只需学“在 x 基础上改多少”。即使中间几层没用，至少能原样传过去，梯度也能顺着捷径直接流回前面，所以能训练上百层。Transformer 里也用了残差连接。",
+q:"面试题：ResNet 为什么能训练很深的网络？"},
+{id:"dl-1x1",t:"1×1 卷积与 Inception、MobileNet",s:"DL 4-2",d:"11-26",
+one:"1×1 卷积用来改变通道数（压缩计算量）；Inception 同时用多种尺寸的卷积再拼起来。",
+x:"MobileNet 用“深度可分离卷积”把计算量降到很小，适合手机。知道名字和一句话思路即可。"},
+{id:"dl-cnntransfer",t:"迁移学习与数据增强（图像）",s:"DL 4-2",d:"11-26",
+one:"下载别人在 ImageNet 上训练好的网络，冻结前面的层，只训练最后几层。",
+x:"数据增强：翻转、随机裁剪、颜色变化，能有效增加训练数据。"}
+]},
+{id:"dl8",t:"第 8 章 深度学习 + 计算机视觉应用",s:"鱼书 第 8 章 · DL 4-3/4-4",topics:[
+{id:"dl-deeper",t:"加深网络的好处",s:"鱼书 8.1",d:"11-27",
+one:"层数越深，用更少的参数就能表达更复杂的函数，而且每一层要学的东西更简单。",
+x:"两层 3×3 卷积看到的范围和一层 5×5 一样，但参数更少、中间还多了一次非线性。鱼书用 VGG 风格的网络在 MNIST 上做到 99.38%。"},
+{id:"dl-gpu",t:"GPU 与分布式训练",s:"鱼书 8.3",d:"11-27",
+one:"深度学习的计算主要是大量矩阵乘法，GPU 能并行做，比 CPU 快几十倍。",
+x:"降低精度（如 16 位浮点）也能加速，深度学习对精度不太敏感。"},
+{id:"dl-detect",t:"目标检测：YOLO、IoU、NMS",s:"DL 4-3 · 鱼书 8.4",d:"11-27",
+one:"不只认出是什么，还要画框标出在哪里。",
+x:"**YOLO**：把图划成网格，每格直接预测框和类别，一次前向就完成，很快。**IoU**：预测框和真实框交集 / 并集，衡量框得准不准（≥ 0.5 常算对）。**非极大值抑制 NMS**：同一个物体有多个框时，只留最有把握的，删掉和它重叠很大的。**锚框**：一格预设几种形状的框，处理重叠物体。"},
+{id:"dl-unet",t:"语义分割与 U-Net",s:"DL 4-3 · 鱼书 8.4.3",d:"11-27",
+one:"给每个像素分类；U-Net 先压缩（提取特征）再放大（恢复尺寸），中间用跳跃连接补回细节。",
+x:"放大靠**转置卷积**。U-Net 在医学图像里很常用。"},
+{id:"dl-face",t:"人脸识别：孪生网络与三元组损失",s:"DL 4-4",d:"11-27",
+one:"不直接分类，而是把人脸编码成向量，同一个人的向量要近，不同人的要远。",
+x:"**一次学习**：每人只有一张照片也能识别，因为学的是“相似度”。**三元组损失**：拿一张锚点 A、同一人 P、不同人 N，要求 ‖A − P‖² + 间隔 ≤ ‖A − N‖²。和对比学习的思想很接近。"},
+{id:"dl-style",t:"神经风格迁移",s:"DL 4-4 · 鱼书 8.4.4",d:"11-27",
+one:"生成一张图：内容像照片 A，风格像名画 B。",
+x:"优化的是生成图片的像素，而不是网络参数。内容用深层特征比较，风格用特征之间的相关性（Gram 矩阵）比较。知道思路即可。"}
+]},
+{id:"dl3x",t:"机器学习项目策略",s:"DL 3-1/3-2（鱼书没有）",topics:[
+{id:"dl-ortho",t:"正交化",s:"DL 3-1",d:"11-26",
+one:"每个调节按钮只影响一件事，出问题时就知道该拧哪个。",
+x:"四步各有各的按钮：训练集表现差 → 加大网络/换优化器；验证集差 → 正则化/加数据；测试集差 → 加大验证集；真实场景差 → 换验证集或代价函数。早停会同时影响两件事，所以吴恩达不太推荐。"},
+{id:"dl-metric",t:"单一数字评估指标",s:"DL 3-1",d:"11-26",
+one:"定一个数来比较模型（如 F1），不要同时盯着好几个数纠结。",
+x:"**满足指标与优化指标**：比如“运行时间 ≤ 100ms”是满足即可，“准确率”是越高越好。"},
+{id:"dl-split",t:"训练/开发/测试集怎么分",s:"DL 3-1",d:"11-26",
+one:"开发集和测试集要来自同一分布，并且反映你将来真正要处理的数据。",
+x:"数据量大时（百万级），开发和测试各 1% 就够了，不必死守 60/20/20。开发集和测试集不同分布，就像练射箭时靶子放在 A 处、比赛时靶子在 B 处。"},
+{id:"dl-human",t:"人类水平与可避免偏差",s:"DL 3-1",d:"11-26",
+one:"用人类水平近似最低可能误差（贝叶斯误差），训练误差离它的差距叫可避免偏差。",
+x:"可避免偏差 > 方差 → 先解决偏差（加大网络、训练更久）；反之先解决方差（正则化、加数据）。模型超过人类后，就很难再判断还能提升多少。"},
+{id:"dl-erran",t:"误差分析与错误标签",s:"DL 3-2",d:"11-26",
+one:"抽 100 个分错的样本，人工数各种错误原因占比，先解决占比大的。",
+x:"标注错误的数据：随机少量的不用管，深度学习对随机错误比较鲁棒；如果它在误差里占比很大再去修。新项目建议：先快速搭一个简单系统，再迭代。"},
+{id:"dl-mismatch",t:"训练和测试分布不一致",s:"DL 3-2",d:"11-26",
+one:"训练用网上的高清图，实际用户上传手机模糊照，分布不同，模型会掉分。",
+x:"再分出一个“训练-开发集”（和训练集同分布但不训练）来区分：是方差问题，还是**数据不匹配**问题。应对：人工分析差异，让训练数据更像真实数据（比如合成噪声）。这是“分布外（OOD）泛化”的入门版，读论文时会用到。"},
+{id:"dl-multitask",t:"迁移学习与多任务学习",s:"DL 3-2",d:"11-26",
+one:"迁移学习：A 任务数据多、B 任务数据少时，用 A 学到的知识帮 B；多任务学习：一个网络同时学几件事。",
+x:"多任务例子：自动驾驶一张图同时判断有没有行人、车、红绿灯、停车标志，共享前面的特征。"},
+{id:"dl-e2e",t:"端到端学习",s:"DL 3-2",d:"11-26",
+one:"跳过人工设计的中间步骤，直接从输入学到输出（语音 → 文字）。",
+x:"好处：让数据说话、少了人工设计。坏处：需要非常多数据，也丢掉了人的有用知识。数据不够时，拆成几步往往更好。"}
+]},
+{id:"dlpt",t:"PyTorch 入门",s:"PyTorch 官方教程",topics:[
+{id:"pt-tensor",t:"张量 Tensor",s:"PyTorch",d:"11-23",
+one:"张量 ≈ 能自动求导、能放到 GPU 上的 NumPy 数组。",
+c:"import torch\nx = torch.tensor([[1., 2.], [3., 4.]])\nx.shape            # torch.Size([2, 2])\nx @ x              # 矩阵乘法，和 NumPy 一样\nx.numpy()          # 转回 NumPy\nx = x.to(\"cuda\")   # 放到 GPU（有的话）",
+x:"大部分操作和 NumPy 同名同用法，学过 NumPy 上手很快。"},
+{id:"pt-autograd",t:"自动求导 autograd",s:"PyTorch",d:"11-23",
+one:"`loss.backward()` 一行代码就自动完成你在第 5 章手推的反向传播。",
+c:"w = torch.tensor(2.0, requires_grad=True)\nloss = (w * 3 - 1) ** 2\nloss.backward()\nprint(w.grad)   # d loss / d w = 2·(3w−1)·3 = 30",
+x:"PyTorch 在正向计算时偷偷记下计算图，反向时按链式法则自动算梯度。"},
+{id:"pt-module",t:"nn.Module 定义网络",s:"PyTorch",d:"11-25",
+one:"网络是一个继承 `nn.Module` 的类：`__init__` 里定义层，`forward` 里写怎么算。",
+c:"import torch.nn as nn\nclass Net(nn.Module):\n    def __init__(self):\n        super().__init__()\n        self.fc1 = nn.Linear(784, 50)\n        self.fc2 = nn.Linear(50, 10)\n    def forward(self, x):\n        return self.fc2(torch.relu(self.fc1(x)))",
+x:"`nn.Linear` 就是鱼书的 Affine 层。不用写 backward，PyTorch 自动求。"},
+{id:"pt-data",t:"Dataset 与 DataLoader",s:"PyTorch",d:"11-25",
+one:"DataLoader 自动把数据打乱、切成 mini-batch，一批批喂给网络。",
+c:"loader = DataLoader(dataset, batch_size=100, shuffle=True)\nfor x, t in loader:\n    ..."},
+{id:"pt-loop",t:"训练循环五步",s:"PyTorch",d:"11-25",
+one:"前向 → 算损失 → 清空梯度 → 反向传播 → 更新参数。",
+c:"model = Net()\nloss_fn = nn.CrossEntropyLoss()   # 已包含 softmax\nopt = torch.optim.Adam(model.parameters(), lr=1e-3)\nfor epoch in range(10):\n    for x, t in loader:\n        y = model(x)          # 1 前向\n        loss = loss_fn(y, t)  # 2 损失\n        opt.zero_grad()       # 3 清梯度\n        loss.backward()       # 4 反向\n        opt.step()            # 5 更新",
+w:"忘了 `zero_grad()` 梯度会一直累加，训练会出错。`CrossEntropyLoss` 里已经有 softmax，网络最后不要再加。",
+q:"合上资料默写这五步。"},
+{id:"pt-eval",t:"评估模式与保存模型",s:"PyTorch",d:null,
+one:"测试时用 `model.eval()` 和 `torch.no_grad()`；用 `torch.save` 保存参数。",
+c:"model.eval()\nwith torch.no_grad():\n    acc = (model(x).argmax(1) == t).float().mean()\ntorch.save(model.state_dict(), \"model.pt\")",
+x:"`eval()` 会关掉 Dropout、让 BatchNorm 用训练时的统计量。"}
+]},
+{id:"dl5x",t:"序列模型与 Transformer",s:"DL 5-1 至 5-4 · 李宏毅",topics:[
+{id:"dl-seq",t:"序列数据",s:"DL 5-1",d:"11-27",
+one:"有先后顺序的数据：一句话、一段语音、股价、DNA。顺序本身就包含信息。",
+x:"“狗咬人”和“人咬狗”字一样意思完全不同。输入输出长度可能不同（翻译），普通全连接网络处理不了。"},
+{id:"dl-rnn",t:"RNN 循环神经网络",s:"DL 5-1",d:"11-27",
+one:"一个字一个字地读，每一步都把“之前读到的记忆”（隐状态）传给下一步。",
+c:"aₜ = tanh( W_aa·aₜ₋₁ + W_ax·xₜ + b )\nŷₜ = softmax( W_ya·aₜ + b )",
+x:"每一步共用同一套参数。反向传播要沿时间往回传（BPTT）。缺点：只能按顺序算、不能并行；句子长了前面的信息会丢。"},
+{id:"dl-lm",t:"语言模型与采样",s:"DL 5-1",d:"11-27",
+one:"语言模型预测“下一个词是什么”的概率；生成文本就是一次次按概率抽下一个词。",
+x:"GPT 本质上也是语言模型，只是用 Transformer 而不是 RNN。"},
+{id:"dl-rnnvanish",t:"RNN 的梯度消失",s:"DL 5-1",d:"11-27",
+one:"序列一长，梯度沿时间一路相乘变得极小，网络记不住很久以前的词。",
+x:"例：“The **cat**, which already ate …, **was** full”，was 要和很远的 cat 对应。梯度爆炸可以用梯度裁剪解决。"},
+{id:"dl-gru",t:"GRU 与 LSTM",s:"DL 5-1",d:"11-27",
+one:"用“门”控制记忆：遗忘门决定忘掉多少旧记忆，输入门决定记住多少新信息，输出门决定输出多少。",
+x:"LSTM 有一条“记忆传送带”（细胞状态），信息可以几乎不变地传很远，缓解梯度消失。GRU 是简化版，只有两个门。"},
+{id:"dl-birnn",t:"双向 RNN 与深层 RNN",s:"DL 5-1",d:"11-27",
+one:"双向 RNN 同时从前往后、从后往前读，每个位置都能看到上下文。",
+x:"例：判断“Teddy”是人名还是玩具熊，要看后面的词。"},
+{id:"dl-emb",t:"词嵌入",s:"DL 5-2",d:"11-28",
+one:"把每个词变成一个几百维的向量，意思相近的词向量也相近。",
+x:"one-hot 向量互相之间距离都一样，看不出“苹果”和“橙子”比“苹果”和“国王”更像。词向量能做类比：国王 − 男人 + 女人 ≈ 女王。大模型的第一层就是嵌入层。"},
+{id:"dl-w2v",t:"word2vec 与负采样",s:"DL 5-2",d:"11-28",
+one:"用“根据一个词预测它周围的词”来训练词向量（Skip-gram）。",
+x:"直接对整个词表做 softmax 太慢；**负采样**改成二分类：判断一对词是真的邻居（正样本）还是随机拼的（负样本）。GloVe 是另一种方法，用词共同出现的次数来学。词向量会学到训练文本里的偏见（如性别刻板印象），需要处理。"},
+{id:"dl-seq2seq",t:"Seq2seq 与束搜索",s:"DL 5-3",d:"11-28",
+one:"编码器把整句读完压成一个向量，解码器再从这个向量一个词一个词生成译文。",
+x:"**束搜索**：每一步保留最好的 B 个候选句子（而不是只留 1 个），最后选总概率最高的。长句时把概率取 log 并按长度归一化。**BLEU**：比较机器翻译和人工翻译有多少词组重合，用来自动打分。"},
+{id:"dl-attn",t:"注意力机制",s:"DL 5-3",d:"11-28",
+one:"生成每个词时，不只看一个压缩向量，而是回头看输入的每个词，并决定“该重点看哪几个”。",
+x:"像人翻译长句：翻到哪就看原文对应的那几个词。权重 α 用 softmax 算，加起来等于 1。解决了“长句压不进一个向量”的问题。"},
+{id:"dl-selfattn",t:"自注意力：Q、K、V",s:"DL 5-4 · 李宏毅",d:"11-28",
+one:"句子里每个词都和所有词算一遍相关度，再按相关度把大家的信息加权汇总，得到带上下文的新表示。",
+c:"Attention(Q, K, V) = softmax( Q·Kᵀ / √d_k ) · V",
+x:"类比查资料：**Q（查询）**是“我想找什么”，**K（键）**是每本书的标签，**V（值）**是书的内容。Q 和每个 K 点积得到相关度，softmax 变成权重，再对 V 加权求和。除以 √d_k 是防止点积太大让 softmax 过于尖锐。例：“它”通过注意力找到指的是“猫”。所有位置可以**并行**计算，这是比 RNN 快的关键。",
+q:"面试题：用自己的话解释 Q、K、V 分别是什么。"},
+{id:"dl-mha",t:"多头注意力",s:"DL 5-4",d:"11-28",
+one:"同时做好几组自注意力，每组关注不同的关系，最后拼起来。",
+x:"一个头可能关注语法关系（主语找谓语），另一个关注指代关系（“它”找“猫”）。像几个人从不同角度读同一句话。"},
+{id:"dl-pe",t:"位置编码",s:"DL 5-4",d:"11-28",
+one:"自注意力本身不管顺序（打乱词序结果一样），所以要给每个位置加上一个“位置向量”。",
+x:"原论文用不同频率的 sin/cos 函数生成，每个位置的编码都独一无二，还能表示相对距离。也可以直接学出来。"},
+{id:"dl-transformer",t:"Transformer 整体结构",s:"DL 5-4 · 李宏毅",d:"11-28",
+one:"编码器和解码器各由 N 个块堆成，每块是“注意力 + 前馈网络”，外加残差连接和层归一化。",
+x:"**编码器块**：多头自注意力 → Add & Norm → 前馈网络 → Add & Norm。**解码器块**：带掩码的自注意力 → 交叉注意力（Q 来自解码器，K、V 来自编码器）→ 前馈网络。层归一化（LayerNorm）对每个样本自己做归一化，和 BatchNorm 不同。",
+q:"画出 Transformer 结构图，并逐块讲出每一块的作用。"},
+{id:"dl-mask",t:"因果掩码与 GPT",s:"DL 5-4",d:"11-28",
+one:"生成时不能偷看后面的词，所以把注意力矩阵里“未来位置”屏蔽掉（设成 −∞，softmax 后为 0）。",
+x:"只用解码器 + 因果掩码 + 预测下一个词，就是 GPT 的结构。BERT 只用编码器，适合理解任务。"},
+{id:"dl-vit",t:"ViT：把 Transformer 用到图像上",s:"李宏毅（选看）",d:"11-28",
+one:"把图片切成 16×16 的小块（patch），每块当作一个“词”，送进 Transformer。",
+x:"切块这一步叫 Patchify。数据量足够大时效果超过 CNN。你的论文编码器就是 ViT。"}
+]}
+]});
+BOOK.push({key:"ml",name:"机器学习",full:"机器学习（吴恩达 2022 专项课）",intro:"按吴恩达《机器学习》3 门课的顺序排列，编号“ML 1-2”表示第 1 门第 2 周。听课前扫一遍一句话总结，听完回来写自己的笔记。",chapters:[
+{id:"ml11",t:"ML 1-1 监督学习、线性回归、梯度下降",s:"第 1 门 第 1 周",topics:[
+{id:"ml-what",t:"什么是机器学习",s:"ML 1-1",d:"11-02",
+one:"不写死规则，而是让程序从数据里自己找出规律。",
+x:"传统编程：人写规则 → 程序算答案。机器学习：给数据和答案 → 程序学出规则。比如垃圾邮件识别，人很难列全规则，但给机器看一万封标好的邮件，它能自己学会。"},
+{id:"ml-sup",t:"监督学习：回归与分类",s:"ML 1-1",d:"11-02",
+one:"有“标准答案”的学习：给输入 x 和正确输出 y，学会从 x 预测 y。",
+x:"**回归**：输出是连续的数（房价、温度）。**分类**：输出是有限的几类（猫/狗、是否垃圾邮件、肿瘤良性/恶性）。",
+q:"“根据学习时间预测考试分数”和“预测考试能否及格”，分别是回归还是分类？"},
+{id:"ml-unsup",t:"无监督学习",s:"ML 1-1",d:"11-02",
+one:"没有标准答案，让算法自己在数据里找结构。",
+x:"典型任务：**聚类**（把相似的新闻分成一组、把用户分群）、**异常检测**（发现可疑交易）、**降维**（把很多特征压缩成几个）。"},
+{id:"ml-linreg",t:"线性回归模型",s:"ML 1-1",d:"11-03",
+one:"用一条直线 f(x) = wx + b 去拟合数据点。",
+x:"w 是斜率（x 增加 1，预测增加多少），b 是截距。训练集里每条数据写作 (x⁽ⁱ⁾, y⁽ⁱ⁾)，共 m 条。模型的预测记作 ŷ（y-hat）。“学习”就是找到最好的 w 和 b。",
+c:"f(x) = w·x + b"},
+{id:"ml-cost",t:"代价函数（均方误差）",s:"ML 1-1",d:"11-03",
+one:"代价函数 J 给“这条直线有多差”打分，越小越好。",
+x:"每个点的误差是 预测 − 真实值，平方后（消掉正负、放大大误差）求平均。前面多除一个 2 只是为了求导后好看。",
+c:"J(w,b) = (1/2m) Σ ( f(x⁽ⁱ⁾) − y⁽ⁱ⁾ )²",
+q:"为什么不直接把误差加起来，而要先平方？"},
+{id:"ml-costvis",t:"代价函数的形状",s:"ML 1-1",d:"11-03",
+one:"线性回归的 J(w,b) 像一个碗，碗底就是最好的 w 和 b。",
+x:"只看 w 时是一条抛物线；同时看 w、b 是三维的碗，俯视画成等高线图（一圈圈椭圆）。碗只有一个底（凸函数），所以不会掉进“假的低点”。"},
+{id:"ml-gd",t:"梯度下降",s:"ML 1-1",d:"11-04",
+one:"蒙着眼下山：每一步都朝最陡的下坡方向走一小步，直到走到谷底。",
+x:"导数（斜率）告诉你哪边是上坡，往反方向走就是下坡。w 和 b 要**同时**更新（先用旧值把两个新值都算好，再一起赋值）。",
+c:"w = w − α · ∂J/∂w\nb = b − α · ∂J/∂b",
+w:"先算出 w 的新值再用它算 b 的新值，就不是同时更新了，这是常见实现错误。"},
+{id:"ml-lr",t:"学习率 α",s:"ML 1-1",d:"11-04",
+one:"学习率就是每步的步长：太小走得慢，太大会跨过谷底甚至越跳越远。",
+x:"越接近谷底坡越缓，导数越小，步子自动变小，所以学习率固定也能收敛。常用尝试：0.001、0.003、0.01、0.03、0.1……每次放大约 3 倍。"},
+{id:"ml-gdlin",t:"线性回归的梯度下降（批量）",s:"ML 1-1",d:"11-04",
+one:"把求出的导数代入更新公式，每一步用上全部 m 条数据，所以叫“批量”梯度下降。",
+c:"∂J/∂w = (1/m) Σ ( f(x⁽ⁱ⁾) − y⁽ⁱ⁾ ) · x⁽ⁱ⁾\n∂J/∂b = (1/m) Σ ( f(x⁽ⁱ⁾) − y⁽ⁱ⁾ )",
+x:"直观理解：误差越大、这个特征越大，就越要调整它的权重。",
+q:"用 NumPy 生成 y = 2x + 1 加噪声的数据，用梯度下降找回 2 和 1，并画出损失曲线。"}
+]},
+{id:"ml12",t:"ML 1-2 多元线性回归与实用技巧",s:"第 1 门 第 2 周",topics:[
+{id:"ml-multi",t:"多元特征",s:"ML 1-2",d:"11-16",
+one:"不止一个输入：房价由面积、卧室数、楼层、房龄一起决定。",
+x:"n 个特征写成向量 x = [x₁, …, xₙ]，权重也是向量 w。xⱼ⁽ⁱ⁾ 表示第 i 个样本的第 j 个特征。",
+c:"f(x) = w·x + b = w₁x₁ + w₂x₂ + … + wₙxₙ + b"},
+{id:"ml-vec",t:"向量化",s:"ML 1-2",d:"11-16",
+one:"用 `np.dot(w, x)` 一次算完，代替逐个相乘相加的 for 循环。",
+x:"代码更短，而且 NumPy 能并行计算，快很多。和 Python 板块的“向量化思维”是同一件事。",
+c:"f = np.dot(w, x) + b"},
+{id:"ml-gdmulti",t:"多元梯度下降",s:"ML 1-2",d:"11-16",
+one:"和一元一样，只是每个 wⱼ 都按自己的偏导更新。",
+c:"wⱼ = wⱼ − α · (1/m) Σ ( f(x⁽ⁱ⁾) − y⁽ⁱ⁾ ) · xⱼ⁽ⁱ⁾",
+x:"另有“正规方程”能一步解出线性回归的 w、b，但只适用于线性回归、特征多时很慢，知道有这回事即可。"},
+{id:"ml-scale",t:"特征缩放",s:"ML 1-2",d:"11-16",
+one:"把各个特征缩放到差不多的范围（如 −1 到 1），梯度下降会快很多。",
+x:"面积是 300–2000，卧室数是 0–5，不缩放的话代价函数的等高线是细长的椭圆，梯度下降会来回之字形走。常用 **Z-score 标准化**：减均值再除以标准差。",
+c:"x_norm = (x − μ) / σ",
+w:"测试数据要用**训练集**的 μ 和 σ 来缩放，不能重新算。"},
+{id:"ml-conv",t:"判断是否收敛：学习曲线",s:"ML 1-2",d:"11-16",
+one:"画出 J 随迭代次数的变化：应该一直下降，最后趋于平稳。",
+x:"如果 J 某次反而上升了，通常是学习率太大或代码有 bug。调试技巧：把 α 设得非常小，J 还上升就一定是代码错了。"},
+{id:"ml-fe",t:"特征工程",s:"ML 1-2",d:"11-16",
+one:"根据对问题的理解，把原始特征组合出更有用的新特征。",
+x:"例：已知地块的宽和深，造一个新特征“面积 = 宽 × 深”，往往比原来两个特征更能预测房价。"},
+{id:"ml-poly",t:"多项式回归",s:"ML 1-2",d:"11-16",
+one:"把 x²、x³、√x 当作新特征，线性回归也能拟合曲线。",
+x:"模型对“特征”仍然是线性的，只是特征变成了非线性的。这时特征缩放更重要，因为 x³ 的范围会非常大。"}
+]},
+{id:"ml13",t:"ML 1-3 逻辑回归、过拟合与正则化",s:"第 1 门 第 3 周",topics:[
+{id:"ml-cls",t:"为什么分类不用线性回归",s:"ML 1-3",d:"11-17",
+one:"线性回归的输出可以是任意数，而且一个离群点就能把分界线拉偏。",
+x:"分类要的是 0 或 1（或者“是 1 的概率”），需要一个把输出压到 0–1 之间的模型。"},
+{id:"ml-logreg",t:"逻辑回归与 sigmoid",s:"ML 1-3",d:"11-17",
+one:"先算 z = w·x + b，再用 sigmoid 把 z 压成 0–1 之间的概率。",
+c:"g(z) = 1 / (1 + e^(−z))\nf(x) = g(w·x + b) = P(y = 1 | x)",
+x:"z 很大时输出接近 1，z 很小时接近 0，z = 0 时正好是 0.5。输出 0.7 表示“有 70% 的把握是 1 类”。sigmoid 也是神经网络的激活函数之一。"},
+{id:"ml-db",t:"决策边界",s:"ML 1-3",d:"11-17",
+one:"概率等于 0.5 的那条线，也就是 w·x + b = 0 的地方。",
+x:"一边预测为 1，另一边预测为 0。用多项式特征（如 x₁² + x₂²）可以得到圆形等弯曲的边界。"},
+{id:"ml-logloss",t:"逻辑损失（交叉熵）",s:"ML 1-3",d:"11-17",
+one:"真实是 1 却预测接近 0（或反过来）时，惩罚趋于无穷大。",
+c:"L = −y·log(f) − (1 − y)·log(1 − f)\nJ = 平均所有样本的 L",
+x:"为什么不用平方误差？因为套上 sigmoid 后平方误差的代价函数不是“碗”，有很多坑，梯度下降容易卡住；交叉熵仍然是凸的。",
+q:"y = 1 时，f = 0.9 和 f = 0.1 的损失分别大约是多少？（log 用自然对数）"},
+{id:"ml-loggd",t:"逻辑回归的梯度下降",s:"ML 1-3",d:"11-17",
+one:"更新公式和线性回归长得一模一样，只是 f 换成了 sigmoid(w·x + b)。",
+c:"wⱼ = wⱼ − α · (1/m) Σ ( f(x⁽ⁱ⁾) − y⁽ⁱ⁾ ) · xⱼ⁽ⁱ⁾",
+x:"“预测 − 真实”这个形式在深度学习里会反复出现（softmax + 交叉熵的反向传播也是 y − t）。"},
+{id:"ml-overfit",t:"过拟合与欠拟合",s:"ML 1-3",d:"11-17",
+one:"欠拟合是没学会（高偏差），过拟合是死记硬背、换题就错（高方差）。",
+x:"欠拟合：用直线拟合明显弯曲的数据，训练集上就很差。过拟合：用很高次的曲线穿过每一个点，训练集完美，新数据一塌糊涂。目标是**泛化**：在没见过的数据上也好。"},
+{id:"ml-fixof",t:"解决过拟合的 3 种方法",s:"ML 1-3",d:"11-17",
+one:"①收集更多数据 ②减少特征 ③正则化（让参数变小）。",
+x:"更多数据最有效但往往最贵；减少特征会丢信息；正则化保留所有特征，只是削弱每个特征的影响，最常用。",
+q:"面试题：说出过拟合的 3 种应对方法，各有什么代价？"},
+{id:"ml-reg",t:"正则化",s:"ML 1-3",d:"11-17",
+one:"在代价函数里加一项“参数越大罚得越多”，逼模型变简单、曲线变平滑。",
+c:"J = 原来的代价 + (λ / 2m) Σ wⱼ²",
+x:"λ 控制罚多重：λ = 0 不正则化（可能过拟合）；λ 太大所有 w 都接近 0（欠拟合）。一般不罚 b。加正则后梯度下降每一步都会先把 w 缩小一点点，所以也叫**权重衰减**。"}
+]},
+{id:"ml21",t:"ML 2-1 神经网络",s:"第 2 门 第 1 周",topics:[
+{id:"ml-nnintro",t:"神经网络的直觉",s:"ML 2-1",d:"11-18",
+one:"一个神经元就是一个逻辑回归；很多神经元排成层、层再叠起来，就是神经网络。",
+x:"例：预测一件 T 恤能否畅销。第一层神经元自己学出“价格是否实惠”“知名度”“质量感知”这类中间特征，下一层再用这些特征做判断。网络**自己学特征**，不用人手工设计，这是它比传统方法强的地方。"},
+{id:"ml-layer",t:"层：输入层、隐藏层、输出层",s:"ML 2-1",d:"11-18",
+one:"输入层放数据，隐藏层做中间加工，输出层给最终答案。",
+x:"上标 [l] 表示第几层，a^[l] 是第 l 层输出的“激活值”向量。说“几层网络”时一般不数输入层。隐藏层叫“隐藏”是因为训练数据里看不到它的正确值。"},
+{id:"ml-layercalc",t:"一层在计算什么",s:"ML 2-1",d:"11-18",
+one:"每个神经元：加权求和再过激活函数，a = g(w·x + b)。",
+c:"z^[l] = W^[l] · a^[l−1] + b^[l]\na^[l] = g( z^[l] )",
+x:"一层有几个神经元就有几组 w、b。用矩阵写，一整层就是一次矩阵乘法。"},
+{id:"ml-fwd",t:"前向传播",s:"ML 2-1",d:"11-18",
+one:"数据从输入层一层层往后算，直到输出层得到预测，这就是“推理”。",
+x:"例：手写数字 0/1 识别，64 像素 → 25 个神经元 → 15 个 → 1 个输出概率。鱼书 3.4 节会用 NumPy 亲手实现，和这里一模一样。"},
+{id:"ml-tf",t:"TensorFlow 实现（只需看懂）",s:"ML 2-1",d:"11-18",
+one:"课程用 TensorFlow 的 `Dense` 层搭网络；我们之后用 PyTorch，思路相同。",
+c:"model = Sequential([\n    Dense(25, activation='sigmoid'),\n    Dense(15, activation='sigmoid'),\n    Dense(1, activation='sigmoid')])",
+x:"课程还会教用 NumPy 手写 `dense()` 函数，帮你理解框架底层在做什么。注意 TensorFlow 习惯把数据写成二维矩阵（每行一个样本）。"},
+{id:"ml-nnvec",t:"神经网络的向量化",s:"ML 2-1",d:"11-18",
+one:"一整层、一整批样本，用一次矩阵乘法 `A_in @ W + b` 算完。",
+x:"这就是为什么 GPU（擅长矩阵乘法）让深度学习起飞。"}
+]},
+{id:"ml22",t:"ML 2-2 训练神经网络",s:"第 2 门 第 2 周",topics:[
+{id:"ml-train3",t:"训练三步",s:"ML 2-2",d:"11-19",
+one:"①定义模型 ②指定损失函数 ③用梯度下降最小化损失。",
+x:"和逻辑回归完全同一套路，只是模型更复杂。框架用**反向传播**自动算出所有参数的梯度（鱼书第 5 章会手推）。TensorFlow 里对应 `Sequential`、`compile(loss=...)`、`fit(X, y, epochs=...)`。"},
+{id:"ml-act",t:"常用激活函数",s:"ML 2-2",d:"11-19",
+one:"sigmoid（0–1）、ReLU（max(0, z)）、线性（不变）。",
+x:"**输出层**按任务选：二分类用 sigmoid；回归可正可负用线性；只能为正（房价）用 ReLU。**隐藏层**默认用 ReLU：算得快，而且正半边不会“变平”，梯度下降更快。"},
+{id:"ml-whyact",t:"为什么需要激活函数",s:"ML 2-2",d:"11-19",
+one:"没有非线性激活，叠多少层都等于一层线性模型。",
+x:"线性函数套线性函数还是线性函数：W₂(W₁x + b₁) + b₂ = W'x + b'。非线性让网络能拟合弯曲的复杂关系。",
+q:"面试题：如果所有隐藏层都用线性激活，网络会怎样？"},
+{id:"ml-softmax",t:"多分类与 softmax",s:"ML 2-2",d:"11-19",
+one:"softmax 把 N 个分数变成 N 个加起来等于 1 的概率。",
+c:"aⱼ = e^(zⱼ) / Σₖ e^(zₖ)",
+x:"手写数字 0–9 有 10 类，输出层 10 个神经元，每个对应一类的概率。二分类的逻辑回归就是 softmax 在 N = 2 时的特例。"},
+{id:"ml-smloss",t:"softmax 的损失（稀疏交叉熵）",s:"ML 2-2",d:"11-19",
+one:"只看正确类别的预测概率 a_y，损失 = −log(a_y)。",
+x:"正确类的概率越接近 1，损失越接近 0。TensorFlow 里叫 `SparseCategoricalCrossentropy`。实现时把输出层设成线性、损失里写 `from_logits=True`，让框架合在一起算，数值更稳（避免 e 的大次方溢出）。"},
+{id:"ml-multilabel",t:"多标签分类",s:"ML 2-2",d:"11-19",
+one:"一张图可以同时有多个答案（有车？有人？有公交？），每个输出各用一个 sigmoid。",
+x:"区别：多**类**是“只能选一个”用 softmax；多**标签**是“每个都可能是”用多个 sigmoid。"},
+{id:"ml-adam",t:"Adam 优化器",s:"ML 2-2",d:"11-19",
+one:"自动给每个参数调学习率：方向一直一致就加速，来回震荡就减速。",
+x:"比普通梯度下降收敛快，几乎是默认选择。原理在深度学习板块“优化器”一节详细讲。"},
+{id:"ml-convlayer",t:"卷积层简介",s:"ML 2-2",d:"11-19",
+one:"每个神经元只看输入的一小块区域，而不是全部。",
+x:"计算更快、需要的数据更少、更不容易过拟合。完整内容在深度学习板块的 CNN 一章。"}
+]},
+{id:"ml23",t:"ML 2-3 应用机器学习的建议",s:"第 2 门 第 3 周",topics:[
+{id:"ml-eval",t:"评估模型：训练集与测试集",s:"ML 2-3",d:"11-19",
+one:"拿一部分数据（如 30%）藏起来不训练，专门用来考试，看模型在新数据上的表现。",
+x:"训练误差低不代表模型好，测试误差才反映泛化能力。"},
+{id:"ml-cv",t:"训练集 / 交叉验证集 / 测试集",s:"ML 2-3",d:"11-19",
+one:"训练集学参数，验证集挑模型（几次多项式、λ 多大），测试集只在最后考一次。",
+x:"常见比例 60/20/20。如果用测试集来挑模型，测试分数就“被偷看”了，会偏乐观。交叉验证集也叫开发集（dev set）。"},
+{id:"ml-bv",t:"偏差与方差",s:"ML 2-3",d:"11-19",
+one:"高偏差：训练误差就高（学不会）；高方差：训练误差低但验证误差高很多（背答案）。",
+x:"诊断看两个数：J_train 和 J_cv。J_train 高 → 高偏差；J_cv 远大于 J_train → 高方差；两者都有可能同时出现。",
+q:"J_train = 15%，J_cv = 16%，人类水平 10.6%。是偏差问题还是方差问题？"},
+{id:"ml-baseline",t:"基准水平",s:"ML 2-3",d:"11-19",
+one:"判断误差高不高要有参照：人类水平、竞品算法或经验值。",
+x:"语音识别人类也有 10.6% 的错误率，那训练误差 10.8% 已经很好了。看两个差距：基准 → 训练误差（偏差），训练误差 → 验证误差（方差）。"},
+{id:"ml-lambda",t:"正则化 λ 与偏差方差",s:"ML 2-3",d:"11-19",
+one:"λ 太小 → 高方差，λ 太大 → 高偏差，用验证集挑中间最好的那个。",
+x:"做法：试一串 λ（0、0.01、0.02、0.04……），每个都训练一次，选 J_cv 最小的。"},
+{id:"ml-lc",t:"学习曲线",s:"ML 2-3",d:"11-19",
+one:"横轴是训练样本数，纵轴是误差，画出 J_train 和 J_cv 两条曲线。",
+x:"高偏差：两条线很快贴在一起且都高于基准，**加数据没用**。高方差：两条线之间有大缺口，**加数据有用**。"},
+{id:"ml-bvfix",t:"偏差方差应对表",s:"ML 2-3",d:"11-19",
+one:"高方差：加数据、减特征、加大 λ；高偏差：加特征、加多项式特征、减小 λ。",
+x:"神经网络的额外好办法：高偏差就把网络加大（更多层、更多神经元），高方差就加数据。只要正则化得当，大网络通常不比小网络差，代价是算得慢。",
+q:"面试题：模型在训练集上就表现很差，你会怎么做？"},
+{id:"ml-loop",t:"机器学习开发的迭代循环",s:"ML 2-3",d:"11-19",
+one:"选架构 → 训练 → 诊断（偏差方差、误差分析）→ 改进，反复转圈。",
+x:"很少一次就成功。好的工程师靠诊断决定下一步，而不是凭感觉乱试。"},
+{id:"ml-erran",t:"误差分析",s:"ML 2-3",d:"11-19",
+one:"把验证集里分错的样本拿出来人工看、分类计数，找到错误最多的那类优先解决。",
+x:"例：100 封分错的垃圾邮件里，21 封是钓鱼邮件、3 封是故意拼错单词，那就先攻钓鱼邮件。错的太多可以随机抽 100 个看。"},
+{id:"ml-data",t:"添加数据与数据增强",s:"ML 2-3",d:"11-19",
+one:"有针对性地加数据；数据增强是把已有样本变形（旋转、缩放、加噪声）造出新样本。",
+x:"变形要符合真实情况：字母 A 旋转一点还是 A，但上下颠倒就不像真实数据了。还有**数据合成**：用电脑字体生成文字图片。以数据为中心的思路：模型不变，专心改进数据。"},
+{id:"ml-transfer",t:"迁移学习",s:"ML 2-3",d:"11-19",
+one:"先在大数据集上预训练，再用自己的小数据集微调，前面学到的通用特征可以复用。",
+x:"例：在 100 万张图上训练好的网络，前几层已学会边缘、角、形状，换成识别手写数字时只需换掉输出层再训练。数据少就只训练输出层，数据多就全部微调。大模型的“预训练 + 微调”就是这个思路。"},
+{id:"ml-cycle",t:"项目全流程与伦理",s:"ML 2-3",d:"11-19",
+one:"定范围 → 收集数据 → 训练（反复）→ 部署上线 → 监控维护。",
+x:"上线后数据会变化，需要持续监控和更新（MLOps）。还要注意公平性、偏见和可能的滥用，上线前想好会伤害谁。"},
+{id:"ml-pr",t:"偏斜数据集：精确率与召回率",s:"ML 2-3",d:"11-19",
+one:"正例很少时准确率会骗人，要看精确率和召回率。",
+x:"罕见病只占 0.5%，模型永远说“没病”也有 99.5% 准确率。\n**精确率** = 真阳性 / 所有预测为阳性：说“有病”的人里有多少真有病。\n**召回率** = 真阳性 / 所有真正阳性：真有病的人里找出了多少。",
+c:"Precision = TP / (TP + FP)\nRecall    = TP / (TP + FN)"},
+{id:"ml-f1",t:"精确率与召回率的权衡、F1",s:"ML 2-3",d:"11-19",
+one:"提高判定阈值 → 精确率升、召回率降，反之亦然；F1 把两者合成一个分数。",
+c:"F1 = 2 · P · R / (P + R)",
+x:"F1 是调和平均，哪个低就被拉低，所以不会被一个高分掩盖另一个低分。漏诊代价大（癌症筛查）就偏向高召回。"}
+]},
+{id:"ml24",t:"ML 2-4 决策树",s:"第 2 门 第 4 周",topics:[
+{id:"ml-tree",t:"决策树模型",s:"ML 2-4",d:"11-20",
+one:"像“20 个问题”游戏：一路问是/否问题，最后走到叶子节点得出答案。",
+x:"例：判断是不是猫——耳朵尖吗？脸圆吗？有胡须吗？根节点是第一个问题，叶子节点是结论。学习决策树就是决定每一步问什么。"},
+{id:"ml-entropy",t:"纯度与熵",s:"ML 2-4",d:"11-20",
+one:"熵衡量一堆样本有多“混杂”：全是同一类时熵 = 0，一半一半时熵 = 1。",
+c:"H(p) = −p·log₂(p) − (1−p)·log₂(1−p)",
+x:"p 是其中猫的比例。我们希望每次划分后，两边都更“纯”。"},
+{id:"ml-ig",t:"信息增益：选哪个特征来分",s:"ML 2-4",d:"11-20",
+one:"信息增益 = 分之前的熵 − 分之后两边熵的加权平均，选增益最大的特征。",
+x:"加权是按两边样本数的比例。增益越大，说明这个问题问得越有价值。"},
+{id:"ml-build",t:"构建决策树与停止条件",s:"ML 2-4",d:"11-20",
+one:"在根节点选最好的特征分开，再对左右两边递归地做同样的事。",
+x:"什么时候停：节点已经 100% 纯；达到最大深度；信息增益太小；样本数太少。限制深度可以防止过拟合。"},
+{id:"ml-onehot",t:"独热编码与连续特征",s:"ML 2-4",d:"11-20",
+one:"有 k 个取值的类别特征拆成 k 个 0/1 特征；连续特征就找一个最好的切分阈值。",
+x:"耳朵形状有“尖/软/椭圆”三种，就变成三个 0/1 特征，每个样本只有一个是 1。体重这种连续值，试多个阈值（如 ≤ 9 kg），选信息增益最大的。独热编码在神经网络里也常用。"},
+{id:"ml-regtree",t:"回归树",s:"ML 2-4",d:"11-20",
+one:"决策树也能预测数值：叶子输出该叶子里样本的平均值，划分时看方差减少多少。"},
+{id:"ml-ensemble",t:"树集成与有放回抽样",s:"ML 2-4",d:"11-20",
+one:"单棵树对数据很敏感，改一个样本树可能完全不同；训练很多棵树投票，结果更稳。",
+x:"**有放回抽样**：从训练集里随机抽 m 次，抽过的可以再被抽到，得到一个“略有不同”的新训练集，每棵树用一个。"},
+{id:"ml-rf",t:"随机森林",s:"ML 2-4",d:"11-20",
+one:"每棵树用不同的抽样数据，而且每次划分只从随机挑的部分特征里选。",
+x:"双重随机让树和树之间差异更大，投票效果更好。每次划分常用 √n 个随机特征。"},
+{id:"ml-xgb",t:"XGBoost（提升树）",s:"ML 2-4",d:"11-20",
+one:"一棵接一棵地训练，每棵新树重点去学前面的树做错的样本。",
+x:"类比“刻意练习”：专练错题。比赛和工业界表格数据上非常常用，直接调库 `XGBClassifier` 即可。"},
+{id:"ml-treevsnn",t:"决策树 vs 神经网络",s:"ML 2-4",d:"11-20",
+one:"表格数据（Excel 那种）树模型又快又好；图像、音频、文本这类非结构化数据用神经网络。",
+x:"神经网络还能迁移学习、方便把多个模型串起来，但训练慢。小决策树可解释性强。"}
+]},
+{id:"ml31",t:"ML 3-1 聚类与异常检测",s:"第 3 门 第 1 周",topics:[
+{id:"ml-cluster",t:"聚类",s:"ML 3-1",d:"11-20",
+one:"没有标签，把相似的数据自动分成几组。",
+x:"应用：新闻分组、客户分群、基因分析、天文数据分析。"},
+{id:"ml-kmeans",t:"K-means 算法",s:"ML 3-1",d:"11-20",
+one:"随机放 K 个中心，反复两步：①每个点归到最近的中心 ②中心移到自己组的平均位置。",
+x:"一直重复直到中心不再移动。如果某个中心没分到点，就删掉它或重新随机放。",
+c:"重复：\n  for 每个点 i:  c⁽ⁱ⁾ = 最近中心的编号\n  for 每个中心 k: μₖ = 分给它的点的平均"},
+{id:"ml-kmcost",t:"K-means 的代价函数",s:"ML 3-1",d:"11-20",
+one:"所有点到自己所属中心的平均距离平方（也叫失真），每一步都只会变小或不变。",
+x:"所以如果代价上升了，代码一定有错。"},
+{id:"ml-kminit",t:"初始化与选 K",s:"ML 3-1",d:"11-20",
+one:"随机选 K 个样本当初始中心，多试几十次取代价最小的；K 按实际用途来定。",
+x:"一次随机可能卡在不好的局部最优。“肘部法”看代价随 K 的拐点，但常常不明显；更实用的是看下游需求，比如 T 恤要做 S/M/L 三个尺码还是五个。"},
+{id:"ml-anomaly",t:"异常检测",s:"ML 3-1",d:"11-20",
+one:"先学“正常数据长什么样”，再把出现概率很低的新数据标为异常。",
+x:"应用：飞机发动机质检、信用卡欺诈、服务器监控。"},
+{id:"ml-gauss",t:"高斯（正态）分布",s:"ML 3-1",d:"11-20",
+one:"钟形曲线：均值 μ 决定中心位置，标准差 σ 决定胖瘦。",
+x:"用训练数据估计：μ = 平均值，σ² = 平方偏差的平均。"},
+{id:"ml-adalgo",t:"异常检测算法",s:"ML 3-1",d:"11-20",
+one:"每个特征各拟合一个高斯分布，把概率乘起来得到 p(x)，p(x) < ε 就判为异常。",
+c:"p(x) = p(x₁; μ₁, σ₁²) · p(x₂; μ₂, σ₂²) · … · p(xₙ; μₙ, σₙ²)",
+x:"ε 用带少量已知异常样本的验证集来挑。"},
+{id:"ml-advssup",t:"异常检测 vs 监督学习",s:"ML 3-1",d:"11-20",
+one:"异常样本极少、异常种类层出不穷时用异常检测；正负样本都多、新样本和旧的类似时用监督学习。",
+x:"欺诈手段天天变 → 异常检测；垃圾邮件类型比较稳定 → 监督学习。特征选择：尽量让特征接近高斯分布（必要时取 log），并通过误差分析造出能区分异常的新特征。"}
+]},
+{id:"ml32",t:"ML 3-2 推荐系统",s:"第 3 门 第 2 周",topics:[
+{id:"ml-recsys",t:"推荐系统问题",s:"ML 3-2",d:"11-21",
+one:"用户给部分电影打了分，预测他们没看过的电影会打几分，推荐分高的。",
+x:"商业价值极大：淘宝、抖音、Netflix 都靠它。"},
+{id:"ml-cbcf",t:"基于内容 vs 协同过滤",s:"ML 3-2",d:"11-21",
+one:"基于内容：看物品本身的特征（爱情片/动作片）；协同过滤：看“和你口味相似的人喜欢什么”。"},
+{id:"ml-cf",t:"协同过滤算法",s:"ML 3-2",d:"11-21",
+one:"同时学用户的偏好向量 w 和电影的特征向量 x，让 w·x + b 接近真实打分。",
+x:"没人告诉算法每部电影“多浪漫”，靠很多用户的打分反推出电影的特征。代价函数只算已打分的格子，再加正则化。"},
+{id:"ml-binary",t:"二元标签",s:"ML 3-2",d:"11-21",
+one:"很多场景没有打分，只有“点没点赞/买没买”，就把模型换成逻辑回归的形式。"},
+{id:"ml-meannorm",t:"均值归一化",s:"ML 3-2",d:"11-21",
+one:"先减去每部电影的平均分再训练，新用户就会被预测成平均分而不是 0 分。"},
+{id:"ml-similar",t:"找相似物品",s:"ML 3-2",d:"11-21",
+one:"两件物品的特征向量距离越近就越相似，用来做“看了这个的人也看了”。",
+x:"协同过滤的局限：冷启动（新物品、新用户没数据），不容易用上年龄、类型等额外信息。"},
+{id:"ml-cbdl",t:"用深度学习做基于内容推荐",s:"ML 3-2",d:"11-21",
+one:"两个神经网络分别把用户和物品编码成向量，用点积预测喜好程度。",
+x:"大规模时分两步：**检索**（从百万物品里快速找几百个候选）+ **排序**（用模型精排）。这种“编码成向量再比相似度”的思路，也是以后做 RAG（检索增强）的基础。"},
+{id:"ml-pca",t:"PCA 主成分分析（选学）",s:"ML 3-2",d:"11-21",
+one:"把很多特征压成少数几个新特征，同时尽量保留信息，常用于可视化。",
+x:"例：50 个国家指标压成 2 维，画在平面上看哪些国家相近。"}
+]},
+{id:"ml33",t:"ML 3-3 强化学习",s:"第 3 门 第 3 周",topics:[
+{id:"ml-rl",t:"什么是强化学习",s:"ML 3-3",d:"11-21",
+one:"不告诉正确动作，只给奖励：做得好加分，做得差扣分，让智能体自己摸索。",
+x:"像训狗：做对了给零食。核心循环：**状态 → 动作 → 奖励 → 新状态**。应用：机器人控制、下棋、大模型的对齐（RLHF）。"},
+{id:"ml-return",t:"回报与折扣因子",s:"ML 3-3",d:"11-21",
+one:"回报 = 未来所有奖励之和，但越远的奖励打折越多。",
+c:"回报 = R₁ + γR₂ + γ²R₃ + …   （γ 如 0.9）",
+x:"γ 让智能体更看重眼前的奖励，类似“今天的 100 块比明年的 100 块值钱”。"},
+{id:"ml-policy",t:"策略与马尔可夫决策过程",s:"ML 3-3",d:"11-21",
+one:"策略 π 告诉智能体“在状态 s 该做什么动作”，目标是找到回报最大的策略。",
+x:"马尔可夫性：未来只取决于当前状态，与怎么到达当前状态无关。"},
+{id:"ml-q",t:"状态-动作价值函数 Q(s, a)",s:"ML 3-3",d:"11-21",
+one:"在状态 s 先做动作 a，之后一直按最优方式行动，能拿到的回报。",
+x:"知道了 Q，最优策略就是每个状态都选 Q 最大的那个动作。"},
+{id:"ml-bellman",t:"贝尔曼方程",s:"ML 3-3",d:"11-21",
+one:"Q = 眼前奖励 + 打折后的“下一步能拿到的最好 Q”。",
+c:"Q(s, a) = R(s) + γ · max_a' Q(s', a')",
+x:"把大问题拆成“这一步 + 剩下的”，是递归的思想。环境有随机性时，改成取期望（平均）。"},
+{id:"ml-dqn",t:"连续状态与 DQN",s:"ML 3-3",d:"11-21",
+one:"状态太多存不下表格，就用神经网络来近似 Q 函数（深度 Q 网络）。",
+x:"例：月球着陆器。用贝尔曼方程造训练目标 y = R + γ·max Q(s', a')，像监督学习一样训练网络。"},
+{id:"ml-eps",t:"ε-贪心与训练技巧",s:"ML 3-3",d:"11-21",
+one:"大部分时间选当前最好的动作（利用），小概率 ε 随机乱试（探索）。",
+x:"ε 一开始大、慢慢变小。其他技巧：mini-batch 加速、**软更新**（新网络参数一点点替换旧的，训练更稳）。强化学习目前在机器人以外的实际应用比监督学习少，但很有前景。"}
+]}
+]});
+
+</script>
+<script>
+(function(){
+const YEAR=2026;
+const pad=n=>String(n).padStart(2,"0");
+const now=new Date();
+const TODAY=pad(now.getMonth()+1)+"-"+pad(now.getDate());
+const TODAY_FULL=now.getFullYear()*10000+(now.getMonth()+1)*100+now.getDate();
+const dnum=d=>YEAR*10000+parseInt(d.slice(0,2))*100+parseInt(d.slice(3));
+const HASH={py:"python",dl:"dl",ml:"ml"};
+const ALL=[];BOOK.forEach(b=>b.chapters.forEach(c=>c.topics.forEach(t=>{t.b=b.key;t.ch=c.id;ALL.push(t)})));
+const BYID={};ALL.forEach(t=>BYID[t.id]=t);
+
+/* ---------- state: notes + status ---------- */
+let S={}; // id -> {n, s}
+const LS="textbook-v1";
+try{const r=localStorage.getItem(LS);if(r)S=JSON.parse(r)||{}}catch(e){}
+function cache(){try{localStorage.setItem(LS,JSON.stringify(S))}catch(e){}}
+let col=null, cloud="connecting";
+const pending={}, timers={};
+
+function auto(t){
+  if(!t.d)return "todo";
+  const n=dnum(t.d);
+  if(n<TODAY_FULL)return "done";
+  if(n===TODAY_FULL)return "today";
+  return "todo";
+}
+function status(t){const o=S[t.id]&&S[t.id].s;return o||auto(t)}
+const LABEL={done:"已学",today:"今天",todo:"未学",review:"要复习"};
+function dateLabel(t){if(!t.d)return "自学";const [m,d]=t.d.split("-");return (+m)+"/"+(+d)}
+
+function setSync(){
+  const el=document.getElementById("sync");
+  const map={connecting:"笔记：正在连接云端…",cloud:"笔记：自动保存到云端，换设备也能看到",saving:"笔记：保存中…",local:(window.claude&&window.claude.use)?"笔记：云端不可用，暂存在这台设备的浏览器里":"笔记：保存在这台设备的浏览器里（换设备或清除浏览器数据会丢失）",error:"笔记：云端保存失败，已暂存在本机，稍后再改一次会重试"};
+  el.textContent=map[cloud]||"";
+}
+function persist(id){
+  cache();
+  if(!col){return}
+  clearTimeout(timers[id]);
+  pending[id]=true;cloud="saving";setSync();
+  timers[id]=setTimeout(async()=>{
+    const v=S[id]||{};
+    try{
+      if(!v.n&&!v.s)await col.doc(id).delete();
+      else await col.doc(id).set({n:v.n||"",s:v.s||"",t:Date.now()});
+      delete pending[id];
+      if(!Object.keys(pending).length){cloud="cloud";setSync()}
+      const ns=document.querySelector('[data-ns="'+id+'"]');if(ns)ns.textContent="已保存";
+    }catch(e){cloud="error";setSync()}
+  },700);
+}
+
+/* ---------- text ---------- */
+function esc(s){return s.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;")}
+function inline(s){return esc(s).replace(/`([^`]+)`/g,"<code>$1</code>").replace(/\*\*([^*]+)\*\*/g,"<b>$1</b>")}
+function rich(s){
+  const lines=s.split("\n");let out="",list=false,para=[];
+  const flush=()=>{if(para.length){out+="<p>"+para.map(inline).join("<br>")+"</p>";para=[]}};
+  lines.forEach(l=>{
+    if(l.startsWith("- ")){flush();if(!list){out+="<ul>";list=true}out+="<li>"+inline(l.slice(2))+"</li>"}
+    else{if(list){out+="</ul>";list=false}para.push(l)}
+  });
+  flush();if(list)out+="</ul>";return out;
+}
+function codeHtml(s){return s.split("\n").map(l=>{const e=esc(l);const i=e.indexOf("# ");return i>=0&&!/["']/.test(e.slice(0,i))?e.slice(0,i)+'<span class="cm">'+e.slice(i)+"</span>":e}).join("\n")}
+
+/* ---------- view state ---------- */
+let board="py",filter="all",query="";const open=new Set();
+try{const v=JSON.parse(localStorage.getItem("textbook-view")||"{}");if(v.board)board=v.board;if(v.filter)filter=v.filter}catch(e){}
+function readHash(){const h=(location.hash||"").replace("#","");const k=Object.keys(HASH).find(k=>HASH[k]===h);if(k)board=k}
+readHash();
+function saveView(){try{localStorage.setItem("textbook-view",JSON.stringify({board,filter}))}catch(e){}}
+ALL.forEach(t=>{if(auto(t)==="today")open.add(t.id)});
+
+const FILTERS=[["all","全部"],["today","今天"],["done","已学"],["review","要复习"],["todo","未学"],["notes","有笔记"]];
+function match(t){
+  const s=status(t);
+  if(filter==="notes"&&!(S[t.id]&&S[t.id].n))return false;
+  if(filter!=="all"&&filter!=="notes"&&s!==filter)return false;
+  if(query){const hay=(t.t+t.one+(t.x||"")+(t.c||"")+(t.s||"")+((S[t.id]&&S[t.id].n)||"")).toLowerCase();if(!hay.includes(query))return false}
+  return true;
+}
+
+function renderBoards(){
+  const el=document.getElementById("boards");el.innerHTML="";
+  BOOK.forEach(b=>{
+    const ts=ALL.filter(t=>t.b===b.key),dn=ts.filter(t=>status(t)==="done").length;
+    const btn=document.createElement("button");btn.className="board";btn.dataset.k=b.key;btn.setAttribute("role","tab");btn.id="board-"+b.key;
+    btn.setAttribute("aria-selected",b.key===board?"true":"false");
+    btn.innerHTML='<strong></strong><small></small><span class="mini"><i></i></span>';
+    btn.children[0].textContent=b.name;
+    btn.children[1].innerHTML="已学 "+dn+" / "+ts.length+"<span> 个知识点</span>";
+    btn.querySelector("i").style.width=Math.round(dn/ts.length*100)+"%";
+    btn.onclick=()=>{board=b.key;saveView();try{history.replaceState(null,"","#"+HASH[b.key])}catch(e){}render();window.scrollTo({top:0})};
+    el.appendChild(btn);
+  });
+}
+function renderFilters(){
+  const el=document.getElementById("filters");el.innerHTML="";
+  FILTERS.forEach(([k,l])=>{
+    const c=document.createElement("button");c.className="chip";c.type="button";c.textContent=l;c.setAttribute("aria-pressed",k===filter?"true":"false");
+    c.onclick=()=>{filter=k;saveView();render()};el.appendChild(c);
+  });
+}
+function renderToday(){
+  const ts=ALL.filter(t=>auto(t)==="today");
+  const box=document.getElementById("todaybox"),el=document.getElementById("todaylist");
+  let list=ts,title="今天（"+(now.getMonth()+1)+"/"+now.getDate()+"）要学";
+  if(!ts.length){
+    const fut=ALL.filter(t=>t.d&&dnum(t.d)>TODAY_FULL).sort((a,b)=>dnum(a.d)-dnum(b.d));
+    if(fut.length){const d=fut[0].d;list=fut.filter(t=>t.d===d);title="下一次（"+dateLabel(fut[0])+"）要学，可以先预习"}
+  }
+  if(!list.length){box.hidden=true;return}
+  box.hidden=false;document.getElementById("todayTitle").textContent=title;el.innerHTML="";
+  const color={py:"var(--py)",dl:"var(--dl)",ml:"var(--ml)"};
+  list.forEach(t=>{const c=document.createElement("button");c.className="chip";c.type="button";
+    c.innerHTML='<span class="dot"></span>';c.firstChild.style.background=color[t.b];c.appendChild(document.createTextNode(t.t));
+    c.onclick=()=>jump(t.id);el.appendChild(c)});
+}
+function jump(id){
+  const t=BYID[id];board=t.b;filter="all";query="";document.getElementById("q").value="";open.add(id);saveView();
+  try{history.replaceState(null,"","#"+HASH[t.b])}catch(e){}
+  render();const el=document.getElementById("t-"+id);if(el){el.scrollIntoView({block:"start"});const h=el.querySelector(".thead");if(h)h.focus({preventScroll:true})}
+}
+
+function topicEl(t){
+  const s=status(t),art=document.createElement("article");art.className="topic"+(auto(t)==="today"?" is-today":"");art.id="t-"+t.id;
+  const isOpen=open.has(t.id)||!!query;
+  const hd=document.createElement("button");hd.className="thead";hd.type="button";hd.setAttribute("aria-expanded",isOpen?"true":"false");hd.setAttribute("aria-controls","b-"+t.id);
+  const st=document.createElement("span");st.className="st st-"+s;st.textContent=LABEL[s];
+  const tt=document.createElement("span");tt.className="ttl";
+  const b=document.createElement("b");b.textContent=t.t;const o=document.createElement("span");o.className="one";o.innerHTML=inline(t.one);tt.append(b,o);
+  const mt=document.createElement("span");mt.className="meta";
+  const src=document.createElement("span");src.textContent=t.s;
+  const dt=document.createElement("span");dt.textContent=t.d?(s==="done"?dateLabel(t)+" 学过":dateLabel(t)+" 学"):"自学补充";
+  mt.append(src,dt);
+  if(S[t.id]&&S[t.id].n){const p=document.createElement("span");p.className="pen";p.textContent="✎ 有笔记";mt.append(p)}
+  hd.append(st,tt,mt);
+  hd.onclick=()=>{if(open.has(t.id))open.delete(t.id);else open.add(t.id);const nb=art.querySelector(".tbody");const o2=open.has(t.id)||!!query;nb.hidden=!o2;hd.setAttribute("aria-expanded",o2?"true":"false")};
+  const body=document.createElement("div");body.className="tbody";body.id="b-"+t.id;body.hidden=!isOpen;
+  const ls=document.createElement("div");ls.className="lesson";
+  if(t.x){const d=document.createElement("div");d.innerHTML=rich(t.x);d.style.display="grid";d.style.gap="8px";ls.appendChild(d)}
+  if(t.c){const p=document.createElement("pre");p.innerHTML=codeHtml(t.c);ls.appendChild(p)}
+  if(t.w){const d=document.createElement("div");d.className="box warn";d.innerHTML='<span class="lb">易错</span>'+inline(t.w);ls.appendChild(d)}
+  if(t.q){const d=document.createElement("div");d.className="box try";d.innerHTML='<span class="lb">'+(t.b==="py"?"试一试":"自测")+'</span>'+inline(t.q);ls.appendChild(d)}
+  body.appendChild(ls);
+  // notes
+  const nt=document.createElement("div");nt.className="notes";
+  const nh=document.createElement("div");nh.className="nhead";
+  const lab=document.createElement("label");lab.htmlFor="n-"+t.id;lab.textContent="我的笔记";
+  const ns=document.createElement("span");ns.className="nstate";ns.dataset.ns=t.id;
+  const seg=document.createElement("span");seg.className="seg";seg.setAttribute("role","group");seg.setAttribute("aria-label","学习状态");
+  const ov=S[t.id]&&S[t.id].s;
+  [["done","已学"],["review","要复习"],["todo","未学"]].forEach(([k,l])=>{
+    const bt=document.createElement("button");bt.type="button";bt.dataset.s=k;bt.textContent=l;
+    const cur=ov||(auto(t)==="today"?"":auto(t));bt.setAttribute("aria-pressed",cur===k?"true":"false");
+    bt.onclick=e=>{e.stopPropagation();S[t.id]=Object.assign({},S[t.id]);S[t.id].s=k;if(S[t.id].s===auto(t))delete S[t.id].s;persist(t.id);render(true)};
+    seg.appendChild(bt);
+  });
+  nh.append(lab,ns,seg);
+  if(ov){const r=document.createElement("button");r.className="linkbtn";r.type="button";r.textContent="恢复按计划";r.onclick=()=>{delete S[t.id].s;persist(t.id);render(true)};nh.appendChild(r)}
+  const ta=document.createElement("textarea");ta.className="note";ta.id="n-"+t.id;ta.placeholder="用自己的话写：它是什么？解决什么问题？举个例子。听课时的疑问也记在这里。";
+  ta.value=(S[t.id]&&S[t.id].n)||"";
+  ta.oninput=()=>{S[t.id]=Object.assign({},S[t.id],{n:ta.value});if(!ta.value)delete S[t.id].n;ns.textContent=col?"保存中…":"已暂存在本机";persist(t.id)};
+  ta.onblur=()=>{const p=art.querySelector(".pen");const has=!!ta.value;if(has&&!p){const x=document.createElement("span");x.className="pen";x.textContent="✎ 有笔记";mt.append(x)}else if(!has&&p)p.remove()};
+  nt.append(nh,ta);body.appendChild(nt);
+  art.append(hd,body);return art;
+}
+
+function render(keepScroll){
+  const y=window.scrollY;
+  const active=document.activeElement&&document.activeElement.id;
+  document.body.dataset.b=board;
+  renderBoards();renderFilters();renderToday();
+  const B=BOOK.find(b=>b.key===board);
+  const toc=document.getElementById("toc"),main=document.getElementById("main");toc.innerHTML="";main.innerHTML="";
+  const intro=document.createElement("p");intro.className="intro";intro.textContent=B.full+"。"+B.intro;main.appendChild(intro);
+  let shown=0;
+  B.chapters.forEach(c=>{
+    const ts=c.topics.filter(match);
+    const dn=c.topics.filter(t=>status(t)==="done").length;
+    const a=document.createElement("a");a.href="#"+HASH[board];a.textContent=c.t;const n=document.createElement("span");n.className="n";n.textContent=dn+"/"+c.topics.length;a.appendChild(n);
+    a.onclick=e=>{e.preventDefault();const el=document.getElementById("c-"+c.id);if(el)el.scrollIntoView({block:"start"})};
+    toc.appendChild(a);
+    if(!ts.length)return;
+    shown+=ts.length;
+    const sec=document.createElement("section");sec.className="chapter";sec.id="c-"+c.id;
+    const h=document.createElement("div");h.className="chead";h.innerHTML="<h2></h2><span class='src'></span><span class='cnt'></span>";
+    h.children[0].textContent=c.t;h.children[1].textContent=c.s;h.children[2].textContent="已学 "+dn+" / "+c.topics.length;
+    sec.appendChild(h);ts.forEach(t=>sec.appendChild(topicEl(t)));main.appendChild(sec);
+  });
+  if(!shown){const p=document.createElement("p");p.className="empty";p.textContent=query?"没有找到包含“"+query+"”的知识点，换个词试试。":"这个板块没有符合筛选条件的知识点。";main.appendChild(p)}
+  if(keepScroll)window.scrollTo(0,y);
+  if(active){const el=document.getElementById(active);if(el&&el!==document.body){el.focus({preventScroll:true});if(el.tagName==="TEXTAREA"){const L=el.value.length;try{el.setSelectionRange(L,L)}catch(e){}}}}
+}
+
+document.getElementById("q").addEventListener("input",e=>{query=e.target.value.trim().toLowerCase();render()});
+window.addEventListener("hashchange",()=>{readHash();render()});
+if(!window.claude||!window.claude.use){cloud="local"}
+render();setSync();
+
+/* ---------- cloud ---------- */
+(async()=>{
+  const fail=setTimeout(()=>{if(cloud==="connecting"){cloud="local";setSync()}},10000);
+  try{
+    if(!window.claude||!window.claude.use){clearTimeout(fail);return}
+    const [db,user]=await Promise.all([window.claude.use("db"),window.claude.use("user")]);
+    if(!db||!user){clearTimeout(fail);cloud="local";setSync();return}
+    const uid=await user.id();
+    if(!uid){clearTimeout(fail);cloud="local";setSync();return}
+    col=db.collection("data/users/"+uid);
+    let first=true;
+    col.limit(1000).onSnapshot(snap=>{
+      clearTimeout(fail);
+      const before=JSON.stringify(S);const remote={};snap.docs.forEach(d=>{const v=d.data()||{};remote[d.id]={n:v.n||"",s:v.s||""}});
+      if(first&&!snap.metadata.fromCache){
+        first=false;
+        // push local-only notes (written before cloud was reachable) up once
+        Object.keys(S).forEach(id=>{if(!remote[id]&&BYID[id]&&(S[id].n||S[id].s))persist(id)});
+      }
+      Object.keys(remote).forEach(id=>{
+        if(pending[id])return;
+        const ta=document.getElementById("n-"+id);
+        if(ta&&document.activeElement===ta)return;
+        const r=remote[id],o={};if(r.n)o.n=r.n;if(r.s)o.s=r.s;S[id]=Object.assign(S[id]||{},o);
+        if(!r.n)delete S[id].n;if(!r.s)delete S[id].s;
+      });
+      const after=JSON.stringify(S);
+      cache();
+      if(!Object.keys(pending).length){cloud="cloud";setSync()}
+      if(after!==before)render(true);
+    },err=>{clearTimeout(fail);col=null;cloud="local";setSync()});
+  }catch(e){clearTimeout(fail);cloud="local";setSync()}
+})();
+})();
+</script>
+
+</body>
+</html>
