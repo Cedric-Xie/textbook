@@ -2609,6 +2609,7 @@ function render(keepScroll){
   if(active){const el=document.getElementById(active);if(el&&el!==document.body){el.focus({preventScroll:true});if(el.tagName==="TEXTAREA"){const L=el.value.length;try{el.setSelectionRange(L,L)}catch(e){}}}}
 }
 
+window.__book={ALL,rerender:()=>render(true),openToday:()=>{open.clear();ALL.forEach(t=>{if(auto(t)==="today")open.add(t.id)})}};
 document.getElementById("q").addEventListener("input",e=>{query=e.target.value.trim().toLowerCase();render()});
 window.addEventListener("hashchange",()=>{readHash();render()});
 if(!window.claude||!window.claude.use){cloud="local"}

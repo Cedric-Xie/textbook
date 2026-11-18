@@ -68,6 +68,10 @@ s_rest=sch[sch.index("</style>")+8:]
 s_markup=s_rest[:s_rest.index("<script>")].strip()
 s_js=s_rest[s_rest.index("<script>")+8:s_rest.rindex("</script>")]
 s_js=s_js.replace("document.body.appendChild(ghost)","document.getElementById('sch').appendChild(ghost)")
+s_js+='''
+window.__sched={WEEKS,baseDays,daysOf,subs:[]};
+{const _render=render;render=function(){_render();window.__sched.subs.forEach(f=>{try{f()}catch(e){console.error(e)}})}}
+'''
 s_css=scope_css(s_css,"#sch")+"\n#sch{min-height:100vh}"
 
 b=R("shell.html").replace("/*DATA*/",data)
@@ -108,5 +112,5 @@ page=('<title>学习主页</title>\n<meta name="claude:viewport-fit-sides" conte
  '<nav id="appnav" role="tablist" aria-label="切换页面"><button type="button" role="tab" data-v="sch">时间表</button><button type="button" role="tab" data-v="book">教科书</button></nav>\n'
  '<div id="sch">\n'+s_markup+'\n</div>\n'
  '<div id="book" hidden>\n'+b_markup+'\n</div>\n'
- +b_js+'\n<script>\n(function(){\n'+s_js+'\n})();\n</script>\n'+nav_js+'\n')
+ +b_js+'\n<script>\n(function(){\n'+s_js+'\n})();\n</script>\n<script>\n'+R('sync.js')+'\n</script>\n'+nav_js+'\n')
 open(os.path.join(D,"..","artifact.html"),"w",encoding="utf-8").write(page)
