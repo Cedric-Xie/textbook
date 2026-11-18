@@ -84,7 +84,13 @@ main{min-width:0;display:grid;gap:28px}
 .chead .cnt{margin-left:auto;font-size:12.5px;color:var(--muted);font-variant-numeric:tabular-nums}
 .topic{background:var(--paper);border:1px solid var(--line);border-radius:10px;scroll-margin-top:170px}
 .topic.is-today{border-color:var(--today);box-shadow:0 0 0 1px var(--today)}
-.thead{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:4px 10px;align-items:start;padding:11px 14px;cursor:pointer;width:100%;background:none;border:0;font:inherit;color:inherit;text-align:left}
+.trow{display:grid;grid-template-columns:auto minmax(0,1fr);align-items:start}
+.chk{display:flex;align-items:center;justify-content:center;padding:12px 0 12px 14px;cursor:pointer}
+.chk input{width:20px;height:20px;margin:2px 0 0;accent-color:var(--done);cursor:pointer}
+.chk input:focus-visible{outline:2px solid var(--acc);outline-offset:2px}
+.topic.checked{background:var(--done-soft);border-color:color-mix(in srgb,var(--done) 35%,var(--line))}
+.topic.checked .ttl b{color:var(--done)}
+.thead{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:4px 10px;align-items:start;padding:11px 14px 11px 10px;cursor:pointer;width:100%;background:none;border:0;font:inherit;color:inherit;text-align:left}
 .thead:focus-visible{outline:2px solid var(--acc);outline-offset:-2px;border-radius:10px}
 .st{font-size:11.5px;font-weight:700;border-radius:4px;padding:1px 6px;margin-top:3px;white-space:nowrap}
 .st-done{color:var(--done);background:var(--done-soft)} .st-review{color:var(--rev);background:var(--rev-soft)} .st-todo{color:var(--todo);background:var(--todo-soft)} .st-today{color:var(--today);background:var(--today-soft)}
@@ -129,8 +135,8 @@ textarea.note:focus{outline:2px solid var(--acc);outline-offset:0}
 .legend{display:flex;flex-wrap:wrap;gap:6px 12px;font-size:12.5px;color:var(--muted);align-items:center}
 footer{margin-top:40px;font-size:13px;color:var(--muted)}
 @media (max-width:520px){
-  .thead{grid-template-columns:auto minmax(0,1fr)}
-  .meta{grid-column:2;justify-items:start;display:flex;gap:10px}
+  .thead{grid-template-columns:minmax(0,1fr)}
+  .meta{grid-column:1;justify-items:start;display:flex;gap:10px}
   .board strong{font-size:15px}
   .board small span{display:none}
 }
@@ -162,12 +168,10 @@ footer{margin-top:40px;font-size:13px;color:var(--muted)}
 
   <footer>
     <div class="legend">
-      <span class="st st-done">已学</span>计划里已经学过的日期
-      <span class="st st-today">今天</span>今天的内容
-      <span class="st st-todo">未学</span>还没到，适合预习
-      <span class="st st-review">要复习</span>你自己标的
+      <span class="st st-done">✓</span>打勾表示你学会了，打勾后整条变成淡绿色
+      <span class="st st-today">今天</span>按 50 天冲刺日程今天要学的内容
     </div>
-    <p>状态默认按 50 天冲刺的日程自动判断（11/2 开始，11/16 起重排）。实际进度不一样时，展开知识点在“我的笔记”旁边改状态。笔记和状态登录后保存在云端，手机和电脑都能看到。</p>
+    <p>学会一个知识点就在左边打勾。打勾和笔记登录后保存在云端，手机和电脑都能看到。</p>
   </footer>
 </div>
 
@@ -2434,7 +2438,8 @@ function auto(t){
   if(n===TODAY_FULL)return "today";
   return "todo";
 }
-function status(t){const o=S[t.id]&&S[t.id].s;return o||auto(t)}
+function ticked(t){return !!(S[t.id]&&S[t.id].s==="done")}
+function status(t){return ticked(t)?"done":"todo"}
 const LABEL={done:"已学",today:"今天",todo:"未学",review:"要复习"};
 function dateLabel(t){if(!t.d)return "自学";const [m,d]=t.d.split("-");return (+m)+"/"+(+d)}
 
@@ -2482,11 +2487,13 @@ readHash();
 function saveView(){try{localStorage.setItem("textbook-view",JSON.stringify({board,filter}))}catch(e){}}
 ALL.forEach(t=>{if(auto(t)==="today")open.add(t.id)});
 
-const FILTERS=[["all","全部"],["today","今天"],["done","已学"],["review","要复习"],["todo","未学"],["notes","有笔记"]];
+const FILTERS=[["all","全部"],["today","今天"],["done","已打勾"],["todo","没打勾"],["notes","有笔记"]];
+if(!FILTERS.some(f=>f[0]===filter))filter="all";
 function match(t){
   const s=status(t);
   if(filter==="notes"&&!(S[t.id]&&S[t.id].n))return false;
-  if(filter!=="all"&&filter!=="notes"&&s!==filter)return false;
+  if(filter==="today"&&auto(t)!=="today")return false;
+  if((filter==="done"||filter==="todo")&&s!==filter)return false;
   if(query){const hay=(t.t+t.one+(t.x||"")+(t.c||"")+(t.s||"")+((S[t.id]&&S[t.id].n)||"")).toLowerCase();if(!hay.includes(query))return false}
   return true;
 }
@@ -2499,7 +2506,7 @@ function renderBoards(){
     btn.setAttribute("aria-selected",b.key===board?"true":"false");
     btn.innerHTML='<strong></strong><small></small><span class="mini"><i></i></span>';
     btn.children[0].textContent=b.name;
-    btn.children[1].innerHTML="已学 "+dn+" / "+ts.length+"<span> 个知识点</span>";
+    btn.children[1].innerHTML="已打勾 "+dn+" / "+ts.length+"<span> 个知识点</span>";
     btn.querySelector("i").style.width=Math.round(dn/ts.length*100)+"%";
     btn.onclick=()=>{board=b.key;saveView();try{history.replaceState(null,"","#"+HASH[b.key])}catch(e){}render();window.scrollTo({top:0})};
     el.appendChild(btn);
@@ -2534,18 +2541,22 @@ function jump(id){
 }
 
 function topicEl(t){
-  const s=status(t),art=document.createElement("article");art.className="topic"+(auto(t)==="today"?" is-today":"");art.id="t-"+t.id;
+  const s=status(t),art=document.createElement("article");art.className="topic"+(auto(t)==="today"?" is-today":"")+(ticked(t)?" checked":"");art.id="t-"+t.id;
   const isOpen=open.has(t.id)||!!query;
   const hd=document.createElement("button");hd.className="thead";hd.type="button";hd.setAttribute("aria-expanded",isOpen?"true":"false");hd.setAttribute("aria-controls","b-"+t.id);
-  const st=document.createElement("span");st.className="st st-"+s;st.textContent=LABEL[s];
   const tt=document.createElement("span");tt.className="ttl";
   const b=document.createElement("b");b.textContent=t.t;const o=document.createElement("span");o.className="one";o.innerHTML=inline(t.one);tt.append(b,o);
   const mt=document.createElement("span");mt.className="meta";
   const src=document.createElement("span");src.textContent=t.s;
-  const dt=document.createElement("span");dt.textContent=t.d?(s==="done"?dateLabel(t)+" 学过":dateLabel(t)+" 学"):"自学补充";
+  const dt=document.createElement("span");dt.textContent=t.d?(auto(t)==="today"?"今天学":"计划 "+dateLabel(t)):"自学补充";
   mt.append(src,dt);
   if(S[t.id]&&S[t.id].n){const p=document.createElement("span");p.className="pen";p.textContent="✎ 有笔记";mt.append(p)}
-  hd.append(st,tt,mt);
+  hd.append(tt,mt);
+  const row=document.createElement("div");row.className="trow";
+  const ck=document.createElement("label");ck.className="chk";
+  const cb=document.createElement("input");cb.type="checkbox";cb.checked=ticked(t);cb.setAttribute("aria-label","学会了："+t.t);
+  cb.onchange=()=>{S[t.id]=Object.assign({},S[t.id]);if(cb.checked)S[t.id].s="done";else delete S[t.id].s;persist(t.id);render(true)};
+  ck.appendChild(cb);row.append(ck,hd);
   hd.onclick=()=>{if(open.has(t.id))open.delete(t.id);else open.add(t.id);const nb=art.querySelector(".tbody");const o2=open.has(t.id)||!!query;nb.hidden=!o2;hd.setAttribute("aria-expanded",o2?"true":"false")};
   const body=document.createElement("div");body.className="tbody";body.id="b-"+t.id;body.hidden=!isOpen;
   const ls=document.createElement("div");ls.className="lesson";
@@ -2562,22 +2573,13 @@ function topicEl(t){
   const nh=document.createElement("div");nh.className="nhead";
   const lab=document.createElement("label");lab.htmlFor="n-"+t.id;lab.textContent="我的笔记";
   const ns=document.createElement("span");ns.className="nstate";ns.dataset.ns=t.id;
-  const seg=document.createElement("span");seg.className="seg";seg.setAttribute("role","group");seg.setAttribute("aria-label","学习状态");
-  const ov=S[t.id]&&S[t.id].s;
-  [["done","已学"],["review","要复习"],["todo","未学"]].forEach(([k,l])=>{
-    const bt=document.createElement("button");bt.type="button";bt.dataset.s=k;bt.textContent=l;
-    const cur=ov||(auto(t)==="today"?"":auto(t));bt.setAttribute("aria-pressed",cur===k?"true":"false");
-    bt.onclick=e=>{e.stopPropagation();S[t.id]=Object.assign({},S[t.id]);S[t.id].s=k;if(S[t.id].s===auto(t))delete S[t.id].s;persist(t.id);render(true)};
-    seg.appendChild(bt);
-  });
-  nh.append(lab,ns,seg);
-  if(ov){const r=document.createElement("button");r.className="linkbtn";r.type="button";r.textContent="恢复按计划";r.onclick=()=>{delete S[t.id].s;persist(t.id);render(true)};nh.appendChild(r)}
+  nh.append(lab,ns);
   const ta=document.createElement("textarea");ta.className="note";ta.id="n-"+t.id;ta.placeholder="用自己的话写：它是什么？解决什么问题？举个例子。听课时的疑问也记在这里。";
   ta.value=(S[t.id]&&S[t.id].n)||"";
   ta.oninput=()=>{S[t.id]=Object.assign({},S[t.id],{n:ta.value});if(!ta.value)delete S[t.id].n;ns.textContent=col?"保存中…":"已暂存在本机";persist(t.id)};
   ta.onblur=()=>{const p=art.querySelector(".pen");const has=!!ta.value;if(has&&!p){const x=document.createElement("span");x.className="pen";x.textContent="✎ 有笔记";mt.append(x)}else if(!has&&p)p.remove()};
   nt.append(nh,ta);body.appendChild(nt);
-  art.append(hd,body);return art;
+  art.append(row,body);return art;
 }
 
 function render(keepScroll){
@@ -2599,7 +2601,7 @@ function render(keepScroll){
     shown+=ts.length;
     const sec=document.createElement("section");sec.className="chapter";sec.id="c-"+c.id;
     const h=document.createElement("div");h.className="chead";h.innerHTML="<h2></h2><span class='src'></span><span class='cnt'></span>";
-    h.children[0].textContent=c.t;h.children[1].textContent=c.s;h.children[2].textContent="已学 "+dn+" / "+c.topics.length;
+    h.children[0].textContent=c.t;h.children[1].textContent=c.s;h.children[2].textContent="已打勾 "+dn+" / "+c.topics.length;
     sec.appendChild(h);ts.forEach(t=>sec.appendChild(topicEl(t)));main.appendChild(sec);
   });
   if(!shown){const p=document.createElement("p");p.className="empty";p.textContent=query?"没有找到包含“"+query+"”的知识点，换个词试试。":"这个板块没有符合筛选条件的知识点。";main.appendChild(p)}
