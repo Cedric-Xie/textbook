@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>教科书 · Python、深度学习、机器学习中文速查</title>
-<meta name="description" content="零基础中文学习笔记：Python 与 NumPy、深度学习（对照《深度学习入门：基于Python的理论与实现》鱼书）、机器学习（对照吴恩达机器学习课程），每个知识点一句话讲清，附代码例子和自测题，可写自己的笔记。">
+<meta name="description" content="零基础中文学习笔记：Python 与 NumPy、深度学习（对照《深度学习入门：基于Python的理论与实现》鱼书）、机器学习（对照吴恩达机器学习课程）和数学基础，每个知识点一句话讲清，附代码例子和自测题，可写自己的笔记。">
 <style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif}img{max-width:100%}[hidden]{display:none!important}</style>
 </head>
 <body>
@@ -134,7 +134,7 @@ footer{margin-top:40px;font-size:13px;color:var(--muted)}
 
 <div class="wrap">
   <header class="top">
-    <div class="brand"><h1>教科书</h1><span class="sub" id="sub">Python · 深度学习 · 机器学习</span></div>
+    <div class="brand"><h1>教科书</h1><span class="sub" id="sub">Python · 深度学习 · 机器学习 · 数学基础</span></div>
     <div class="sync" id="sync">笔记：正在连接云端…</div>
     <section class="todaybox" id="todaybox" hidden>
       <h2 id="todayTitle">今天要学</h2>
@@ -168,6 +168,8 @@ footer{margin-top:40px;font-size:13px;color:var(--muted)}
 
 <script>
 const BOOK=[];
+function X(ch,after,t){for(const b of BOOK)for(const c of b.chapters)if(c.id===ch){const i=c.topics.findIndex(x=>x.id===after);c.topics.splice(i<0?c.topics.length:i+1,0,t);return}throw new Error("no chapter "+ch)}
+function NC(bk,afterCh,ch){const b=BOOK.find(x=>x.key===bk);const i=afterCh?b.chapters.findIndex(c=>c.id===afterCh):-1;b.chapters.splice(i+1,0,ch)}
 BOOK.push({key:"py",name:"Python",full:"Python 与 NumPy",intro:"先会读、再会改、最后会写。每节都配了最小例子，自己敲一遍比看十遍有用。",chapters:[
 {id:"py1",t:"起步：数据和变量",s:"鱼书 1.1–1.3",topics:[
 {id:"py-run",t:"运行 Python 的三种方式",s:"鱼书 1.2",d:"11-02",
@@ -1040,6 +1042,363 @@ one:"大部分时间选当前最好的动作（利用），小概率 ε 随机�
 x:"ε 一开始大、慢慢变小。其他技巧：mini-batch 加速、**软更新**（新网络参数一点点替换旧的，训练更稳）。强化学习目前在机器人以外的实际应用比监督学习少，但很有前景。"}
 ]}
 ]});
+/* 补充：Python。X(章节id, 插在哪个知识点之后, 知识点) */
+X("py1","py-str",{id:"py-strm",t:"字符串常用方法",s:"补充",d:"11-02",
+one:"字符串自带很多“工具”：去空格、替换、拼接、查找、大小写。",
+c:"s = \"  Hello World  \"\ns.strip()             # 'Hello World' 去两端空格\ns.replace(\"World\", \"AI\")\ns.lower(), s.upper()\n\"-\".join([\"a\", \"b\"])   # 'a-b'\n\"Wor\" in s            # True\ns.find(\"o\")           # 第一次出现的位置，找不到返回 -1",
+x:"字符串**不可修改**：这些方法都返回一个新字符串，原来的不变，所以要写 `s = s.strip()`。"});
+X("py1","py-list",{id:"py-listop",t:"列表常用操作",s:"补充",d:"11-02",
+one:"增：append/insert；删：pop/remove；排序：sort/sorted；统计：len/sum/max/min。",
+c:"a = [3, 1, 2]\na.insert(0, 9)    # [9, 3, 1, 2]\na.pop()           # 删掉并返回最后一个 2\na.remove(9)       # 按值删除\na.sort()          # 原地排序 [1, 3]\nb = sorted(a, reverse=True)  # 返回新列表\n2 in a            # 是否包含\nsum(a), max(a), len(a)",
+w:"`a.sort()` 返回 None，写 `a = a.sort()` 会把列表弄丢。要新列表用 `sorted(a)`。"});
+X("py1","py-listop",{id:"py-nested",t:"嵌套列表（二维数据）",s:"补充",d:"11-02",
+one:"列表里放列表，就是表格：`m[行][列]`。",
+c:"m = [[1, 2, 3],\n     [4, 5, 6]]\nm[1][2]      # 6\nlen(m)       # 2 行\nfor row in m:\n    print(row)",
+x:"能表示矩阵，但做数学运算很慢、很麻烦，所以后面用 NumPy 数组代替。"});
+X("py1","py-dict",{id:"py-tuple",t:"元组 tuple",s:"补充",d:"11-02",
+one:"元组是不能修改的列表，用圆括号 `( )`。",
+c:"p = (3, 4)\nx, y = p          # 解包：x=3, y=4\na, b = b, a       # 一行交换两个变量\nshape = (2, 3)    # NumPy 的 shape 就是元组",
+x:"函数返回多个值时，其实返回的是一个元组。"});
+X("py1","py-tuple",{id:"py-set",t:"集合 set",s:"补充",d:"11-02",
+one:"集合里的元素不重复、没有顺序，适合去重和判断“在不在”。",
+c:"s = set([1, 2, 2, 3])   # {1, 2, 3}\ns.add(4)\n3 in s                   # True，比列表查找快\na, b = {1, 2}, {2, 3}\na & b, a | b, a - b      # 交集 并集 差集"});
+X("py1","py-bool",{id:"py-none",t:"None 与真假判断",s:"补充",d:"11-02",
+one:"None 表示“什么都没有”；0、空字符串、空列表、None 在判断里都当作 False。",
+c:"x = None\nif x is None:\n    print(\"还没赋值\")\nif []:          # 空列表为假，不会执行\n    print(\"不会打印\")"});
+X("py1","py-none",{id:"py-io",t:"输入输出 input / print",s:"补充",d:"11-02",
+one:"`input()` 读用户输入（永远是字符串），`print()` 输出到屏幕。",
+c:"name = input(\"你的名字：\")\nage = int(input(\"年龄：\"))\nprint(\"你好\", name, sep=\"，\")\nprint(\"不换行\", end=\"\")",
+x:"`+=` 是 `x = x + ...` 的简写，`-=`、`*=` 同理。"});
+X("py2","py-for",{id:"py-zip",t:"enumerate 与 zip",s:"补充",d:"11-03",
+one:"enumerate 同时拿到下标和元素；zip 把两个列表“拉链式”配对。",
+c:"names = [\"a\", \"b\"]\nscores = [90, 80]\nfor i, n in enumerate(names):\n    print(i, n)\nfor n, s in zip(names, scores):\n    print(n, s)\nd = dict(zip(names, scores))  # {'a': 90, 'b': 80}"});
+X("py2","py-zip",{id:"py-nestloop",t:"嵌套循环",s:"补充",d:"11-03",
+one:"循环里套循环：外层走一步，内层走完一整圈。",
+c:"for i in range(1, 10):\n    for j in range(1, i + 1):\n        print(f\"{j}×{i}={i*j}\", end=\" \")\n    print()",
+x:"处理二维数据（表格、图片像素）时常用。层数越多越慢，NumPy 能替代大部分嵌套循环。"});
+X("py2","py-func",{id:"py-ret",t:"返回多个值与参数传递",s:"补充",d:"11-03",
+one:"`return a, b` 一次返回多个值；调用时可以按位置传，也可以按名字传。",
+c:"def stats(lst):\n    return min(lst), max(lst)\nlo, hi = stats([3, 1, 4])\n\ndef train(lr=0.01, epochs=10):\n    ...\ntrain(epochs=5)          # 关键字参数，顺序随意",
+w:"默认参数不要用可变对象（如 `def f(a=[])`），多次调用会共用同一个列表。"});
+X("py2","py-ret",{id:"py-args",t:"*args 与 **kwargs",s:"补充",d:null,
+one:"`*args` 收集任意多个位置参数成元组，`**kwargs` 收集任意多个关键字参数成字典。",
+c:"def f(*args, **kwargs):\n    print(args, kwargs)\nf(1, 2, lr=0.1)   # (1, 2) {'lr': 0.1}\n\nx = (2, 3)\nnp.zeros(x)       # 也可写 np.zeros(*[x])",
+x:"读框架源码时经常见到，先能看懂即可。"});
+X("py2","py-args",{id:"py-scope",t:"变量作用域",s:"补充",d:"11-03",
+one:"函数里新建的变量只在函数里有效（局部变量），函数外面看不到。",
+c:"x = 10\ndef f():\n    x = 5      # 新的局部 x，不影响外面\n    return x\nf(); print(x)  # 10",
+x:"想在函数里改外面的变量，要声明 `global x`，但尽量别这么做，用参数和返回值传数据更清楚。"});
+X("py2","py-scope",{id:"py-lambda",t:"lambda 匿名函数",s:"补充",d:null,
+one:"一行写完的小函数：`lambda 参数: 表达式`。",
+c:"sq = lambda x: x ** 2\nsq(3)   # 9\nwords = [\"apple\", \"hi\", \"cat\"]\nsorted(words, key=lambda w: len(w))  # 按长度排序",
+x:"鱼书里用 `f = lambda W: net.loss(x, t)` 把损失包成函数，再交给数值微分。"});
+X("py2","py-lambda",{id:"py-builtin",t:"常用内置函数",s:"补充",d:"11-03",
+one:"不用 import 就能用：len、sum、max、min、abs、round、sorted、range、type、isinstance。",
+c:"round(3.14159, 2)       # 3.14\nabs(-5)                 # 5\nisinstance(3, int)      # True\nmax([3, 7, 2])          # 7\nlist(range(3))          # [0, 1, 2]"});
+X("py2","py-comp",{id:"py-recur",t:"递归",s:"补充",d:null,
+one:"函数调用自己，把大问题变成同类的小问题，必须有“出口”（停止条件）。",
+c:"def fact(n):\n    if n == 1:        # 出口\n        return 1\n    return n * fact(n - 1)",
+x:"决策树的构建就是递归：先分根节点，再对左右子树做同样的事。"});
+X("py3","py-class",{id:"py-inherit",t:"继承与 super()",s:"补充",d:null,
+one:"子类继承父类的全部功能，再增加或改写自己的部分。",
+c:"class Animal:\n    def __init__(self, name):\n        self.name = name\n    def speak(self):\n        return \"...\"\n\nclass Dog(Animal):\n    def speak(self):          # 改写\n        return \"汪\"\n\nclass Net(nn.Module):        # PyTorch 就是这样用\n    def __init__(self):\n        super().__init__()    # 先执行父类的初始化",
+x:"PyTorch 每个网络都继承 `nn.Module`，所以自动拥有 `parameters()`、`to()` 等功能。"});
+X("py3","py-inherit",{id:"py-magic",t:"特殊方法 __xxx__",s:"补充",d:null,
+one:"前后带双下划线的方法让对象支持 Python 的内置语法，如 `len(obj)`、`obj(x)`。",
+c:"class Layer:\n    def __call__(self, x):   # 让对象能像函数一样调用\n        return self.forward(x)\n    def forward(self, x):\n        return x * 2\nlayer = Layer()\nlayer(3)   # 6",
+x:"PyTorch 里写 `model(x)` 能运行，就是因为 `nn.Module` 定义了 `__call__`，它会去调用你写的 `forward`。"});
+X("py3","py-module",{id:"py-main",t:"if __name__ == \"__main__\"",s:"补充",d:null,
+one:"这行下面的代码只在“直接运行这个文件”时执行，被别的文件 import 时不执行。",
+c:"def main():\n    print(\"训练开始\")\n\nif __name__ == \"__main__\":\n    main()",
+x:"写好的函数既能自己测试运行，又能被别人导入复用。"});
+X("py3","py-main",{id:"py-pip",t:"安装包：pip 与 Anaconda",s:"鱼书 1.2",d:"11-02",
+one:"`pip install 包名` 安装第三方库；Anaconda 是一次装好 Python + NumPy + Matplotlib 的发行版。",
+c:"pip install numpy matplotlib\npip install torch\npip list            # 看已安装的包\n# Colab 里在命令前加 !\n!pip install xgboost",
+x:"鱼书推荐 Anaconda。用 Colab 的话大部分常用库已经装好。"});
+X("py3","py-pip",{id:"py-path",t:"文件路径与 sys.path",s:"鱼书代码",d:"11-21",
+one:"Python 按 sys.path 列出的文件夹找模块；鱼书代码开头的 `sys.path.append(os.pardir)` 就是把上一级目录加进去。",
+c:"import sys, os\nsys.path.append(os.pardir)   # 上一级目录\nfrom dataset.mnist import load_mnist",
+w:"运行鱼书代码要先 `cd` 到对应章节的文件夹，否则会找不到 dataset、common 这些模块。"});
+X("py3","py-file",{id:"py-pickle",t:"pickle：保存 Python 对象",s:"鱼书 3.6",d:"11-19",
+one:"pickle 能把任意 Python 对象（字典、数组、模型参数）原样存成文件，下次直接读回。",
+c:"import pickle\nwith open(\"params.pkl\", \"wb\") as f:\n    pickle.dump(params, f)\nwith open(\"sample_weight.pkl\", \"rb\") as f:\n    network = pickle.load(f)",
+x:"鱼书 3.6 用它加载训练好的权重。注意是二进制模式 `wb`/`rb`。"});
+X("py4","np-create",{id:"np-astype",t:"数据类型转换 astype",s:"补充",d:"11-16",
+one:"`x.astype(np.float32)` 把数组转换成另一种类型。",
+c:"y = np.array([True, False])\ny.astype(int)          # [1 0]\nimg.astype(np.float32) / 255.0   # 像素归一化",
+x:"鱼书阶跃函数就用 `(x > 0).astype(np.int)` 把布尔变成 0/1（新版 NumPy 写 `int`）。"});
+X("py4","np-axis",{id:"np-stat",t:"统计函数",s:"补充",d:"11-17",
+one:"max、min、mean、std、var、argmax、argmin、sum 都能按 axis 计算。",
+c:"x = np.array([3, 1, 4, 1, 5])\nx.mean(), x.std(), x.var()\nx.argmax()             # 4，最大值的下标\nnp.sqrt(x), np.abs(x), np.log(x)",
+x:"`np.sum(x)` 和 `x.sum()` 一样。不要对 NumPy 数组用 Python 自带的 `sum()`，多维时结果不对还很慢。"});
+X("py4","np-stat",{id:"np-random",t:"随机数与随机种子",s:"鱼书 4.2.3",d:"11-17",
+one:"np.random 生成随机数；设了 seed，每次运行结果都一样，实验才能复现。",
+c:"np.random.seed(0)\nnp.random.rand(3)            # 0–1 均匀分布\nnp.random.randn(2, 3)        # 标准正态\nnp.random.choice(60000, 10)  # 随机抽 10 个下标\nnp.random.permutation(5)     # 打乱 0–4"},);
+X("py4","np-random",{id:"np-where",t:"np.where 与条件选择",s:"补充",d:null,
+one:"`np.where(条件, A, B)`：条件为真取 A，否则取 B，逐元素进行。",
+c:"x = np.array([-2, 3, -1])\nnp.where(x > 0, x, 0)     # [0 3 0]  就是 ReLU\nnp.where(x > 0)           # 返回满足条件的下标"});
+X("py4","np-reshape",{id:"np-concat",t:"拼接与堆叠",s:"补充",d:null,
+one:"concatenate 沿已有的维度接起来，stack 新建一个维度叠起来。",
+c:"a = np.array([1, 2]); b = np.array([3, 4])\nnp.concatenate([a, b])   # [1 2 3 4]\nnp.stack([a, b])         # [[1 2] [3 4]]  形状 (2, 2)\nnp.vstack, np.hstack     # 竖着拼、横着拼"});
+X("py4","np-concat",{id:"np-copy",t:"视图与复制",s:"补充",d:"11-17",
+one:"切片得到的是原数组的“视图”，改它会改到原数组；要独立的一份用 `.copy()`。",
+c:"a = np.array([1, 2, 3])\nb = a[:2]\nb[0] = 99\nprint(a)       # [99  2  3] 原数组也变了\nc = a.copy()   # 独立副本",
+w:"鱼书 ReLU 层写 `out = x.copy()` 就是为了不改动输入 x。"});
+X("py4","np-copy",{id:"np-norm",t:"范数与距离",s:"补充",d:null,
+one:"`np.linalg.norm(x)` 求向量长度；两个向量相减再求范数就是距离。",
+c:"x = np.array([3, 4])\nnp.linalg.norm(x)          # 5.0\nnp.linalg.norm(a - b)      # 欧氏距离",
+x:"K-means 找最近中心、人脸识别比较相似度、L2 正则化都要用到。"});
+X("py4","np-norm",{id:"np-nditer",t:"逐个遍历多维数组",s:"鱼书 4.4",d:"11-21",
+one:"`np.nditer` 能按顺序访问多维数组的每个元素，鱼书的数值梯度函数就靠它。",
+c:"it = np.nditer(W, flags=['multi_index'])\nwhile not it.finished:\n    idx = it.multi_index    # 例如 (0, 1)\n    ...                     # 对 W[idx] 做微小改动\n    it.iternext()"});
+X("py5","plt-img",{id:"plt-sub",t:"多张子图 subplot",s:"补充",d:"11-18",
+one:"`plt.subplot(行, 列, 第几个)` 在一张图里排多个小图。",
+c:"for i in range(6):\n    plt.subplot(2, 3, i + 1)\n    plt.imshow(x_train[i].reshape(28, 28), cmap=\"gray\")\n    plt.axis(\"off\")\nplt.show()"});
+X("py5","plt-sub",{id:"plt-scatter",t:"散点图与直方图",s:"鱼书 6.2",d:"11-18",
+one:"scatter 画数据点，hist 画数值分布。",
+c:"plt.scatter(x, y, c=labels)     # 按类别上色\nplt.hist(activations.flatten(), bins=30, range=(0, 1))\nplt.ylim(0, 1)                    # 设定坐标范围",
+x:"鱼书 6.2 用直方图看每层激活值的分布，判断初始化好不好。"});
+NC("py","py5",{id:"pygit",t:"Git 与 GitHub：管理代码",s:"计划 W3",topics:[
+{id:"git-why",t:"为什么要用 Git",s:"Git",d:null,
+one:"Git 记录代码的每一次修改，改坏了可以回到以前任何一个版本；GitHub 是放代码的网站。",
+x:"像游戏存档：每完成一步就存一次档。GitHub 还能展示你的作品，申请暑研和读博时是很好的证明。"},
+{id:"git-basic",t:"四个最常用命令",s:"Git",d:null,
+one:"add 选要存的文件，commit 存档，push 上传到 GitHub，pull 下载最新版本。",
+c:"git init                      # 新建仓库\ngit add train.py              # 选文件\ngit commit -m \"加入训练代码\"   # 存档并写说明\ngit push                      # 上传\ngit pull                      # 拉取\ngit status / git log          # 看状态、看历史",
+x:"commit 说明写清楚“改了什么”，以后找起来方便。"},
+{id:"git-ignore",t:".gitignore",s:"Git",d:null,
+one:"列出不想上传的文件：大数据集、模型权重、密码文件、缓存。",
+c:"# .gitignore\n__pycache__/\n*.pkl\ndata/\n.env"},
+{id:"git-branch",t:"分支与 Pull Request",s:"Git",d:null,
+one:"分支是在不影响主线的情况下做实验；做好后用 Pull Request 申请合并回主线。",
+c:"git checkout -b new-idea   # 新建并切到分支\n# ... 修改、commit ...\ngit checkout main          # 回主线",
+x:"这个教科书网站就是先推到一个分支，再由你点 Merge 合并的。"}
+]});
+/* 补充：深度学习 */
+X("dl2","dl-gate",{id:"dl-bias",t:"权重与偏置的作用",s:"鱼书 2.3.2",d:"11-18",
+one:"权重决定每个输入的重要程度，偏置决定神经元被激活的难易程度。",
+x:"把 θ 移到左边写成 b = −θ：b 越大，越容易输出 1。几何上，w 决定分界线的方向，b 决定分界线离原点多远。"});
+X("dl3","dl-relu",{id:"dl-tanh",t:"tanh、Leaky ReLU 等其他激活函数",s:"DL 1-3",d:"11-18",
+one:"tanh 输出 −1 到 1、以 0 为中心；Leaky ReLU 在负半边留一点小斜率。",
+c:"tanh(z) = (e^z − e^−z) / (e^z + e^−z)\nLeakyReLU(z) = max(0.01z, z)",
+x:"tanh 输出均值接近 0，隐藏层里通常比 sigmoid 好。ReLU 负半边梯度为 0，神经元可能“死掉”，Leaky ReLU 能缓解。Transformer 里常用 GELU，是 ReLU 的平滑版。"});
+X("dl3","dl-tanh",{id:"dl-actgrad",t:"激活函数的导数",s:"DL 1-3",d:"11-18",
+one:"sigmoid′ = a(1−a)，tanh′ = 1−a²，ReLU′ = 1（z>0）或 0（z≤0）。",
+x:"反向传播要用这些导数。sigmoid 和 tanh 在 z 很大或很小时导数接近 0（饱和），所以容易梯度消失。"});
+X("dl3","dl-output",{id:"dl-outnum",t:"输出层神经元数量",s:"鱼书 3.5.3",d:"11-19",
+one:"分类问题有几类，输出层就放几个神经元：手写数字 10 类就是 10 个。",
+x:"每个输出神经元对应一个类别的得分，最大的那个就是预测结果。"});
+X("dl3","dl-mnist",{id:"dl-pre",t:"预处理与正规化",s:"鱼书 3.6.2",d:"11-19",
+one:"把输入数据变换到合适的范围再喂给网络，比如像素除以 255 变成 0–1。",
+x:"更进一步的做法是让每个特征均值为 0、方差为 1（标准化），或者白化。好的预处理能加快学习、提高精度。"});
+X("dl4","dl-ce",{id:"dl-onehot",t:"one-hot 标签与标签形式",s:"鱼书 4.2.4",d:"11-21",
+one:"标签有两种写法：one-hot（[0,0,1,0…]）或直接写类别编号（2），交叉熵代码要对应处理。",
+c:"# 标签是编号时，直接取出正确类的概率\nbatch_size = y.shape[0]\n-np.sum(np.log(y[np.arange(batch_size), t] + 1e-7)) / batch_size",
+x:"`y[np.arange(N), t]` 一次取出每个样本正确类的预测概率，是 NumPy 花式索引的典型用法。"});
+X("dl4","dl-numdiff",{id:"dl-numgrad",t:"数值梯度的实现",s:"鱼书 4.4",d:"11-21",
+one:"对每个参数分别加减 h，算出两次损失的差，得到这个参数的偏导，循环所有参数就是梯度。",
+c:"def numerical_gradient(f, x):\n    h = 1e-4\n    grad = np.zeros_like(x)\n    for idx in range(x.size):\n        tmp = x[idx]\n        x[idx] = tmp + h; fxh1 = f(x)\n        x[idx] = tmp - h; fxh2 = f(x)\n        grad[idx] = (fxh1 - fxh2) / (2 * h)\n        x[idx] = tmp   # 还原\n    return grad",
+x:"每个参数都要算两次完整的前向传播，几万个参数就要几万次，这就是它慢的原因。"});
+X("dl4","dl-train",{id:"dl-epoch",t:"epoch、batch、iteration 的关系",s:"鱼书 4.5",d:"11-21",
+one:"batch：一次用多少样本；iteration：更新一次参数；epoch：全部数据过一遍。",
+c:"每个 epoch 的 iteration 数 = 训练样本数 / batch 大小\n60000 / 100 = 600",
+q:"有 1 万个样本，batch 大小 50，训练 20 个 epoch，一共更新多少次参数？"});
+X("dl4","dl-epoch",{id:"dl-testacc",t:"用测试数据评价",s:"鱼书 4.5.3",d:"11-21",
+one:"每个 epoch 记录一次训练准确率和测试准确率，两条曲线差得远就是过拟合。",
+x:"鱼书的两层网络两条线几乎重合，说明没有过拟合。曲线是判断训练状态的主要工具。"});
+X("dl5","dl-chain",{id:"dl-chainback",t:"链式法则与计算图",s:"鱼书 5.2.3",d:"11-22",
+one:"在计算图上，反向传播就是把“上游传来的导数 × 本节点的局部导数”往下游传。",
+x:"一个变量被用到多次（图里有分支）时，它的梯度是各条路径传回来的梯度**相加**。"});
+X("dl5","dl-addmul",{id:"dl-apple",t:"买苹果例子的反向传播",s:"鱼书 5.3.3–5.4",d:"11-22",
+one:"总价 = 苹果单价 × 个数 × 消费税，反向传播一次就能求出每个量对总价的影响。",
+x:"苹果 100 元 × 2 个 × 1.1：对单价的导数 2.2，对个数的导数 110，对税率的导数 200。“税率变化影响最大”这类结论一次反向就全得到了。"});
+X("dl5","dl-gradcheck",{id:"dl-whybp",t:"为什么反向传播快",s:"鱼书 5",d:"11-22",
+one:"数值微分每个参数都要单独算两次前向；反向传播一次前向 + 一次反向就得到全部梯度。",
+x:"几十万个参数时，差距是几十万倍。这正是深度学习能训练大模型的基础。"});
+X("dl1x","dl-init0",{id:"dl-dnnfb",t:"深层网络的前向与反向",s:"DL 1-4",d:"11-21",
+one:"前向时每层把 Z 和 A 存进缓存，反向时从最后一层开始，用缓存一层层算 dW、db、dA。",
+c:"前向：Z[l] = W[l]·A[l−1] + b[l],  A[l] = g(Z[l])\n反向：dZ[l] = dA[l] ⊙ g′(Z[l])\n      dW[l] = (1/m) dZ[l]·A[l−1]ᵀ\n      db[l] = (1/m) Σ dZ[l]\n      dA[l−1] = W[l]ᵀ·dZ[l]",
+x:"这就是鱼书第 5 章的“层”思想，吴恩达用的是按列放样本的写法。"});
+X("dl6","dl-sgd",{id:"dl-opt-cmp",t:"四种优化器对比",s:"鱼书 6.1.7",d:"11-24",
+one:"在 MNIST 上，AdaGrad、Adam、Momentum 都比 SGD 学得快，Adam 通常是稳妥的默认选择。",
+x:"鱼书画了四种方法在同一个函数上的路径：SGD 之字形、Momentum 像滚球、AdaGrad 步子越来越小、Adam 两者兼有。"});
+X("dl6","dl-lrdecay",{id:"dl-earlystop",t:"早停 early stopping",s:"DL 2-1",d:"11-23",
+one:"验证集误差不再下降、开始上升时就停止训练，防止过拟合。",
+x:"简单好用，缺点是它同时影响“把训练误差降低”和“防止过拟合”两件事（不符合正交化），吴恩达更推荐用 L2 正则化。"});
+X("dl6","dl-vanish",{id:"dl-clip",t:"梯度裁剪",s:"DL 5-1",d:"11-23",
+one:"梯度太大时把它按比例缩小到一个上限，防止参数一步跳飞（梯度爆炸）。",
+c:"torch.nn.utils.clip_grad_norm_(model.parameters(), max_norm=1.0)",
+x:"训练 RNN 和 Transformer 时很常用。"});
+X("dl6","dl-l2",{id:"dl-l1",t:"L1 正则化",s:"补充",d:null,
+one:"惩罚权重的绝对值之和，会让很多权重正好变成 0（稀疏）。",
+x:"L2 让权重都变小但不为 0；L1 倾向于只保留少数重要的权重。深度学习里 L2（权重衰减）更常用。"});
+X("dl6","dl-dropout",{id:"dl-ensemble",t:"集成学习",s:"鱼书 6.4.3",d:"11-23",
+one:"训练多个模型，预测时取平均，通常比单个模型准几个百分点。",
+x:"Dropout 可以看作在一个网络里低成本地实现了集成学习。"});
+X("dl6","dl-normin",{id:"dl-bnwhy",t:"Batch Norm 为什么有用",s:"DL 2-3",d:"11-24",
+one:"它让每一层的输入分布保持稳定，后面的层不用一直追着前面层的变化重新适应。",
+x:"放在线性计算之后、激活函数之前。用了 BN 后偏置 b 可以去掉（被 β 替代）。测试时用训练过程中各 batch 均值和方差的指数加权平均。"});
+X("dl7","dl-pool",{id:"dl-avgpool",t:"平均池化与全局池化",s:"DL 4-1",d:"11-26",
+one:"平均池化取区域平均值；全局平均池化把整张特征图压成一个数，常代替最后的全连接层。"});
+X("dl7","dl-outsize",{id:"dl-params",t:"卷积层的参数量",s:"DL 4-1",d:"11-26",
+one:"参数量 = 卷积核个数 × (输入通道 × 核高 × 核宽 + 1)，和图片大小无关。",
+c:"10 个 3×3×3 的卷积核：10 × (27 + 1) = 280 个参数\n同样输入做全连接（32×32×3 → 100）：约 30 万个",
+q:"输入 3 通道，用 16 个 5×5 的卷积核，参数量是多少？"});
+X("dl7","dl-cnnarch",{id:"dl-receptive",t:"感受野",s:"补充",d:"11-26",
+one:"输出上的一个点“看到”的原图区域大小，层越深感受野越大。",
+x:"两层 3×3 卷积的感受野是 5×5，三层是 7×7。所以深层神经元能识别更大的图案。"});
+X("dl7","dl-classic",{id:"dl-vis",t:"CNN 学到了什么",s:"鱼书 7.6",d:"11-26",
+one:"第一层卷积核学会了检测边缘和颜色块，越深层学到的特征越抽象。",
+x:"鱼书把第一层卷积核画成图片：训练前是随机噪声，训练后变成有规律的条纹、斑点。"});
+X("dl5x","dl-w2v",{id:"dl-token",t:"分词与词表",s:"补充",d:"11-28",
+one:"文本先切成 token（词或子词），再把每个 token 换成词表里的编号，最后查嵌入表变成向量。",
+x:"现代大模型用子词分词（如 BPE）：常见词是一个 token，生僻词拆成几块，这样词表不用太大也能表示任何词。"});
+X("dl5x","dl-pe",{id:"dl-ffn",t:"前馈网络、残差与层归一化",s:"DL 5-4",d:"11-28",
+one:"每个 Transformer 块里，注意力之后接一个两层全连接网络（FFN），两部分外面都包着“残差 + LayerNorm”。",
+c:"x = LayerNorm(x + MultiHeadAttention(x))\nx = LayerNorm(x + FFN(x))",
+x:"注意力负责“位置之间交换信息”，FFN 负责“每个位置自己加工信息”。残差连接让深层网络能训练，LayerNorm 让数值稳定。"});
+X("dl5x","dl-ffn",{id:"dl-cross",t:"交叉注意力",s:"DL 5-4",d:"11-28",
+one:"解码器用自己的 Q 去查编码器输出的 K、V，也就是“翻译每个词时去看原文”。",
+x:"自注意力：Q、K、V 都来自同一个序列；交叉注意力：Q 来自一个序列，K、V 来自另一个序列。"});
+X("dl5x","dl-mask",{id:"dl-bertgpt",t:"BERT 与 GPT",s:"补充",d:"11-28",
+one:"BERT 只用编码器、做完形填空式预训练，擅长理解；GPT 只用解码器、预测下一个词，擅长生成。",
+x:"现在的对话大模型（GPT、Claude 等）都是 GPT 这一路：只用解码器的 Transformer，先在海量文本上预训练，再微调和对齐。"});
+X("dl5x","dl-bertgpt",{id:"dl-temp",t:"生成时的采样与温度",s:"补充",d:"11-28",
+one:"生成下一个词时，温度低就几乎总选概率最大的词（稳定），温度高就更随机（更有创意）。",
+c:"p = softmax(logits / T)",
+x:"还有 top-k、top-p 采样：只在概率最高的一部分词里抽。"});
+X("dlpt","pt-tensor",{id:"pt-shape",t:"张量形状操作",s:"PyTorch",d:"11-23",
+one:"view/reshape 改形状，unsqueeze 加一维，squeeze 去掉长度为 1 的维，permute 调换维度顺序。",
+c:"x = torch.randn(100, 1, 28, 28)\nx.view(100, -1).shape    # (100, 784)\nx.squeeze(1).shape       # (100, 28, 28)\nx.permute(0, 2, 3, 1)    # (100, 28, 28, 1)"});
+X("dlpt","pt-tensor",{id:"pt-device",t:"CPU 与 GPU",s:"PyTorch",d:"11-23",
+one:"模型和数据必须在同一个设备上，用 `.to(device)` 搬过去。",
+c:"device = \"cuda\" if torch.cuda.is_available() else \"cpu\"\nmodel = model.to(device)\nx, t = x.to(device), t.to(device)",
+w:"报错“Expected all tensors to be on the same device”就是有东西没搬到 GPU。"});
+X("dlpt","pt-module",{id:"pt-seq",t:"nn.Sequential 与常用层",s:"PyTorch",d:"11-25",
+one:"简单的网络可以用 Sequential 按顺序把层串起来，不用写类。",
+c:"model = nn.Sequential(\n    nn.Conv2d(1, 16, 3, padding=1), nn.ReLU(), nn.MaxPool2d(2),\n    nn.Flatten(),\n    nn.Linear(16 * 14 * 14, 10))",
+x:"常用层：`nn.Linear` 全连接、`nn.Conv2d` 卷积、`nn.MaxPool2d` 池化、`nn.BatchNorm2d`、`nn.Dropout`、`nn.Embedding` 嵌入。"});
+X("dlpt","pt-loop",{id:"pt-optim",t:"优化器与学习率调度",s:"PyTorch",d:"11-25",
+one:"`torch.optim` 里有 SGD、Adam 等；scheduler 按计划调整学习率。",
+c:"opt = torch.optim.SGD(model.parameters(), lr=0.1, momentum=0.9, weight_decay=1e-4)\nsched = torch.optim.lr_scheduler.StepLR(opt, step_size=10, gamma=0.1)\n# 每个 epoch 结束：sched.step()",
+x:"`weight_decay` 就是 L2 正则化。"});
+/* 补充：机器学习，含数学基础 */
+NC("ml",null,{id:"math",t:"数学基础：够用就好",s:"计划 W1–W2 数学 + 课程用到的数学",topics:[
+{id:"m-vec",t:"向量",s:"数学",d:"11-02",
+one:"向量就是一列有顺序的数，可以看作空间里的一个箭头，也可以看作一个东西的“特征清单”。",
+x:"一套房子 = [面积 120, 卧室 3, 房龄 10]，这就是一个 3 维向量。图片展平后是 784 维向量，词嵌入是几百维向量。"},
+{id:"m-vecop",t:"向量加法与数乘",s:"数学",d:"11-02",
+one:"加法是对应位置相加（箭头首尾相接），数乘是每个数都乘同一个数（箭头伸缩）。",
+c:"[1, 2] + [3, 4] = [4, 6]\n2 × [1, 2] = [2, 4]"},
+{id:"m-dot",t:"点积（内积）",s:"数学",d:"11-02",
+one:"对应位置相乘再求和，结果是一个数；它衡量两个向量有多“同方向”。",
+c:"[1, 2, 3] · [4, 5, 6] = 4 + 10 + 18 = 32\na · b = |a| |b| cos θ",
+x:"同方向点积大，垂直为 0，反方向为负。线性回归的 w·x、注意力里的 Q·K、推荐系统的相似度，全都是点积。"},
+{id:"m-norm",t:"向量长度与距离",s:"数学",d:"11-02",
+one:"长度 = 各分量平方和再开根号；两点距离 = 差向量的长度。",
+c:"|[3, 4]| = √(9 + 16) = 5"},
+{id:"m-mat",t:"矩阵",s:"数学",d:"11-16",
+one:"矩阵是一张数字表格，m 行 n 列叫 m×n 矩阵；可以看作把很多向量排在一起。",
+x:"一批 100 个样本、每个 784 个特征，就是 100×784 的矩阵。神经网络一层的权重也是一个矩阵。"},
+{id:"m-matmul",t:"矩阵乘法",s:"数学",d:"11-16",
+one:"结果的第 i 行第 j 列 = 左矩阵第 i 行 · 右矩阵第 j 列（点积）。",
+c:"(m×n) · (n×p) = (m×p)\n[[1,2],[3,4]] · [[5],[6]] = [[17],[39]]",
+x:"不满足交换律：AB 一般不等于 BA。形状口诀：中间相同才能乘，结果取两边。"},
+{id:"m-lin",t:"矩阵是线性变换",s:"数学",d:"11-16",
+one:"矩阵乘以向量，就是对向量做旋转、缩放、投影等变换。",
+x:"神经网络每一层先用矩阵把输入“变换到新的空间”，再用激活函数“弯一下”，一层层把数据变得容易分开。"},
+{id:"m-T",t:"转置与单位矩阵",s:"数学",d:"11-16",
+one:"转置 Aᵀ 是行列互换；单位矩阵 I 对角线是 1，乘谁都不变。",
+c:"[[1,2,3],[4,5,6]]ᵀ = [[1,4],[2,5],[3,6]]\n(AB)ᵀ = BᵀAᵀ"},
+{id:"m-sum",t:"求和符号 Σ",s:"数学",d:"11-03",
+one:"Σ 就是“把一串数加起来”，下面写从几开始，上面写到几结束。",
+c:"Σᵢ₌₁ᵐ xᵢ = x₁ + x₂ + … + xₘ\n# 对应代码\ntotal = sum(x[i] for i in range(m))   # 或 np.sum(x)"},
+{id:"m-explog",t:"指数与对数",s:"数学",d:"11-17",
+one:"eˣ 增长极快、永远为正；log 是它的反函数，把乘法变成加法。",
+c:"e ≈ 2.718\nlog(e) = 1, log(1) = 0, log(很小的数) → −∞\nlog(ab) = log a + log b",
+x:"sigmoid、softmax 用 eˣ 保证结果为正；交叉熵用 log 让“错得离谱”时惩罚巨大。概率连乘会变得极小，取 log 变成连加更稳定。"},
+{id:"m-deriv",t:"导数",s:"数学",d:"11-03",
+one:"导数是函数在某点的斜率：x 变化一点点，y 变化多少。",
+c:"(x²)′ = 2x    (xⁿ)′ = n·xⁿ⁻¹\n(eˣ)′ = eˣ    (log x)′ = 1/x\n常数的导数 = 0",
+x:"导数为正说明往右走 y 变大，为负说明变小，为 0 说明到了平坦处（可能是最低点）。梯度下降全靠它找方向。"},
+{id:"m-partial",t:"偏导数与梯度",s:"数学",d:"11-03",
+one:"多个变量时，只让一个变量动、其他固定，求出的导数叫偏导数；所有偏导数排成向量就是梯度。",
+c:"f(x, y) = x² + 3y\n∂f/∂x = 2x,  ∂f/∂y = 3\n∇f = (2x, 3)"},
+{id:"m-chain",t:"链式法则",s:"数学",d:"11-22",
+one:"函数套函数时，导数等于外层导数乘内层导数。",
+c:"y = f(g(x))  →  dy/dx = f′(g(x)) · g′(x)\n例：y = (3x + 1)²  →  dy/dx = 2(3x + 1) · 3",
+x:"反向传播就是在整个网络上反复用链式法则。"},
+{id:"m-prob",t:"概率基础",s:"数学",d:"11-17",
+one:"概率是 0 到 1 之间的数，所有可能结果的概率加起来等于 1。",
+x:"P(A|B) 读作“已知 B 发生时 A 的概率”，逻辑回归输出的就是 P(y=1|x)。独立事件同时发生的概率是相乘，所以异常检测里把每个特征的概率乘起来。"},
+{id:"m-meanvar",t:"均值、方差与标准差",s:"数学",d:"11-16",
+one:"均值是平均水平，方差是“离平均有多散”，标准差是方差开根号（单位和原数据一样）。",
+c:"μ = (1/m) Σ xᵢ\nσ² = (1/m) Σ (xᵢ − μ)²\nσ = √σ²",
+x:"特征缩放、Batch Norm、高斯分布都要用到。"}
+]});
+X("ml11","ml-linreg",{id:"ml-notation",t:"课程里的符号约定",s:"ML 1-1",d:"11-03",
+one:"x 输入特征，y 目标值，m 样本数，n 特征数，(x⁽ⁱ⁾, y⁽ⁱ⁾) 第 i 个样本，ŷ 预测值。",
+x:"上标带括号 ⁽ⁱ⁾ 表示第几个样本（不是 i 次方），下标 ⱼ 表示第几个特征。神经网络里上标方括号 [l] 表示第几层。"});
+X("ml11","ml-gdlin",{id:"ml-gdintuit",t:"为什么梯度下降能找到最低点",s:"ML 1-1",d:"11-04",
+one:"在最低点左边导数为负，减去负数 w 变大；右边导数为正，w 变小，所以总会往谷底走。",
+x:"凸函数（碗形）只有一个最低点，梯度下降一定能到；神经网络的损失不是碗形，可能停在局部最低点，但实际影响不大。"});
+X("ml12","ml-gdmulti",{id:"ml-normal",t:"正规方程",s:"ML 1-2",d:"11-16",
+one:"线性回归可以不迭代，用一个公式直接解出最优 w。",
+c:"w = (XᵀX)⁻¹ Xᵀ y",
+x:"优点：不用选学习率、不用迭代。缺点：只适用于线性回归，特征很多（上万）时求逆很慢。一些库内部会用它，知道有这个方法即可。"});
+X("ml12","ml-poly",{id:"ml-sklearn",t:"用 scikit-learn 实现",s:"ML 1-2",d:"11-16",
+one:"scikit-learn 是传统机器学习的工具库，几行代码就能完成缩放和训练。",
+c:"from sklearn.preprocessing import StandardScaler\nfrom sklearn.linear_model import SGDRegressor\nX_norm = StandardScaler().fit_transform(X)\nmodel = SGDRegressor(max_iter=1000).fit(X_norm, y)\nmodel.coef_, model.intercept_   # 学到的 w 和 b",
+x:"课程的选修实验有这一节。自己用 NumPy 写一遍是为了理解，实际工作常直接调库。"});
+X("ml13","ml-db",{id:"ml-threshold",t:"预测与阈值",s:"ML 1-3",d:"11-17",
+one:"逻辑回归输出概率，再用阈值（通常 0.5）变成 0 或 1 的预测。",
+x:"阈值可以调：漏掉坏情况代价大（如疾病筛查）就把阈值调低。"});
+X("ml13","ml-reg",{id:"ml-reglin",t:"正则化后的梯度下降",s:"ML 1-3",d:"11-17",
+one:"更新 w 时多了一项 (λ/m)·wⱼ，相当于每一步先把 w 乘一个略小于 1 的数，再正常更新。",
+c:"wⱼ = wⱼ − α [ (1/m) Σ (f(x⁽ⁱ⁾) − y⁽ⁱ⁾) xⱼ⁽ⁱ⁾ + (λ/m) wⱼ ]\n   = wⱼ (1 − αλ/m) − α · (原来的梯度)",
+x:"线性回归和逻辑回归都是这个形式，b 不加正则项。"});
+X("ml21","ml-nnvec",{id:"ml-dense",t:"用 NumPy 手写一层",s:"ML 2-1",d:"11-18",
+one:"一层就是：对每个神经元算 w·x + b，再过激活函数；向量化后一行搞定。",
+c:"def dense(a_in, W, b):\n    z = np.matmul(a_in, W) + b   # W 每一列是一个神经元\n    return sigmoid(z)\n\ndef sequential(x):\n    a1 = dense(x, W1, b1)\n    a2 = dense(a1, W2, b2)\n    return a2",
+x:"和鱼书 3.4 的 forward 是同一个东西，可以对照着看。"});
+X("ml21","ml-dense",{id:"ml-agi",t:"神经网络与人工智能的关系",s:"ML 2-1",d:"11-18",
+one:"人工神经网络受大脑启发，但实际工作方式和大脑差别很大；现在的 AI 分为专用 AI 和通用 AI（AGI）。",
+x:"吴恩达认为专用 AI（语音识别、推荐、自动驾驶等）已经非常成功，AGI 还很遥远。你的“贾维斯”属于把多个专用能力整合起来的方向。"});
+X("ml22","ml-train3",{id:"ml-tfsteps",t:"训练三步的代码",s:"ML 2-2",d:"11-19",
+one:"TensorFlow 里分别是 Sequential（模型）、compile（损失）、fit（训练）。",
+c:"model = Sequential([Dense(25, 'relu'), Dense(15, 'relu'), Dense(1, 'sigmoid')])\nmodel.compile(loss=BinaryCrossentropy())\nmodel.fit(X, y, epochs=100)",
+x:"对应逻辑回归的三步：定义 f(x)、定义损失和代价、用梯度下降最小化。PyTorch 写法见深度学习板块的“训练循环五步”。"});
+X("ml22","ml-adam",{id:"ml-backprop",t:"计算图与反向传播（课程选修）",s:"ML 2-2",d:"11-19",
+one:"框架通过计算图，用一次反向传播求出所有参数的导数，比一个个求快得多。",
+x:"课程的选修视频讲了这个，鱼书第 5 章讲得更细，以鱼书为主。"});
+X("ml23","ml-cv",{id:"ml-modelsel",t:"用验证集选模型",s:"ML 2-3",d:"11-19",
+one:"候选模型（几次多项式、几层网络）都在训练集上训练，选验证集误差最小的，最后用测试集报告成绩。",
+x:"测试集只用一次，它给出的才是对新数据表现的公平估计。"});
+X("ml23","ml-transfer",{id:"ml-skewdata",t:"数据合成",s:"ML 2-3",d:"11-19",
+one:"用程序人工造出训练数据，比如用电脑里的各种字体渲染文字图片来训练文字识别。",
+x:"主要用于计算机视觉，能便宜地得到大量带标签的数据。"});
+X("ml24","ml-onehot",{id:"ml-treeprobs",t:"决策树的优缺点",s:"ML 2-4",d:"11-20",
+one:"优点：训练快、不用特征缩放、小树容易解释。缺点：单棵树不稳定，容易过拟合。",
+x:"所以实际中几乎总用树集成（随机森林、XGBoost）。"});
+X("ml31","ml-adalgo",{id:"ml-adeval",t:"异常检测的评估",s:"ML 3-1",d:"11-20",
+one:"训练集只放正常样本，验证集和测试集里放少量已知异常，用来调 ε 和评估。",
+x:"异常样本太少时看精确率、召回率、F1，而不是准确率。"});
+X("ml31","ml-advssup",{id:"ml-adfeat",t:"异常检测的特征选择",s:"ML 3-1",d:"11-20",
+one:"让特征分布更接近钟形（如取 log），并通过分析漏掉的异常来造新特征。",
+c:"x_new = np.log(x + 1)\nx_new = cpu_load / network_traffic   # 组合特征",
+x:"例：CPU 负载高但网络流量低，单看每个都不算异常，组合起来就很可疑。"});
+X("ml32","ml-cf",{id:"ml-cfgd",t:"用自动求导实现协同过滤",s:"ML 3-2",d:"11-21",
+one:"协同过滤不是神经网络的标准层，就自己写代价函数，让 TensorFlow 自动求导，再用 Adam 优化。",
+c:"with tf.GradientTape() as tape:\n    cost = cofi_cost(X, W, b, Y, R, lambda_)\ngrads = tape.gradient(cost, [X, W, b])\nopt.apply_gradients(zip(grads, [X, W, b]))",
+x:"这说明框架的自动求导不只用于神经网络，任何可导的代价函数都能用。PyTorch 的 `loss.backward()` 是同一件事。"});
+X("ml32","ml-cbdl",{id:"ml-recethic",t:"推荐系统的伦理",s:"ML 3-2",d:"11-21",
+one:"只优化点击率可能推荐耸动、上瘾或有害的内容，设计时要考虑对用户和社会的影响。"});
+X("ml33","ml-dqn",{id:"ml-lunar",t:"例子：月球着陆器",s:"ML 3-3",d:"11-21",
+one:"状态 8 个数（位置、速度、角度、腿是否着地），动作 4 个（不动、左推、主推、右推），平稳着陆得高分。",
+x:"网络输入状态，输出 4 个动作各自的 Q 值，选最大的执行。课程的编程作业就是训练它。"});
+X("ml33","ml-eps",{id:"ml-rllimit",t:"强化学习的局限",s:"ML 3-3",d:"11-21",
+one:"在模拟器里容易成功，搬到真实世界难得多；实际应用比监督和无监督学习少。",
+x:"但大模型的对齐训练（RLHF）用到了强化学习，所以它对做 AI 助手很重要。"});
 
 </script>
 <script>

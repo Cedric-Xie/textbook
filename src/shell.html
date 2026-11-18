@@ -126,7 +126,7 @@ footer{margin-top:40px;font-size:13px;color:var(--muted)}
 
 <div class="wrap">
   <header class="top">
-    <div class="brand"><h1>教科书</h1><span class="sub" id="sub">Python · 深度学习 · 机器学习</span></div>
+    <div class="brand"><h1>教科书</h1><span class="sub" id="sub">Python · 深度学习 · 机器学习 · 数学基础</span></div>
     <div class="sync" id="sync">笔记：正在连接云端…</div>
     <section class="todaybox" id="todaybox" hidden>
       <h2 id="todayTitle">今天要学</h2>
@@ -195,7 +195,7 @@ function dateLabel(t){if(!t.d)return "自学";const [m,d]=t.d.split("-");return 
 
 function setSync(){
   const el=document.getElementById("sync");
-  const map={connecting:"笔记：正在连接云端…",cloud:"笔记：自动保存到云端，换设备也能看到",saving:"笔记：保存中…",local:"笔记：云端不可用，暂存在这台设备的浏览器里",error:"笔记：云端保存失败，已暂存在本机，稍后再改一次会重试"};
+  const map={connecting:"笔记：正在连接云端…",cloud:"笔记：自动保存到云端，换设备也能看到",saving:"笔记：保存中…",local:(window.claude&&window.claude.use)?"笔记：云端不可用，暂存在这台设备的浏览器里":"笔记：保存在这台设备的浏览器里（换设备或清除浏览器数据会丢失）",error:"笔记：云端保存失败，已暂存在本机，稍后再改一次会重试"};
   el.textContent=map[cloud]||"";
 }
 function persist(id){
@@ -319,7 +319,7 @@ function topicEl(t){
   [["done","已学"],["review","要复习"],["todo","未学"]].forEach(([k,l])=>{
     const bt=document.createElement("button");bt.type="button";bt.dataset.s=k;bt.textContent=l;
     const cur=ov||(auto(t)==="today"?"":auto(t));bt.setAttribute("aria-pressed",cur===k?"true":"false");
-    bt.onclick=e=>{e.stopPropagation();S[t.id]=Object.assign({},S[t.id]);S[t.id].s=(k===auto(t)&&!ov)?k:k;if(S[t.id].s===auto(t))delete S[t.id].s;persist(t.id);render(true)};
+    bt.onclick=e=>{e.stopPropagation();S[t.id]=Object.assign({},S[t.id]);S[t.id].s=k;if(S[t.id].s===auto(t))delete S[t.id].s;persist(t.id);render(true)};
     seg.appendChild(bt);
   });
   nh.append(lab,ns,seg);
@@ -356,26 +356,28 @@ function render(keepScroll){
   });
   if(!shown){const p=document.createElement("p");p.className="empty";p.textContent=query?"没有找到包含“"+query+"”的知识点，换个词试试。":"这个板块没有符合筛选条件的知识点。";main.appendChild(p)}
   if(keepScroll)window.scrollTo(0,y);
-  if(active){const el=document.getElementById(active);if(el&&el!==document.body)el.focus({preventScroll:true})}
+  if(active){const el=document.getElementById(active);if(el&&el!==document.body){el.focus({preventScroll:true});if(el.tagName==="TEXTAREA"){const L=el.value.length;try{el.setSelectionRange(L,L)}catch(e){}}}}
 }
 
 document.getElementById("q").addEventListener("input",e=>{query=e.target.value.trim().toLowerCase();render()});
 window.addEventListener("hashchange",()=>{readHash();render()});
+if(!window.claude||!window.claude.use){cloud="local"}
 render();setSync();
 
 /* ---------- cloud ---------- */
 (async()=>{
   const fail=setTimeout(()=>{if(cloud==="connecting"){cloud="local";setSync()}},10000);
   try{
+    if(!window.claude||!window.claude.use){clearTimeout(fail);return}
     const [db,user]=await Promise.all([window.claude.use("db"),window.claude.use("user")]);
     if(!db||!user){clearTimeout(fail);cloud="local";setSync();return}
     const uid=await user.id();
     if(!uid){clearTimeout(fail);cloud="local";setSync();return}
-    col=db.collection("data/users/"+uid+"/textbook").doc("v1").collection("topics");
+    col=db.collection("data/users/"+uid);
     let first=true;
     col.limit(1000).onSnapshot(snap=>{
       clearTimeout(fail);
-      const remote={};snap.docs.forEach(d=>{const v=d.data()||{};remote[d.id]={n:v.n||"",s:v.s||""}});
+      const before=JSON.stringify(S);const remote={};snap.docs.forEach(d=>{const v=d.data()||{};remote[d.id]={n:v.n||"",s:v.s||""}});
       if(first&&!snap.metadata.fromCache){
         first=false;
         // push local-only notes (written before cloud was reachable) up once
@@ -388,9 +390,10 @@ render();setSync();
         const r=remote[id],o={};if(r.n)o.n=r.n;if(r.s)o.s=r.s;S[id]=Object.assign(S[id]||{},o);
         if(!r.n)delete S[id].n;if(!r.s)delete S[id].s;
       });
+      const after=JSON.stringify(S);
       cache();
       if(!Object.keys(pending).length){cloud="cloud";setSync()}
-      render(true);
+      if(after!==before)render(true);
     },err=>{clearTimeout(fail);col=null;cloud="local";setSync()});
   }catch(e){clearTimeout(fail);cloud="local";setSync()}
 })();
