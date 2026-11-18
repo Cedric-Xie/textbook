@@ -2,10 +2,11 @@
 import os
 D=os.path.dirname(os.path.abspath(__file__))
 R=lambda f:open(os.path.join(D,f),encoding="utf-8").read()
-helpers='''function X(ch,after,t){for(const b of BOOK)for(const c of b.chapters)if(c.id===ch){const i=c.topics.findIndex(x=>x.id===after);c.topics.splice(i<0?c.topics.length:i+1,0,t);return}throw new Error("no chapter "+ch)}
+helpers='''function D(id,o){for(const b of BOOK)for(const c of b.chapters)for(const t of c.topics)if(t.id===id){if(o.a)t.a=o.a;if(o.s)t.st=o.s;if(o.ex)t.ex=o.ex;if(o.x)t.x=o.x;return}throw new Error("no topic "+id)}
+function X(ch,after,t){for(const b of BOOK)for(const c of b.chapters)if(c.id===ch){const i=c.topics.findIndex(x=>x.id===after);c.topics.splice(i<0?c.topics.length:i+1,0,t);return}throw new Error("no chapter "+ch)}
 function NC(bk,afterCh,ch){const b=BOOK.find(x=>x.key===bk);const i=afterCh?b.chapters.findIndex(c=>c.id===afterCh):-1;b.chapters.splice(i+1,0,ch)}
 '''
-data=helpers+"".join(R(f) for f in ["py.js","ml.js","dl.js","extra_py.js","extra_dl.js","extra_ml.js"])
+data=helpers+"".join(R(f) for f in ["py.js","ml.js","dl.js","extra_py.js","extra_dl.js","extra_ml.js"]+sorted(f for f in os.listdir(D) if f.startswith("deep_") and f.endswith(".js")))
 shell=R("shell.html").replace("/*DATA*/",data)
 open(os.path.join(D,"..","artifact.html"),"w",encoding="utf-8").write(shell)
 body=shell.replace('<title>教科书</title>\n<meta name="claude:viewport-fit-sides" content="cover">\n','')

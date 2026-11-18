@@ -95,6 +95,11 @@ pre{margin:0;font-family:var(--mono);font-size:13px;line-height:1.6;background:v
 pre .cm{color:var(--muted)}
 .box{border-radius:8px;padding:8px 12px;font-size:14px}
 .box .lb{font-weight:700;font-size:12.5px;letter-spacing:.05em;margin-right:6px}
+.box.ana{background:var(--soft);border:1px solid var(--line)} .box.ana .lb{color:var(--acc)}
+.steps{display:grid;gap:4px}.steps .sh{font-weight:700;font-size:12.5px;letter-spacing:.05em;color:var(--acc)}
+.steps ol{margin:0;padding-left:1.4em;display:grid;gap:4px;font-size:14.5px}
+.box.ex{border:1px solid var(--line);border-left:3px solid var(--acc);background:var(--paper)} .box.ex .lb{color:var(--acc);margin-bottom:2px}
+.box.ex .exb{font-size:14px;line-height:1.75}
 .box.warn{background:var(--rev-soft)} .box.warn .lb{color:var(--rev)}
 .box.try{background:var(--acc-soft)} .box.try .lb{color:var(--acc)}
 .notes{display:grid;gap:6px}
@@ -305,6 +310,9 @@ function topicEl(t){
   const body=document.createElement("div");body.className="tbody";body.id="b-"+t.id;body.hidden=!isOpen;
   const ls=document.createElement("div");ls.className="lesson";
   if(t.x){const d=document.createElement("div");d.innerHTML=rich(t.x);d.style.display="grid";d.style.gap="8px";ls.appendChild(d)}
+  if(t.a){const d=document.createElement("div");d.className="box ana";d.innerHTML='<span class="lb">打个比方</span>'+inline(t.a);ls.appendChild(d)}
+  if(t.st&&t.st.length){const d=document.createElement("div");d.className="steps";d.innerHTML='<div class="sh">一步一步看</div><ol>'+t.st.map(x=>"<li>"+inline(x)+"</li>").join("")+"</ol>";ls.appendChild(d)}
+  if(t.ex){const d=document.createElement("div");d.className="box ex";d.innerHTML='<div class="lb">算一个小例子</div><div class="exb">'+inline(t.ex).replace(/\n/g,"<br>")+"</div>";ls.appendChild(d)}
   if(t.c){const p=document.createElement("pre");p.innerHTML=codeHtml(t.c);ls.appendChild(p)}
   if(t.w){const d=document.createElement("div");d.className="box warn";d.innerHTML='<span class="lb">易错</span>'+inline(t.w);ls.appendChild(d)}
   if(t.q){const d=document.createElement("div");d.className="box try";d.innerHTML='<span class="lb">'+(t.b==="py"?"试一试":"自测")+'</span>'+inline(t.q);ls.appendChild(d)}
