@@ -1,0 +1,854 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>50天暑研冲刺</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@600;800&family=Noto+Sans+SC:wght@400;500;700&family=JetBrains+Mono:wght@500&display=swap">
+<style>
+/* Layout: notebook-style week tabs on top, one week at a time: goal panel, then seven day cards */
+:root{
+  --bg:#f3f5f8; --paper:#ffffff; --ink:#18202c; --muted:#5d6878; --line:#dde2ea;
+  --accent:#2b5fd9; --accent-soft:#e3ebfc; --done:#1f8a5b; --done-soft:#e1f3ea; --warn:#b5651d;
+  --t-video:#2b5fd9; --t-code:#7a3fc4; --t-paper:#b5651d; --t-talk:#1f8a5b; --t-check:#c23b4e; --t-py:#0e7c86;
+  --display:"Noto Serif SC","Songti SC",serif; --body:"Noto Sans SC","PingFang SC","Microsoft YaHei",sans-serif; --mono:"JetBrains Mono",ui-monospace,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#10141b; --paper:#181e28; --ink:#e6eaf1; --muted:#98a3b4; --line:#2a3240;
+  --accent:#7aa2ff; --accent-soft:#1f2b45; --done:#5cc995; --done-soft:#17322a; --warn:#e3a463;
+  --t-video:#7aa2ff; --t-code:#b98cf0; --t-paper:#e3a463; --t-talk:#5cc995; --t-check:#f07f8f; --t-py:#4cc3cc; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#10141b; --paper:#181e28; --ink:#e6eaf1; --muted:#98a3b4; --line:#2a3240;
+  --accent:#7aa2ff; --accent-soft:#1f2b45; --done:#5cc995; --done-soft:#17322a; --warn:#e3a463;
+  --t-video:#7aa2ff; --t-code:#b98cf0; --t-paper:#e3a463; --t-talk:#5cc995; --t-check:#f07f8f; --t-py:#4cc3cc; color-scheme:dark}
+body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:15px;line-height:1.6}
+.wrap{max-width:960px;margin:0 auto;padding-block:24px 48px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:grid;gap:20px}
+header{display:grid;gap:10px}
+h1{font-family:var(--display);font-weight:800;font-size:clamp(26px,5vw,36px);margin:0;letter-spacing:.02em;text-wrap:balance}
+.sub{color:var(--muted);margin:0}
+.stats{display:flex;flex-wrap:wrap;gap:8px 20px;font-size:14px;color:var(--muted)}
+.stats b{color:var(--ink);font-family:var(--mono);font-variant-numeric:tabular-nums}
+.bar{height:8px;background:var(--line);border-radius:4px;overflow:hidden}
+.bar i{display:block;height:100%;background:var(--done);width:0;transition:width .3s}
+.tabs{display:flex;gap:8px;overflow-x:auto;padding-bottom:4px;scrollbar-width:thin}
+.tab{flex:0 0 auto;border:1px solid var(--line);background:var(--paper);color:var(--ink);border-radius:10px;padding:8px 12px;cursor:pointer;font:inherit;text-align:left;display:grid;gap:2px;min-width:92px}
+.tab small{font-family:var(--mono);font-size:11px;color:var(--muted)}
+.tab .pct{font-family:var(--mono);font-size:11px;color:var(--done)}
+.tab[aria-selected="true"]{border-color:var(--accent);background:var(--accent-soft)}
+.tab.now::after{content:"本周";font-size:10px;color:var(--accent);font-weight:700}
+.tab:focus-visible,.task input:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.goal{background:var(--paper);border:1px solid var(--line);border-radius:14px;padding:18px 20px;display:grid;gap:14px}
+.goal h2{font-family:var(--display);font-size:22px;margin:0;text-wrap:balance}
+.goal .theme{color:var(--muted);margin:0}
+.cols{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px}
+.cols > div{min-width:0}
+.label{font-size:12px;letter-spacing:.08em;color:var(--muted);font-weight:700;margin:0 0 6px}
+.goal ul{margin:0;padding-left:1.2em;display:grid;gap:4px}
+.days{display:grid;gap:12px}
+.day{background:var(--paper);border:1px solid var(--line);border-radius:12px;padding:14px 16px;display:grid;gap:8px}
+.day.today{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent)}
+.day.alldone{background:var(--done-soft)}
+.dhead{display:flex;flex-wrap:wrap;align-items:baseline;gap:6px 12px}
+.dhead .date{font-family:var(--mono);font-size:13px;color:var(--muted)}
+.dhead h3{margin:0;font-size:16px;font-weight:700}
+.dhead .hrs{margin-left:auto;font-size:12px;color:var(--muted)}
+.dhead .tag-today{font-size:11px;color:var(--paper);background:var(--accent);border-radius:4px;padding:0 6px}
+.task input{margin-top:5px;width:16px;height:16px;accent-color:var(--done)}
+.kind{font-size:11px;font-weight:700;border-radius:4px;padding:1px 6px;margin-top:2px;white-space:nowrap;border:1px solid currentColor}
+.k-py{color:var(--t-py)}.k-video{color:var(--t-video)}.k-code{color:var(--t-code)}.k-paper{color:var(--t-paper)}.k-talk{color:var(--t-talk)}.k-check{color:var(--t-check)}
+.task span.txt{min-width:0;display:grid;gap:3px}
+.task .note{font-size:13px;color:var(--muted);line-height:1.55}
+.task .links{display:flex;flex-wrap:wrap;gap:6px}
+.task .links a{font-size:12px;color:var(--accent);text-decoration:none;border:1px solid var(--line);border-radius:999px;padding:1px 8px;overflow-wrap:anywhere}
+.task .links a:hover,.task .links a:focus-visible{border-color:var(--accent)}
+.tbody input:checked ~ .txt .main{color:var(--muted);text-decoration:line-through}
+.daytools{display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px}
+.daytools .hint{margin:0;font-size:13px;color:var(--muted);flex:1 1 260px}
+.tlist{display:grid;gap:8px;min-height:28px}
+.task{display:grid;grid-template-columns:auto 1fr auto;gap:6px;align-items:start;border-radius:8px}
+.task .tbody{display:grid;grid-template-columns:auto auto 1fr;gap:8px;align-items:start;cursor:pointer;min-width:0}
+.handle{border:0;background:none;color:var(--muted);font-size:16px;line-height:1;padding:4px 4px;margin-top:1px;cursor:grab;touch-action:none;border-radius:4px;user-select:none;-webkit-user-select:none}
+.handle:hover{color:var(--ink);background:var(--accent-soft)}
+.handle:focus-visible,.ibtn:focus-visible,.add:focus-visible,.btn:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
+.acts{display:flex;gap:2px;opacity:.55}
+.task:hover .acts,.task:focus-within .acts{opacity:1}
+.ibtn{border:0;background:none;color:var(--muted);font:inherit;font-size:13px;padding:2px 6px;border-radius:4px;cursor:pointer;white-space:nowrap}
+.ibtn:hover{background:var(--accent-soft);color:var(--ink)}
+.ibtn.del.armed{color:var(--paper);background:var(--t-check)}
+.add{justify-self:start;border:1px dashed var(--line);background:none;color:var(--muted);font:inherit;font-size:13px;border-radius:8px;padding:3px 10px;cursor:pointer}
+.add:hover{border-color:var(--accent);color:var(--accent)}
+.empty{margin:0;font-size:13px;color:var(--muted)}
+.ph{height:40px;border:2px dashed var(--accent);border-radius:8px;background:var(--accent-soft)}
+.ghost{position:fixed;z-index:50;pointer-events:none;background:var(--paper);border:1px solid var(--accent);border-radius:8px;box-shadow:0 8px 24px rgba(0,0,0,.18);padding:6px 10px;display:flex;gap:8px;align-items:center;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;box-sizing:border-box}
+.ghost span:last-child{overflow:hidden;text-overflow:ellipsis}
+body.dragging{cursor:grabbing;user-select:none;-webkit-user-select:none}
+.editor{display:grid;gap:8px;border:1px solid var(--accent);border-radius:10px;padding:10px;background:var(--accent-soft)}
+.erow{display:flex;flex-wrap:wrap;gap:8px}
+.editor input,.editor textarea,.editor select{font:inherit;font-size:14px;color:var(--ink);background:var(--paper);border:1px solid var(--line);border-radius:6px;padding:6px 8px;min-width:0}
+.editor input,.editor textarea{width:100%;box-sizing:border-box}
+.btn{font:inherit;font-size:13px;border:1px solid var(--line);background:var(--paper);color:var(--ink);border-radius:8px;padding:5px 12px;cursor:pointer}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--paper)}
+.btn.ghostbtn.armed{border-color:var(--t-check);color:var(--t-check)}
+.legend{display:flex;flex-wrap:wrap;gap:8px;font-size:12px;color:var(--muted);align-items:center}
+.save{font-size:12px;color:var(--muted)}
+footer{font-size:13px;color:var(--muted)}
+footer a{color:var(--accent)}
+@media (prefers-reduced-motion: reduce){.bar i{transition:none}}
+</style>
+
+<div class="wrap">
+  <header>
+    <h1>50天暑研冲刺</h1>
+    <p class="sub">2026/11/2 – 12/6 · 目标：面试通过 · 看完并理解吴恩达《机器学习》3 门 +《深度学习》5 门 · Python 每天一条主线</p>
+    <div class="stats">
+      <span>距 12/6 还有 <b id="left">–</b> 天</span>
+      <span>总进度 <b id="totalPct">0%</b>（<b id="totalCnt">0/0</b> 项）</span>
+      <span class="save" id="saveState">进度保存中…</span>
+    </div>
+    <div class="bar" aria-hidden="true"><i id="totalBar"></i></div>
+  </header>
+
+  <nav class="tabs" id="tabs" role="tablist" aria-label="选择周次"></nav>
+
+  <section class="goal" id="goal"></section>
+
+  <div class="legend">
+    <span class="kind k-py">Python</span>Python 主线
+    <span class="kind k-video">视频</span>课程视频与测验
+    <span class="kind k-code">动手</span>代码与鱼书
+    <span class="kind k-paper">论文</span>读论文
+    <span class="kind k-talk">表达</span>复述与面试
+    <span class="kind k-check">检验</span>周日检验
+  </div>
+
+  <div class="daytools" id="daytools"></div>
+  <section class="days" id="days"></section>
+
+  <footer>B站链接是搜索页（同一门课有很多上传版本），选播放量高、带中英字幕的那个即可；Coursera 可以免费旁听。论文相关任务的详细内容在<a href="https://claude.ai/artifact/P9mENTLY7QE8ieg7i2pqU5" target="_blank" rel="noopener">论文精读文档</a>。<br>工作日约 4 小时（其中 Python 30–45 分钟），周六约 6.5 小时，周日 2–3 小时。视频当天没看完就周六补，不要砍复述和论文。12/6 之后进入面试。11/16–12/1 只学内容（视频可以开 1.5–2 倍速，但每一节都要看完），12/2–12/6 做练习当复习并模拟面试。</footer>
+</div>
+
+<script>
+const V="video",C="code",P="paper",T="talk",K="check",Y="py";
+const bili=q=>["B站搜索："+q,"https://search.bilibili.com/all?keyword="+encodeURIComponent(q)];
+const ML=q=>bili("吴恩达 机器学习 2022 "+q), DL=q=>bili("吴恩达 深度学习 "+q), LHY=q=>bili("李宏毅 "+q);
+const L={
+ cML:["Coursera 机器学习专项课（可免费旁听）","https://www.coursera.org/specializations/machine-learning-introduction"],
+ cDL:["Coursera 深度学习专项课（可免费旁听）","https://www.coursera.org/specializations/deep-learning"],
+ colab:["Google Colab","https://colab.research.google.com/"],
+ pyCtl:["Python 官方教程：流程控制","https://docs.python.org/zh-cn/3/tutorial/controlflow.html"],
+ pyDS:["Python 官方教程：数据结构","https://docs.python.org/zh-cn/3/tutorial/datastructures.html"],
+ pyIO:["Python 官方教程：输入输出","https://docs.python.org/zh-cn/3/tutorial/inputoutput.html"],
+ pyCls:["Python 官方教程：类","https://docs.python.org/zh-cn/3/tutorial/classes.html"],
+ pyMod:["Python 官方教程：模块","https://docs.python.org/zh-cn/3/tutorial/modules.html"],
+ pyErr:["Python 官方教程：错误和异常","https://docs.python.org/zh-cn/3/tutorial/errors.html"],
+ pyArg:["Python 文档：argparse","https://docs.python.org/zh-cn/3/library/argparse.html"],
+ np:["NumPy 新手教程","https://numpy.org/doc/stable/user/absolute_beginners.html"],
+ npB:["NumPy 广播规则","https://numpy.org/doc/stable/user/basics.broadcasting.html"],
+ plt:["Matplotlib 快速入门","https://matplotlib.org/stable/users/explain/quick_start.html"],
+ pt:["PyTorch 入门教程","https://pytorch.org/tutorials/beginner/basics/intro.html"],
+ ptT:["PyTorch：张量","https://pytorch.org/tutorials/beginner/basics/tensorqs_tutorial.html"],
+ ptA:["PyTorch：自动求导","https://pytorch.org/tutorials/beginner/basics/autogradqs_tutorial.html"],
+ ptM:["PyTorch：搭建网络","https://pytorch.org/tutorials/beginner/basics/buildmodel_tutorial.html"],
+ ptD:["PyTorch：数据加载","https://pytorch.org/tutorials/beginner/basics/data_tutorial.html"],
+ ptO:["PyTorch：训练循环","https://pytorch.org/tutorials/beginner/basics/optimization_tutorial.html"],
+ ptS:["PyTorch：保存与加载","https://pytorch.org/tutorials/beginner/basics/saveloadrun_tutorial.html"],
+ fish:["鱼书官方代码（GitHub）","https://github.com/oreilly-japan/deep-learning-from-scratch"],
+ git:["Pro Git 中文版","https://git-scm.com/book/zh/v2"],
+ paper:["论文精读文档","https://claude.ai/artifact/P9mENTLY7QE8ieg7i2pqU5"],
+ doi:["论文原文（ACM）","https://doi.org/10.1145/3805622.3810754"],
+ plan:["冲刺计划文档","https://claude.ai/artifact/KfPiYBPFQPNqzhnrWUQVc1"]
+};
+const WEEKS=[
+ {id:"S1",start:"2026-11-02",title:"S1 · 机器学习入门 + Python 基础",theme:"《机器学习》第 1 门：回归与分类。Python 从基础语法补起，目标是能读懂课程代码。",
+  goals:["说清什么是监督学习、无监督学习","讲清线性回归、代价函数、梯度下降","讲清逻辑回归、过拟合与正则化","用一句话说出论文要解决的问题"],
+  out:["用 NumPy 写一元线性回归的梯度下降，画出损失曲线","论文生词表第一版"],
+  pyGoal:"能独立写 20 行以内的小程序：变量、判断、循环、函数、列表、字典",pyOut:"10 道基础小题（判断素数、九九乘法表、斐波那契、词频统计等）",
+  days:[
+   [[Y,"打开 Colab，复习变量、if 判断、for 循环","Colab 是浏览器里的 Python 笔记本，不用装软件。每个知识点都自己敲一个小例子运行。",[L.colab,L.pyCtl]],
+    [V,"ML 1-1：什么是机器学习，监督与无监督学习","监督学习有“标准答案”（房价、是否垃圾邮件），无监督学习没有答案、只找结构（把用户分组）。各举 2 个生活例子写进笔记。",[ML("监督学习 无监督学习"),L.cML]],
+    [P,"读论文标题、摘要、引言，划出不懂的词","先不求懂，只把不认识的词（PDE、neural operator、Lie symmetry、OOD…）列成生词表，后面每学会一个划掉一个。",[L.paper,L.doi]]],
+   [[Y,"Python 30 分钟：for 循环、列表推导式","列表推导式 [x*x for x in range(10)] 是课程代码里最常见的写法，先能读懂。",[L.pyDS]],
+    [V,"ML 1-1：线性回归模型、代价函数","线性回归就是“找一条最贴近数据点的直线”，代价函数衡量直线离点有多远。重点理解为什么用平方误差。",[ML("线性回归 代价函数")]],
+    [C,"NumPy 入门：数组创建、加减乘、shape","NumPy 数组是深度学习的基本“容器”。重点记住 shape（形状），后面 80% 的 bug 都是形状对不上。",[L.np]],
+    [T,"用自己的话讲代价函数在衡量什么","费曼学习法：假装讲给一个高中生听，讲不顺的地方就是没懂的地方。",[]]],
+   [[Y,"Python 30 分钟：函数参数与返回值，写 3 个小函数","比如 is_prime(n)、mean(lst)、square_all(lst)。函数是把代码拆小块的基本工具。",[L.pyCtl]],
+    [V,"ML 1-1：梯度下降的直觉和学习率","想象蒙眼下山：每步往最陡的方向走一小步。学习率就是步子大小，太大会来回跳，太小走不动。",[ML("梯度下降")]],
+    [C,"NumPy：矩阵乘法 @、求和、均值","@ 是矩阵乘法，* 是逐元素相乘，两者别混。试试 sum(axis=0) 和 axis=1 的区别。",[L.np]],
+    [P,"读论文图 1、图 2，补充生词表","图 1 讲对称性增强，图 2 讲自监督学习流程。先看懂图在“画什么”，不求懂原理。",[L.paper]]],
+   [[Y,"Python 30 分钟：字典、f-string 字符串格式化","字典 {名字: 分数} 用来存“键→值”。f\"loss={loss:.4f}\" 是打印训练日志的标准写法。",[L.pyDS,L.pyIO]],
+    [V,"ML 1-2：多元特征、向量化、特征缩放","多个特征时用向量一次算完（向量化）。特征缩放让不同单位的特征（面积、房间数）在同一量级，梯度下降更快。",[ML("向量化 特征缩放")]],
+    [C,"鱼书第 1 章：NumPy 和 Matplotlib 画图","照着书把 sin 曲线画出来。画图是看训练过程的眼睛。",[L.fish,L.plt]],
+    [T,"讲清为什么向量化比 for 循环快","提示：NumPy 底层用 C 和并行指令一次处理一整批数。",[]]],
+   [[Y,"Python 30 分钟：类与对象，读懂 class 和 self","PyTorch 的每个网络都是一个 class，self 指“这个对象自己”。先读懂，不急着写。",[L.pyCls]],
+    [V,"ML 1-2：学习率选择、多项式回归","学会看损失曲线判断学习率：曲线上下乱跳是太大，几乎不降是太小。",[ML("学习率 多项式回归")]],
+    [V,"ML 1-3：逻辑回归、决策边界","逻辑回归做“是/否”分类，sigmoid 把任意数压到 0–1 之间当概率。",[ML("逻辑回归 决策边界")]],
+    [P,"读论文结论部分","结论里有论文承认的局限（需要能找到对称性、计算开销大），面试很可能被问到。",[L.paper]]],
+   [[V,"ML 1-3：逻辑回归代价函数、过拟合、正则化","过拟合 = 背答案，正则化 = 惩罚太复杂的模型。理解为什么分类不用平方误差而用交叉熵。",[ML("过拟合 正则化")]],
+    [C,"产出：NumPy 手写梯度下降 + 损失曲线","自己生成 y=2x+1 加噪声的数据，用梯度下降找回 2 和 1，再画出损失随迭代下降的曲线。卡住就把代码发给我。",[L.colab,L.plt]],
+    [V,"完成第 1 门所有课后测验","测验 ≥ 80% 才算“理解”。错的题回看对应视频。",[L.cML]],
+    [Y,"Python 练习：完成 10 道基础小题","判断素数、九九乘法表、斐波那契、统计一句话里每个词出现的次数、找列表最大值等。",[L.pyCtl]],
+    [T,"英文录音 1 分钟：讲梯度下降","手机录音即可，听回放找卡顿。面试是英文，越早开始越好。",[]]],
+   [[K,"本周检验：不看资料写梯度下降；说清论文要解决的问题","我会出 3–5 题。答不上的部分下周一、二补。",[L.plan]],
+    [P,"整理生词表","把本周学会的词划掉，比如 MSE、gradient descent。",[L.paper]],
+    [T,"定下周重点","花 15 分钟看下周任务，有疑问就问我。",[]]]
+  ]},
+ {id:"S2",start:"2026-11-09",title:"S2 · 神经网络与实用建议",theme:"《机器学习》第 2 门：神经网络、训练、调试模型的方法、决策树。Python 学会拆函数和类。",
+  goals:["解释过拟合及 3 种应对办法","说出逻辑回归为什么用交叉熵","讲清偏差与方差，会看学习曲线","知道精确率、召回率、F1 是什么","讲清论文的输入、输出、损失和 OOD 设置"],
+  out:["读懂课程梯度下降作业代码，改参数看结果","英文自我介绍初稿"],
+  pyGoal:"能把代码拆成函数和类，会读写文件、用 import",pyOut:"命令行记账本：能添加、查看、保存到文件",
+  days:[
+   [[Y,"Python 30 分钟：import 模块、读写文件","import numpy as np 就是导入模块。open() 读写文件，记账本要用到。",[L.pyMod,L.pyIO]],
+    [V,"ML 2-1：神经网络直觉、神经元与层","一个神经元 = 逻辑回归；很多神经元排成层，层叠起来就是神经网络。",[ML("神经网络 神经元")]],
+    [P,"读论文 3.1 节问题定义，式 (1)(2)","式 (2) 就是“输入当前状态和物理参数，输出下一时刻状态”，和线性回归是同一个框架。",[L.paper]]],
+   [[Y,"Python 45 分钟：写一个 Student 类","包含名字、成绩列表、求平均分的方法。练熟 __init__ 和 self。",[L.pyCls]],
+    [V,"ML 2-1：前向传播","前向传播 = 数据从输入层一层层算到输出层。课程用 TensorFlow，你只需看懂思路，以后用 PyTorch。",[ML("前向传播")]],
+    [C,"读懂课程梯度下降作业代码，逐行加中文注释","看不懂的行标出来发给我。导师只要求理论，所以读懂即可，不必自己从零写。",[L.cML]],
+    [T,"讲清一层神经元在算什么","提示：线性变换 + 激活函数。",[]]],
+   [[Y,"Python 30 分钟：在 Jupyter 里逐行运行一段课程代码，打印中间结果","用 print(x.shape) 看每一步数组形状，这是读懂任何深度学习代码的万能方法。",[L.colab]],
+    [V,"ML 2-2：训练神经网络、激活函数","为什么需要 ReLU、sigmoid 这类非线性？没有它们，多层网络等于一层。",[ML("激活函数 ReLU")]],
+    [P,"读论文式 (3)(4) 和表 1","表 1：训练时粘度 1e-1 到 1e-10，测试时 1e-11、1e-12，这就是 OOD（分布外）测试。",[L.paper]],
+    [Y,"Python 45 分钟：异常处理 try/except","程序出错时不崩溃。记账本输入非数字时要用到。",[L.pyErr]]],
+   [[V,"ML 2-2：Softmax、多分类、Adam 简介","Softmax 把一组分数变成概率。论文里的对比损失式 (11) 本质也是 softmax，记住这个联系。",[ML("softmax Adam")]],
+    [C,"改作业学习率，观察损失曲线变化","把学习率调大 10 倍、调小 10 倍各跑一次，截图对比，写下观察。",[L.cML]],
+    [Y,"Python 45 分钟：记账本，添加和查看","用列表存记录，每条记录是字典 {日期, 金额, 备注}。",[L.pyDS]],
+    [T,"讲清为什么需要激活函数","",[]]],
+   [[V,"ML 2-3：评估模型、偏差与方差、学习曲线","偏差高 = 欠拟合（学不会），方差高 = 过拟合（死记硬背）。学习曲线是诊断工具。",[ML("偏差 方差 学习曲线")]],
+    [Y,"Python 45 分钟：记账本，保存和读取文件","用 json 模块保存，重启程序后记录还在。",[L.pyIO]],
+    [P,"用一段中文写下论文的问题和数据","包括：要预测什么、输入是什么、用了哪 3 个方程、OOD 怎么设置。",[L.paper]]],
+   [[V,"ML 2-3：误差分析、精确率与召回率","精确率：说“是”的里面有多少真是；召回率：真是的里面找出了多少。",[ML("精确率 召回率")]],
+    [V,"ML 2-4：决策树、集成学习（1.5–2 倍速）","知道是什么即可，论文用不到。",[ML("决策树")]],
+    [V,"完成第 2 门所有测验","",[L.cML]],
+    [Y,"Python：记账本完成","能添加、查看、保存。完成后发给我看。",[]],
+    [T,"写英文自我介绍初稿","3 段：你是谁、为什么做 AI（贾维斯）、做过什么研究（这篇论文一句话）。",[]]],
+   [[K,"本周检验：过拟合 3 种对策；交叉熵；偏差 vs 方差；论文输入输出","",[L.plan]],
+    [T,"英文录音：读自我介绍","",[]]]
+  ]},
+ {id:"S3",start:"2026-11-16",title:"S3 · 无监督学习与反向传播",theme:"《机器学习》第 3 门 +《深度学习》第 1 门前半；鱼书第 4–5 章亲手推反向传播。Python 主攻 NumPy。",
+  goals:["知道 K-means、异常检测、推荐系统、强化学习各是什么","白纸推导两层网络的反向传播","讲清计算图和链式法则","不看论文画出 LiPS 四个模块的流程图"],
+  out:["跟着鱼书跑通 NumPy 两层网络训练 MNIST（准确率 > 90%）"],
+  pyGoal:"熟练用 NumPy：索引、切片、广播、axis，不写 for 循环",pyOut:"NumPy 实现 sigmoid、softmax、交叉熵，全部向量化",
+  days:[
+   [[Y,"Python 45 分钟：NumPy 索引与切片","x[0]、x[:, 1]、x[x>0] 三种写法都要会。",[L.np]],
+    [V,"ML 3-1：K-means 聚类、异常检测","K-means：先随便放几个中心，反复“分组→移动中心”。",[ML("K-means 聚类")]],
+    [P,"读论文 3.2 节和图 3 整体框架","式 (5) û = S(G(C(AUG(D))))：增强 → 特征 → 生成 → 自训练，从里往外读。",[L.paper]]],
+   [[Y,"Python 45 分钟：NumPy 广播规则，做 5 个小例子","广播：形状不同的数组也能相加，比如矩阵每一行加同一个向量。",[L.npB]],
+    [V,"ML 3-2：推荐系统（协同过滤）","知道“根据相似用户的喜好推荐”即可。",[ML("推荐系统 协同过滤")]],
+    [C,"鱼书第 4 章：损失函数、数值微分","数值微分 = 把 x 挪一点点看 y 变多少，最直观的求导方法。",[L.fish]]],
+   [[Y,"Python 45 分钟：axis 参数，按行按列求和、求最大值","",[L.np]],
+    [V,"ML 3-3：强化学习概念（2 倍速）","知道“智能体—环境—奖励”的循环即可，以后做贾维斯会用到。",[ML("强化学习")]],
+    [V,"完成第 3 门所有测验","",[L.cML]]],
+   [[Y,"Python 45 分钟：NumPy 写 sigmoid 和 softmax","softmax 要减去最大值防止溢出，这是面试常考小细节。",[L.np]],
+    [V,"DL 1-1、1-2：逻辑回归当作神经网络（可 2 倍速）","和 ML 第 1 门重叠，快速过，重点看计算图的画法。",[DL("第一课 逻辑回归 计算图"),L.cDL]],
+    [C,"鱼书第 4 章：梯度、梯度下降代码","",[L.fish]]],
+   [[Y,"Python 45 分钟：NumPy 写交叉熵损失","",[L.np]],
+    [V,"DL 1-2：向量化、计算图","",[DL("向量化")]],
+    [C,"鱼书第 5 章：计算图、链式法则","链式法则像齿轮：大齿轮转 1 圈带小齿轮转 2 圈，再带更小的转 3 圈，总共 2×3=6 圈。",[L.fish]],
+    [T,"讲清链式法则（用齿轮比喻）","",[]]],
+   [[C,"鱼书第 5 章：反向传播实现","每层只需知道“上游传来的梯度 × 本层的局部梯度”。",[L.fish]],
+    [C,"产出：NumPy 两层网络训练 MNIST","照着鱼书 ch05 的代码跑，再改隐藏层大小看准确率变化。",[L.fish,L.colab]],
+    [C,"白纸手推两层网络梯度","推完拍照发我。这是面试最常见的基础题之一。",[]],
+    [Y,"Python：把鱼书两层网络代码逐行改写成自己的版本","",[L.fish]],
+    [P,"不看论文画出四个模块流程图","画完对照图 3 检查。",[L.paper]]],
+   [[K,"本周检验：手推反向传播；MNIST > 90%；画论文流程图","",[L.plan]],
+    [T,"英文录音：讲反向传播","",[]]]
+  ]},
+ {id:"S4",start:"2026-11-23",title:"S4 · 深层网络与训练技巧",theme:"《深度学习》第 1 门后半 + 第 2 门：让网络训练得又快又稳。Python 进入 PyTorch。",
+  goals:["说清 Adam 和普通 SGD 的区别","给一组训练/验证误差，判断是偏差还是方差","讲清 Dropout、BatchNorm、初始化的作用","讲清 EMA（指数加权平均）在做什么","用 RQ1 讲清论文主结果"],
+  out:["PyTorch 重写两层网络","第 0 次模拟面试（基础概念，15 分钟）"],
+  pyGoal:"不看参考写出 PyTorch 训练循环",pyOut:"自己写的 PyTorch 训练循环 + Matplotlib 损失曲线",
+  days:[
+   [[Y,"Python 45 分钟：Matplotlib 画多条曲线、加标题图例","",[L.plt]],
+    [V,"DL 1-3：浅层神经网络","",[DL("浅层神经网络")]],
+    [P,"读论文 4.1 节实验设置","3 个方程、10 个基线、MSE、Adam、学习率 1e-3、batch 100。每个词你现在都应该认识。",[L.paper]]],
+   [[Y,"Python 45 分钟：PyTorch 张量与 NumPy 互转","torch.tensor(x) 和 t.numpy()。PyTorch 张量 ≈ 能求导、能上 GPU 的 NumPy 数组。",[L.ptT]],
+    [V,"DL 1-4：深层神经网络","",[DL("深层神经网络")]],
+    [C,"读懂关键作业：深层网络","读懂代码结构即可，不必自己写。",[L.cDL]],
+    [T,"讲清为什么网络要“深”","提示：浅层学边缘，深层组合成形状、物体。",[]]],
+   [[Y,"Python 45 分钟：PyTorch 自动求导 backward","loss.backward() 自动帮你做上周手推的反向传播。",[L.ptA]],
+    [V,"DL 2-1：初始化、正则化、Dropout","Dropout = 训练时随机关掉一些神经元，逼网络不依赖某几个“学霸”。",[DL("dropout 正则化")]],
+    [P,"读论文表 2，用 RQ1 讲主结果","记住 NS 的 OOD MSE：LiPS 0.0798 vs 最强基线 DGODE 0.0925。",[L.paper]]],
+   [[Y,"Python 45 分钟：nn.Module 写一个小网络","",[L.ptM]],
+    [V,"DL 2-2：Mini-batch、Momentum、RMSprop、Adam","重点看“指数加权平均”那几节：论文式 (12) 的 EMA 就是它。",[DL("Adam 指数加权平均")]],
+    [C,"读懂关键作业：优化算法","",[L.cDL]],
+    [T,"讲清 Adam 做了什么","提示：动量 + 自适应学习率。",[]]],
+   [[Y,"Python 45 分钟：DataLoader 与 mini-batch","",[L.ptD]],
+    [V,"DL 2-3：调参、BatchNorm、Softmax","",[DL("Batch Norm")]],
+    [V,"完成第 1–2 门所有测验","",[L.cDL]],
+    [P,"读论文 3.4 节 EMA 部分","用吴恩达讲的指数加权平均解释式 (12)：α 接近 1，参数变化很平滑。",[L.paper]]],
+   [[C,"PyTorch 入门：重写两层网络，画损失曲线","把上周 NumPy 版改成 PyTorch 版，对比代码量。",[L.pt,L.ptO]],
+    [Y,"Python：合上资料默写一遍训练循环","五步：前向 → 算损失 → 清梯度 → 反向 → 更新。",[L.ptO]],
+    [T,"第 0 次模拟面试（15 分钟，只问基础概念）","我当面试官，中文即可。看看现在的状态。",[]]],
+   [[K,"本周检验：Adam vs SGD；偏差还是方差；EMA","",[L.plan]],
+    [T,"复盘模拟面试答不好的题","",[]]]
+  ]},
+ {id:"S5",start:"2026-11-30",title:"S5 · 卷积网络与论文核心方法",theme:"《深度学习》第 3–4 门 + 论文讲义 1–4：PDE、神经求解器、李点对称、对比学习。",
+  goals:["讲清 CNN、ResNet、U-Net 各一句话","讲清李点对称增强：NS 的四种变换各在变什么","讲清对比学习：正负样本、InfoNCE、温度系数","讲清 RQ2–RQ4：OOD 泛化、物理一致、插件"],
+  out:["PyTorch 小实验：用平移增强训练 1 维热方程模型，比较有无增强的 OOD 误差","论文常规 6 问的中文答案"],
+  pyGoal:"能读懂别人项目的代码结构，并整理自己的实验代码",pyOut:"热方程实验代码整理成函数 + 中文注释",
+  days:[
+   [[Y,"Python 45 分钟：读一个小开源项目的文件结构","看 README → 入口文件 → 模型定义 → 训练脚本。",[L.fish]],
+    [V,"DL 3-1：机器学习策略、评价指标、训练/开发/测试集","",[DL("机器学习策略")]],
+    [P,"讲义 1：PDE、Navier–Stokes、粘度、能量谱","我会写好发你。读完能说出 NS 描述什么、粘度是什么。",[L.paper]]],
+   [[Y,"Python 45 分钟：argparse 与配置参数","",[L.pyArg]],
+    [V,"DL 3-2：误差分析、训练与测试分布不一致、迁移学习","“分布不一致”这节就是论文里 OOD 的入门版，认真看。",[DL("数据分布不匹配")]],
+    [P,"讲义 2：神经 PDE 求解器（PINN、FNO）","知道 FNO 用傅里叶变换、PINN 把方程写进损失即可。",[L.paper]],
+    [T,"讲清什么是分布外测试","",[]]],
+   [[Y,"Python 45 分钟：保存与加载模型","",[L.ptS]],
+    [V,"DL 4-1：卷积、池化","卷积核在图上滑动，同一个图案出现在哪都能识别：这就是平移对称在网络里的体现。",[DL("卷积神经网络")]],
+    [P,"讲义 3 + 论文 3.3 节：李点对称增强","对照图 4：时间平移、空间平移、伽利略变换保持物理，MixUp 破坏物理。",[L.paper]]],
+   [[Y,"Python 45 分钟：随机种子与可复现","实验要能复现，torch.manual_seed 是第一步。",[L.pt]],
+    [V,"DL 4-2：经典网络、ResNet、U-Net 思想","ResNet 和 U-Net 都是论文里的基线。",[DL("ResNet 残差网络")]],
+    [P,"讲义 4 + 论文 3.4 节前半：对比学习","式 (11) 就是一个 softmax：在一堆样本里把“自己的另一个版本”挑出来。",[L.paper]],
+    [T,"讲清对称性增强为什么不破坏物理","",[]]],
+   [[Y,"Python 45 分钟：热方程实验，先写数据生成","我会给你一段生成 1 维热方程数据的参考代码。",[L.colab]],
+    [V,"DL 4-3、4-4：目标检测、人脸识别（1.5–2 倍速）","知道是什么即可。人脸识别里的“三元组损失”和对比学习思想相近，可以留意。",[DL("人脸识别 三元组损失")]],
+    [V,"完成第 3–4 门所有测验","",[L.cDL]],
+    [P,"读论文 4.3–4.5 节，表 3、表 4、图 8","记住摘要里的 38% 来自表 4：Spherical-SWE 的 OOD，比 NUWA 0.0039 降到 0.0024。",[L.paper]]],
+   [[C,"产出：热方程小实验（有/无平移增强对比）","这是论文核心思想的迷你复现，面试时可以说“我自己验证过增强的效果”。",[L.colab,L.pt]],
+    [Y,"Python：整理实验代码，加注释","",[]],
+    [P,"写论文常规 6 问的中文答案","题目在精读文档第 5 节。",[L.paper]]],
+   [[K,"本周检验：论文常规 6 问，每题追问 2 层","",[L.paper]],
+    [T,"英文录音：1 分钟讲论文","用精读文档第 1 节的英文版本当底稿。",[L.paper]]]
+  ]},
+ {id:"S6",start:"2026-12-07",title:"S6 · Transformer 与论文其余模块",theme:"《深度学习》第 5 门到 Transformer；论文讲义 5–6：注意力引导生成、VAE、自训练。写出英文讲稿。",
+  goals:["画出 Transformer 结构图，讲清自注意力（Q、K、V）","讲清 ViT 怎么把图片切成小块（Patchify）","讲清论文的“因果引擎”其实做了什么，以及它的局限","讲清自训练和伪标签的风险","英文 3 分钟讲完论文"],
+  out:["英文 3 分钟讲稿 + 3–5 张讲解图","第 1 次模拟面试（中文，30 分钟）"],
+  pyGoal:"能跑通并调试论文代码，会用 Git 管理",pyOut:"论文代码在 Colab 跑通一个小配置，或热方程实验推到 GitHub",
+  days:[
+   [[Y,"Python 45 分钟：打开论文代码仓库，画出文件调用关系","代码在哪里请先问合作者。没有代码就继续完善热方程实验。",[]],
+    [V,"DL 5-1：RNN、语言模型","",[DL("RNN 循环神经网络")]],
+    [P,"按“研究过程五步”写讲稿提纲","问题 → 假设 → 方法 → 实验 → 局限与下一步。",[L.plan]]],
+   [[Y,"Python 45 分钟：配置环境，在 Colab 装依赖","",[L.colab]],
+    [V,"DL 5-1：GRU、LSTM、梯度消失","",[DL("LSTM")]],
+    [P,"写英文讲稿：问题与动机","",[L.paper]]],
+   [[Y,"Python 45 分钟：用 print 和断点调试，看张量形状","",[L.pt]],
+    [V,"DL 5-2：词向量、word2vec","",[DL("词嵌入 word2vec")]],
+    [P,"讲义 5 + 论文 3.4 节后半：注意力引导生成与 VAE","VAE 只需懂两件事：重建要像；隐变量要接近标准正态（式 15 的两项）。",[L.paper]]],
+   [[Y,"Python 45 分钟：Git 提交与推送","",[L.git]],
+    [V,"DL 5-3：Seq2seq、注意力机制","",[DL("注意力机制")]],
+    [P,"讲义 6 + 论文 3.5 节：自训练与伪标签","想清楚：模型自己预测错了，再拿错的当标签会怎样？",[L.paper]],
+    [T,"准备“你想做助手，为什么做 PDE”的回答","",[L.plan]]],
+   [[V,"DL 5-4：Transformer","卡住就看李宏毅的 Self-attention 和 Transformer 两讲。",[DL("Transformer"),LHY("self-attention 自注意力"),LHY("Transformer")]],
+    [V,"李宏毅：ViT / 图像上的自注意力（选看）","论文编码器是 ViT，图 3 里的 Patchify 就是切小块。",[LHY("self-attention 图像 ViT")]],
+    [V,"完成第 5 门所有测验","",[L.cDL]],
+    [T,"画 Transformer 结构图并讲一遍","",[]]],
+   [[C,"跑论文代码的小配置，或完善热方程实验","二选一，有截图结果就行。",[L.colab]],
+    [Y,"Python：把结果画成图，推到 GitHub","",[L.plt,L.git]],
+    [P,"写完英文讲稿，做 3–5 张讲解图","图建议：问题示意、LiPS 流程图、主结果表、OOD 对比图。",[L.paper]],
+    [T,"第 1 次模拟面试（中文，30 分钟）","",[]]],
+   [[K,"本周检验：模拟面试 ≥ 6/10","",[L.plan]],
+    [T,"复盘答不好的题","",[]]]
+  ]},
+ {id:"S7",start:"2026-12-14",title:"S7 · 面试冲刺",theme:"不再学新内容，只练“说出来”，补漏洞，申请材料定稿。",
+  goals:["60 题题库答对 80%","英文讲稿背熟，3 分钟内讲完","答好论文 6 个薄弱点追问","了解目标导师最近 2 篇论文，准备 2 个提问"],
+  out:["第 2、3 次模拟面试（英文）","申请材料全部定稿"],
+  pyGoal:"面试现场能读懂并解释一段 Python/NumPy 代码",pyOut:"手写 5 道面试代码题",
+  days:[
+   [[T,"题库 1–20：机器学习基础","题库我会提前发给你。",[L.plan]],
+    [Y,"Python 30 分钟：手写 NumPy 线性回归","",[L.np]],
+    [P,"讲稿背诵第一遍","",[L.paper]]],
+   [[T,"题库 21–40：神经网络与训练","",[L.plan]],
+    [Y,"Python 30 分钟：手写 softmax 与交叉熵","",[L.np]],
+    [P,"讲稿录音自查","",[]]],
+   [[T,"题库 41–60：CNN、Transformer、论文追问","",[L.plan]],
+    [Y,"Python 30 分钟：手写一个 PyTorch 训练循环","",[L.ptO]],
+    [P,"读目标导师的论文摘要","",[]]],
+   [[T,"练论文 6 个薄弱点的回答","精读文档第 5 节后半。坦诚 + 说出你会怎么改进。",[L.paper]],
+    [Y,"Python 30 分钟：读一段陌生代码并口头解释","",[]],
+    [T,"准备向导师提的 2 个问题","",[]]],
+   [[T,"第 2 次模拟面试（英文）","",[]],
+    [Y,"Python 30 分钟：手写 K-means","",[L.np]],
+    [T,"复盘","",[]]],
+   [[T,"申请材料定稿","",[]],
+    [Y,"Python：5 道代码题再做一遍，计时","",[]],
+    [P,"讲稿最终版","",[L.paper]]],
+   [[K,"第 3 次模拟面试（英文）≥ 8/10","",[]],
+    [T,"最终复盘","",[]]]
+  ]}
+];
+// 第 1–4 周论文减量：每周 2 次、每次 20 分钟，只做“标注”
+const LIGHT={
+ S1:[[2,"论文 20 分钟：读摘要和结论，用一句话写下论文要解决的问题","先不求懂细节，只抓住“它想解决什么问题”。"],[5,"论文 20 分钟：标出本周学过的词","MSE、梯度下降、过拟合在论文里出现在哪，用荧光笔标出来。"]],
+ S2:[[2,"论文 20 分钟：读 3.1 节式 (2)(3)","对照线性回归：输入当前状态和物理参数，输出下一时刻状态，用 MSE 当损失。是同一个框架。"],[5,"论文 20 分钟：标出 MLP、softmax、过拟合","找到就标，看不懂的句子先跳过。"]],
+ S3:[[2,"论文 20 分钟：看图 3，认一认四个模块的名字","只认名字：增强、对比学习、因果引擎与生成、自训练。原理第 5–6 周再学。"],[5,"论文 20 分钟：标出和反向传播、计算图相关的地方","不多，找到一两处就行。"]],
+ S4:[[2,"论文 20 分钟：读 4.1 节实验设置","Adam、batch、学习率、早停，这些词你现在都认识了，试着把这一段读顺。"],[5,"论文 20 分钟：读式 (12) EMA","用吴恩达讲的指数加权平均解释它：α 接近 1，参数变化很平滑。"]]
+};
+// 论文统一放到最后三周（S5–S7）开始，前四周不安排论文
+WEEKS.forEach(w=>{if(["S1","S2","S3","S4"].includes(w.id))w.days=w.days.map(d=>d.filter(t=>t[0]!==P))});
+WEEKS.find(w=>w.id==="S5").days[0].unshift([P,"论文启动：读摘要和结论，用一句话写下论文要解决的问题","前四周学完了基础，现在读会轻松很多。先抓住“它想解决什么问题”，细节交给后面的讲义。",[L.paper,L.doi]]);
+(function(){const W=id=>WEEKS.find(w=>w.id===id);
+ W("S1").out=["用 NumPy 写一元线性回归的梯度下降，画出损失曲线"];
+ W("S1").goals=W("S1").goals.filter(g=>!g.includes("论文"));
+ W("S2").goals=W("S2").goals.filter(g=>!g.includes("论文"));
+ W("S1").days[6]=W("S1").days[6].map(t=>t[0]===K?[K,"本周检验：不看资料讲清线性回归、代价函数、梯度下降",t[2],t[3]]:t);
+ W("S3").goals=W("S3").goals.filter(g=>!g.includes("LiPS"));
+ W("S4").goals=W("S4").goals.filter(g=>!g.includes("RQ1"));
+ W("S3").days[6]=W("S3").days[6].map(t=>t[0]===K?[K,"本周检验：手推反向传播；MNIST 准确率 > 90%",t[2],t[3]]:t);
+ W("S2").days[6]=W("S2").days[6].map(t=>t[0]===K?[K,"本周检验：过拟合 3 种对策；交叉熵；偏差 vs 方差",t[2],t[3]]:t);
+})();
+// S1 的 Python 主线按鱼书第 1 章顺序
+(function(){const w=WEEKS.find(x=>x.id==="S1");
+ const F=[
+  [0,"鱼书 1.1–1.3 前半：算术计算、数据类型、变量、列表、字典、布尔型","按书上的方式，在终端输入 python 进入解释器（>>> 提示符）逐行敲：type() 看类型，列表切片 a[0:2]、字典 {键: 值}、True/False。每个例子都自己改一改再运行。"],
+  [1,"鱼书 1.3 后半：if 语句、for 语句、函数","注意 Python 用缩进（4 个空格）表示代码块。练习：写 is_prime(n)，再打印 100 以内的素数。"],
+  [2,"鱼书 1.4：保存为脚本文件、类","类就是“模板”：class Man 里的 __init__ 是构造函数，self 指对象自己。PyTorch 的网络都是这样写的。"],
+  [3,"鱼书 1.5 前半：导入 NumPy、生成数组、算术运算、N 维数组","重点：shape 和 dtype；数组之间 + - * / 是对应元素运算。"],
+  [4,"鱼书 1.5 后半：广播、访问元素","广播：形状不同的数组也能运算（矩阵 × 标量、矩阵 + 一行向量）。练习：用 X[X>15] 取出大于 15 的元素。"],
+  [5,"鱼书 1.6：Matplotlib 画 sin、cos 曲线和显示图像","画出 sin 和 cos 两条线，加标题、坐标轴名和图例。画图是之后看损失曲线的基本功。"]
+ ];
+ w.days=w.days.map((d,i)=>d.filter(t=>!(t[0]===Y)&&!(t[0]===C&&!t[1].startsWith("产出"))));
+ F.forEach(([i,txt,note])=>w.days[i].unshift([Y,txt,note,[L.fish,["Anaconda 下载","https://www.anaconda.com/download"]]]));
+ w.days[5].push([Y,"Python 练习：完成 10 道基础小题","判断素数、九九乘法表、斐波那契、词频统计、找列表最大值等，用本周学的语法。",[L.pyCtl]]);
+ w.theme="《机器学习》第 1 门：回归与分类。Python 按鱼书第 1 章从头学：基础语法 → 类 → NumPy → Matplotlib。";
+ w.pyGoal="学完鱼书第 1 章：能写基础 Python、读懂类、会用 NumPy 和 Matplotlib";
+})();
+// 鱼书其余章节作为“温故”加入
+(function(){const W=id=>WEEKS.find(x=>x.id===id);
+ const add=(id,day,txt,note)=>W(id).days[day].push([C,txt,note,[L.fish]]);
+ add("S2",0,"鱼书第 2 章：感知机（30 分钟）","感知机就是最简单的“神经元”。重点看与门、或门怎么用权重和偏置实现，以及为什么一层做不了异或。");
+ add("S2",1,"鱼书 3.1–3.2：从感知机到神经网络、激活函数（30 分钟）","用 NumPy 画出阶跃函数、sigmoid、ReLU 三条曲线，对照吴恩达今天讲的激活函数。");
+ add("S2",2,"鱼书 3.3：多维数组的运算（30 分钟）","np.dot 和矩阵形状对齐：(2,3) 乘 (3,2) 得 (2,2)。神经网络的每一层就是一次矩阵乘法。");
+ add("S2",3,"鱼书 3.4–3.5：三层网络的实现、输出层与 softmax（30 分钟）","跟着书实现 forward()，并写出防溢出的 softmax（减去最大值）。");
+ add("S2",4,"鱼书 3.6：手写数字识别（30 分钟）","用书中训练好的权重跑前向传播，看准确率。这是第 3 周训练网络的基础。");
+ add("S4",6,"温故：鱼书第 6 章（6.1 参数更新）","跑书里 SGD、Momentum、AdaGrad、Adam 的对比图，对照吴恩达《深度学习》第 2 门复习。");
+ add("S4",6,"温故：鱼书 6.2–6.4（初始化、BatchNorm、正则化）","快速浏览，看图为主，和吴恩达讲的内容互相印证。");
+ add("S5",6,"温故：鱼书第 7 章（卷积层与池化层）","重点看 7.2 卷积层的图解和 7.3 池化层，复习吴恩达《深度学习》第 4 门。代码可以只读不跑。");
+ add("S6",6,"温故：鱼书第 8 章（深度学习的发展）","快速浏览，了解 VGG、ResNet 和深度学习的应用，当作复习和拓展视野。");
+})();
+// 11/8：第 1 周没做完的任务挪到新加的一周（S1续），后面各周整体顺延一周
+(function(){
+ const s1=WEEKS.find(w=>w.id==="S1");
+ const byId={};s1.days.forEach((d,i)=>d.forEach((t,j)=>{byId["S1-"+i+"-"+j]=t}));
+ const pick=id=>{const t=byId[id];return [t[0],t[1],t[2],t[3],id]};
+ const plan=[
+  ["S1-3-0","S1-3-1","S1-3-2"],
+  ["S1-4-0","S1-4-1"],
+  ["S1-4-2","S1-5-0"],
+  ["S1-5-1","S1-5-5"],
+  ["S1-5-3","S1-5-4"],
+  ["S1-5-2"],
+  ["S1-6-0","S1-6-1"]
+ ];
+ const moved=new Set(plan.flat());
+ s1.days=s1.days.map((d,i)=>d.map((t,j)=>[t[0],t[1],t[2],t[3],"S1-"+i+"-"+j]).filter(t=>!moved.has(t[4])));
+ const extra={id:"S1续",start:"2026-11-09",title:"S1续 · 补完机器学习第 1 门",
+  theme:"第 1 周没做完的内容整体顺延到这一周，节奏放慢：NumPy、Matplotlib、逻辑回归、过拟合，最后用 NumPy 手写梯度下降收尾。",
+  goals:["讲清逻辑回归、过拟合与正则化","会用 NumPy 数组运算、广播，会用 Matplotlib 画曲线","不看资料讲清线性回归、代价函数、梯度下降"],
+  out:["用 NumPy 写一元线性回归的梯度下降，画出损失曲线","英文录音 1 分钟：讲梯度下降"],
+  pyGoal:"学完鱼书第 1 章后半：NumPy 和 Matplotlib",pyOut:"10 道基础小题 + 梯度下降小程序",
+  days:plan.map(d=>d.map(pick))};
+ extra.days[5].push([T,"补漏：本周哪项没做完就在今天补上","周六时间最多，留作缓冲。全部做完的话，提前看下周 ML 2-1 的第一个视频。",[]]);
+ const k=WEEKS.indexOf(s1);WEEKS.splice(k+1,0,extra);
+ WEEKS.forEach((w,i)=>{if(i>k+1){const d=new Date(w.start+"T00:00:00");d.setDate(d.getDate()+7);w.start=d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0")}});
+})();
+// 11/16：截止提前到 12/6，剩下三周重排（面试优先：核心精学，其余快看）
+(function(){
+ const s1=WEEKS.find(w=>w.id==="S1"),ex=WEEKS.find(w=>w.id==="S1续");
+ const byId={};ex.days.flat().forEach(t=>{byId[t[4]]=t});
+ const M=id=>byId[id];
+ const fishL=[L.fish];
+ const S2={id:"S2",start:"2026-11-16",title:"S2 · 机器学习 3 门收尾",
+  theme:"《机器学习》3 门全部看完：第 1 门补完，第 2 门（神经网络、模型诊断）放慢看，决策树和第 3 门可以开 1.5–2 倍速。练习只保留梯度下降一个产出。",
+  goals:["讲清逻辑回归为什么用交叉熵、过拟合的 3 种对策","讲清神经网络前向传播、激活函数、softmax","讲清偏差与方差，会看学习曲线","知道 K-means、推荐系统、强化学习各是什么"],
+  out:["NumPy 手写梯度下降 + 损失曲线","英文录音 1 分钟：讲梯度下降"],
+  pyGoal:"会用 NumPy 数组运算、广播和 Matplotlib 画图",pyOut:"梯度下降小程序",
+  days:[
+   [M("S1-3-0"),M("S1-3-1"),M("S1-4-1"),M("S1-3-2")],
+   [M("S1-4-0"),M("S1-4-2"),M("S1-5-1")],
+   [M("S1-5-0"),M("S1-5-2")],
+   [[V,"ML 2-1：神经网络直觉、神经元与层、前向传播","一个神经元 = 逻辑回归；很多神经元排成层，层叠起来就是神经网络。课程用 TensorFlow，只看懂思路。",[ML("神经网络 前向传播"),L.cML]],
+    [V,"ML 2-2：训练神经网络、激活函数、Softmax、Adam","为什么需要 ReLU 这类非线性？没有它们，多层网络等于一层。Softmax 把一组分数变成概率。",[ML("激活函数 softmax")]],
+    [C,"鱼书第 2 章 + 3.1–3.2：感知机、激活函数（30 分钟）","画出阶跃函数、sigmoid、ReLU 三条曲线，对照吴恩达讲的激活函数。",fishL]],
+   [[V,"ML 2-3：偏差与方差、学习曲线、误差分析、精确率与召回率","偏差高 = 学不会（欠拟合），方差高 = 死记硬背（过拟合）。精确率：说“是”的里面多少真是；召回率：真是的里面找出多少。",[ML("偏差 方差 学习曲线")]],
+    [C,"鱼书 3.3–3.5：多维数组运算、三层网络、softmax（30 分钟）","神经网络的每一层就是一次矩阵乘法。跟着书写 forward()。",fishL]],
+   [[V,"ML 2-4：决策树、集成学习（1.5–2 倍速）","全部看完。重点：信息增益怎么选特征、随机森林为什么比单棵树稳。",[ML("决策树")]],
+    [V,"ML 3：K-means 聚类、异常检测（1.5 倍速，全部看完）","K-means：先随便放几个中心，反复“分组 → 移动中心”。",[ML("K-means 聚类")]],
+    [V,"ML 3：推荐系统、强化学习（1.5–2 倍速）","全部看完。抓住两条主线：协同过滤“根据相似用户推荐”，强化学习“智能体—环境—奖励”循环。",[ML("推荐系统 强化学习")]],
+    M("S1-5-4")],
+   [[K,"本周检验：监督与无监督、梯度下降、交叉熵、过拟合、偏差与方差","我会出 5 题，答不上的下周一补。",[L.plan]],
+    [T,"定下周重点","",[]]]
+  ]};
+ const S3={id:"S3",start:"2026-11-23",title:"S3 · 深度学习：反向传播、训练技巧、CNN",
+  theme:"《深度学习》第 1–4 门全部看完：第 1、2 门放慢看，和机器学习重叠的部分及第 3、4 门可以开 1.5 倍速。鱼书第 4–6 章跟着读，PyTorch 读懂训练循环。",
+  goals:["白纸推导两层网络的反向传播，讲清链式法则","说清 Adam 和普通 SGD 的区别，讲清 EMA","讲清 Dropout、BatchNorm、初始化的作用","讲清卷积为什么能识别不同位置的同一个图案"],
+  out:["手推反向传播的照片","第 0 次模拟面试（15 分钟，基础概念）"],
+  pyGoal:"读懂 PyTorch 训练循环的五步",pyOut:"能口头解释一段 PyTorch 训练代码",
+  days:[
+   [[V,"DL 1 第 1–3 周：深度学习概论、逻辑回归当作神经网络、浅层网络（1.5 倍速）","和机器学习重叠的部分开快一点，重点看计算图的画法。",[DL("第一课 逻辑回归 计算图"),L.cDL]],
+    [C,"鱼书第 4 章：损失函数、数值微分、梯度（快速）","数值微分 = 把 x 挪一点点看 y 变多少，最直观的求导方法。",fishL]],
+   [[V,"DL 1 第 4 周：深层神经网络","为什么要“深”：浅层学边缘，深层组合成形状、物体。",[DL("深层神经网络")]],
+    [C,"鱼书第 5 章：计算图、链式法则","链式法则像齿轮：大齿轮带小齿轮，转速一层层相乘。",fishL]],
+   [[C,"鱼书第 5 章：反向传播实现 + 白纸手推两层网络梯度","每层只需知道“上游传来的梯度 × 本层的局部梯度”。推完拍照发我。",fishL],
+    [Y,"PyTorch：张量和自动求导","loss.backward() 自动帮你做刚才手推的反向传播。",[L.ptT,L.ptA]]],
+   [[V,"DL 2 第 1 周：初始化、正则化、Dropout","Dropout = 训练时随机关掉一些神经元，逼网络不依赖某几个“学霸”。",[DL("dropout 正则化")]],
+    [V,"DL 2 第 2 周：Mini-batch、Momentum、RMSprop、Adam","重点看“指数加权平均”：论文里的 EMA 就是它。",[DL("Adam 指数加权平均")]],
+    [T,"讲清 Adam 做了什么","提示：动量 + 自适应学习率。",[]]],
+   [[V,"DL 2 第 3 周：调参、BatchNorm、Softmax","",[DL("Batch Norm")]],
+    [Y,"PyTorch：读懂 nn.Module 和训练循环","五步：前向 → 算损失 → 清梯度 → 反向 → 更新。读懂即可，不要求从零写。",[L.ptM,L.ptO]],
+    [C,"温故：鱼书第 6 章浏览（参数更新、BatchNorm）","看图为主，和吴恩达讲的互相印证。",fishL]],
+   [[V,"DL 4 第 1–2 周：卷积、池化、ResNet、U-Net 思想（1.5 倍速）","卷积核在图上滑动，同一个图案出现在哪都能识别。ResNet 和 U-Net 都是论文里的基线。",[DL("卷积神经网络 ResNet")]],
+    [V,"DL 3 第 1–2 周：机器学习策略全部（1.5 倍速）","评价指标、训练/开发/测试集、误差分析、分布不一致、迁移学习。“分布不一致”就是论文里 OOD（分布外）的入门版，这节放慢看。",[DL("数据分布不匹配")]],
+    [V,"DL 4 第 3–4 周：目标检测、人脸识别、风格迁移（1.5–2 倍速）","全部看完。留意“三元组损失”，和论文的对比学习思想相近。",[DL("人脸识别 三元组损失")]],
+    [T,"第 0 次模拟面试（15 分钟，只问基础概念）","我当面试官，中文即可。",[]]],
+   [[K,"本周检验：手推反向传播；Adam vs SGD；Dropout 和 BatchNorm；CNN","",[L.plan]],
+    [T,"定下周重点","",[]]]
+  ]};
+ const S4={id:"S4",start:"2026-11-30",title:"S4 · Transformer、论文与面试",
+  theme:"周一学完《深度学习》第 5 门（含 Transformer），之后全力读论文、写讲稿、模拟面试。12/6 前达到能用英文讲清论文、答出常见追问。",
+  goals:["画出 Transformer 结构图，讲清自注意力（Q、K、V）","讲清论文四个模块：对称性增强、对比学习、注意力引导生成、自训练","记住主结果和 6 个薄弱点的回答","英文 3 分钟讲完论文"],
+  out:["英文 3 分钟讲稿 + 3–5 张讲解图","论文常规 6 问的中文答案","3 次模拟面试"],
+  pyGoal:"面试现场能读懂并解释一段 NumPy / PyTorch 代码",pyOut:"能口头解释课程和论文里的代码",
+  days:[
+   [[V,"DL 5 第 1 周：RNN、GRU、LSTM（1.5 倍速）","RNN 一步步读序列，LSTM 用“门”解决梯度消失。",[DL("RNN LSTM")]],
+    [V,"DL 5 第 2–3 周：词向量、word2vec、Seq2seq、注意力机制（1.5 倍速）","词向量把词变成向量；注意力 = 输出时决定“该看输入的哪一部分”。",[DL("词嵌入 注意力机制")]],
+    [V,"DL 5 第 4 周：Transformer","最重要的一节，放慢看。卡住就看李宏毅的两讲。",[DL("Transformer"),LHY("self-attention 自注意力"),LHY("Transformer")]],
+    [V,"李宏毅：ViT / 图像上的自注意力（选看）","论文编码器是 ViT，图 3 里的 Patchify 就是把图切成小块。",[LHY("self-attention 图像 ViT")]]],
+   [[T,"画 Transformer 结构图并讲一遍","",[]],
+    [P,"论文启动：读摘要和结论，用一句话写下论文要解决的问题","课都学完了，现在读会轻松很多。",[L.paper,L.doi]],
+    [P,"讲义 1–2：PDE、Navier–Stokes、神经 PDE 求解器","读完能说出 NS 描述什么、粘度是什么、FNO 和 PINN 各是什么。",[L.paper]],
+    [P,"读论文 3.1 节问题定义和表 1","表 1：训练粘度 1e-1 到 1e-10，测试 1e-11、1e-12，这就是 OOD 测试。",[L.paper]]],
+   [[P,"讲义 3 + 论文 3.3 节：李点对称增强","对照图 4：平移、伽利略变换保持物理，MixUp 破坏物理。",[L.paper]],
+    [P,"讲义 4 + 论文 3.4 节前半：对比学习、InfoNCE、EMA","式 (11) 就是一个 softmax：在一堆样本里挑出“自己的另一个版本”。",[L.paper]],
+    [T,"讲清对称性增强为什么不破坏物理","",[]]],
+   [[P,"讲义 5–6 + 论文 3.4 后半、3.5：注意力引导生成、VAE、自训练","想清楚：模型自己预测错了，再拿错的当标签会怎样？",[L.paper]],
+    [P,"读实验 4.1–4.5，记住表 2–4 的关键数字","NS 的 OOD MSE：LiPS 0.0798 vs DGODE 0.0925；摘要里的 38% 来自表 4。",[L.paper]],
+    [P,"写论文常规 6 问的中文答案","题目在精读文档第 5 节。",[L.paper]]],
+   [[P,"英文 3 分钟讲稿 + 3–5 张讲解图","问题 → 方法 → 实验 → 局限与下一步。",[L.paper]],
+    [T,"练论文 6 个薄弱点的回答","坦诚 + 说出你会怎么改进。",[L.paper]],
+    [T,"第 1 次模拟面试（中文，30 分钟）","",[]]],
+   [[T,"题库 60 题过一遍","题库我会提前发给你。",[L.plan]],
+    [T,"第 2 次模拟面试（英文）","",[]],
+    [T,"准备向导师提的 2 个问题","",[]]],
+   [[K,"第 3 次模拟面试（英文）≥ 8/10","",[]],
+    [T,"讲稿最终版，录音自查","",[L.paper]]]
+  ]};
+ const k=WEEKS.indexOf(s1);WEEKS.splice(k+1,WEEKS.length,S2,S3,S4);
+})();
+// 11/16：先学完全部内容（不做练习），12/2 起练习当复习
+(function(){
+ const ws=["S2","S3","S4"].map(id=>WEEKS.find(w=>w.id===id));
+ const pool=ws.flatMap(w=>w.days.flat());
+ const F=pre=>{const t=pool.find(x=>x[1].startsWith(pre));if(!t)throw new Error("missing "+pre);return t};
+ const fishL=[L.fish];
+ const bp=[C,"鱼书第 5 章：反向传播的实现（读懂代码）","每层只需知道“上游传来的梯度 × 本层的局部梯度”。先读懂，手推留到复习阶段。",fishL];
+ const hand=[C,"复习：白纸手推两层网络的反向传播","推完拍照发我。这是面试最常见的基础题之一。",fishL];
+ const days=[
+  // S2 11/16–11/22
+  [F("鱼书 1.5 前半"),F("ML 1-2：多元特征"),F("ML 1-2：学习率")],
+  [F("鱼书 1.5 后半"),F("ML 1-3：逻辑回归、决策边界"),F("ML 1-3：逻辑回归代价函数")],
+  [F("鱼书 1.6"),F("ML 2-1"),F("鱼书第 2 章")],
+  [F("ML 2-2"),F("ML 2-3"),F("鱼书 3.3–3.5")],
+  [F("ML 2-4"),F("ML 3：K-means")],
+  [F("ML 3：推荐系统"),F("DL 1 第 1–3 周"),F("鱼书第 4 章"),F("DL 1 第 4 周")],
+  [F("鱼书第 5 章：计算图"),bp],
+  // S3 11/23–11/29
+  [F("PyTorch：张量"),F("DL 2 第 1 周")],
+  [F("DL 2 第 2 周"),F("DL 2 第 3 周")],
+  [F("PyTorch：读懂"),F("温故：鱼书第 6 章")],
+  [F("DL 3 第 1–2 周"),F("DL 4 第 1–2 周")],
+  [F("DL 4 第 3–4 周"),F("DL 5 第 1 周")],
+  [F("DL 5 第 2–3 周"),F("DL 5 第 4 周"),F("李宏毅：ViT"),F("论文启动")],
+  [F("讲义 1–2"),F("读论文 3.1")],
+  // S4 11/30–12/6
+  [F("讲义 3 "),F("讲义 4 ")],
+  [F("讲义 5–6"),F("读实验 4.1")],
+  [F("产出：NumPy 手写梯度下降"),F("讲清为什么向量化"),hand,F("讲清 Adam")],
+  [F("画 Transformer"),F("讲清对称性增强"),F("写论文常规 6 问"),F("第 0 次模拟面试")],
+  [F("英文 3 分钟讲稿"),F("练论文 6 个薄弱点"),F("第 1 次模拟面试")],
+  [F("题库 60 题"),F("英文录音 1 分钟"),F("第 2 次模拟面试"),F("准备向导师提的")],
+  [F("第 3 次模拟面试"),F("讲稿最终版")]
+ ];
+ // 练习类任务标成“复习”
+ for(let i=16;i<days.length;i++)days[i]=days[i].map(t=>t[1].startsWith("复习")?t:[t[0],"复习："+t[1],t[2],t[3],t[4]]);
+ ws.forEach((w,k)=>{w.days=days.slice(k*7,k*7+7)});
+ const [S2,S3,S4]=ws;
+ S2.title="S2 · 学完《机器学习》3 门，开始深度学习";
+ S2.theme="这一阶段只学内容不做练习：视频可开 1.5–2 倍速，但每一节都要看完；鱼书跟着读。练习统一放到 12/2 之后当复习。";
+ S2.goals=["看完《机器学习》第 1–3 门全部视频","看完《深度学习》第 1 门","读完鱼书第 1–5 章"];
+ S2.out=["每天的视频笔记（几行要点即可）"];
+ S2.pyGoal="读懂 NumPy、Matplotlib 和鱼书里的代码";S2.pyOut="跟着鱼书敲过的代码";
+ S3.title="S3 · 学完《深度学习》2–5 门，开始读论文";
+ S3.theme="继续只学不练：《深度学习》第 2–5 门全部看完（含 Transformer），PyTorch 读懂训练循环，周末开始读论文。";
+ S3.goals=["看完《深度学习》第 2–5 门全部视频","读懂 PyTorch 训练循环的五步","读完论文摘要、结论和讲义 1–2"];
+ S3.out=["每天的视频笔记"];
+ S3.pyGoal="读懂 PyTorch 训练循环";S3.pyOut="能口头解释一段 PyTorch 训练代码";
+ S4.title="S4 · 读完论文，练习当复习，模拟面试";
+ S4.theme="周一、周二读完论文剩下的部分；周三起全部是练习：讲概念、手推、写讲稿、模拟面试，把前面学的东西过一遍。";
+ S4.goals=["讲清论文四个模块和主结果","手推反向传播，讲清 Adam、Transformer","英文 3 分钟讲完论文，答好 6 个薄弱点追问"];
+ S4.out=["英文 3 分钟讲稿 + 3–5 张讲解图","论文常规 6 问的中文答案","4 次模拟面试"];
+})();
+const DOW=["周一","周二","周三","周四","周五","周六","周日"];
+const HRS=["4h","4h","4h","4h","4h","6.5h","2–3h"];
+const KIND={video:"视频",code:"动手",paper:"论文",talk:"表达",check:"检验",py:"Python"};
+
+function addDays(iso,n){const d=new Date(iso+"T00:00:00");d.setDate(d.getDate()+n);return d}
+function md(d){return (d.getMonth()+1)+"/"+d.getDate()}
+function ymd(d){return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0")}
+const todayStr=ymd(new Date());
+
+let done={},layout={};
+try{const s=localStorage.getItem("sprint50v4");if(s)done=JSON.parse(s)||{}}catch(e){}
+try{const s=localStorage.getItem("sprint50v5layout");if(s)layout=JSON.parse(s)||{}}catch(e){}
+
+function baseDays(w){return w.days.map((d,i)=>d.map(([k,txt,note,links,fid],j)=>({id:fid||(w.id+"-"+i+"-"+j),k:k,txt:txt,note:note||"",links:(links||[]).map(l=>l.slice())})))}
+function daysOf(w){const L=layout[w.id];return (Array.isArray(L)&&L.length===7)?L:baseDays(w)}
+function editDays(w){if(!(Array.isArray(layout[w.id])&&layout[w.id].length===7))layout[w.id]=baseDays(w);return layout[w.id]}
+function keysOf(w){return daysOf(w).flat().map(t=>t.id)}
+function pct(ks){if(!ks.length)return 0;return Math.round(ks.filter(k=>done[k]).length/ks.length*100)}
+
+let cur=WEEKS.findIndex(w=>{const s=w.start,e=ymd(addDays(w.start,6));return todayStr>=s&&todayStr<=e});
+const nowIdx=cur;
+if(cur<0)cur=todayStr<WEEKS[0].start?0:WEEKS.length-1;
+try{const h=location.hash.replace("#","");const i=WEEKS.findIndex(w=>w.id.toLowerCase()===h.toLowerCase());if(i>=0)cur=i}catch(e){}
+
+let editing=null; // task id being edited, or "new:<day>"
+let dirtyWhileEditing=false;
+
+function renderTabs(){
+  const el=document.getElementById("tabs");el.innerHTML="";
+  WEEKS.forEach((w,i)=>{
+    const b=document.createElement("button");b.className="tab"+(i===nowIdx?" now":"");b.id="tab-"+w.id;
+    b.setAttribute("role","tab");b.setAttribute("aria-selected",i===cur?"true":"false");
+    const s=addDays(w.start,0),e=addDays(w.start,6);
+    b.innerHTML="<strong></strong><small></small><span class='pct'></span>";
+    b.children[0].textContent=w.id;b.children[1].textContent=md(s)+"–"+md(e);b.children[2].textContent=pct(keysOf(w))+"%";
+    b.onclick=()=>{cur=i;editing=null;try{history.replaceState(null,"","#"+w.id.toLowerCase())}catch(e){}render()};
+    el.appendChild(b);
+  });
+}
+function list(items){const ul=document.createElement("ul");items.forEach(t=>{const li=document.createElement("li");li.textContent=t;ul.appendChild(li)});return ul}
+function renderGoal(){
+  const w=WEEKS[cur],g=document.getElementById("goal");g.innerHTML="";
+  const h=document.createElement("h2");h.textContent=w.title;
+  const p=document.createElement("p");p.className="theme";p.textContent=w.theme;
+  const cols=document.createElement("div");cols.className="cols";
+  const a=document.createElement("div");a.innerHTML="<p class='label'>周末要达到（周日检验）</p>";a.appendChild(list(w.goals));
+  const b=document.createElement("div");b.innerHTML="<p class='label'>本周产出</p>";b.appendChild(list(w.out));
+  cols.append(a,b);
+  if(w.pyGoal){const c=document.createElement("div");c.innerHTML="<p class='label'>Python 主线</p>";c.appendChild(list(["目标："+w.pyGoal,"产出："+w.pyOut]));cols.appendChild(c)}
+  const bar=document.createElement("div");bar.className="bar";const i=document.createElement("i");i.style.width=pct(keysOf(w))+"%";bar.appendChild(i);
+  g.append(h,p,cols,bar);
+}
+
+function twoStep(btn,label,confirmLabel,action){
+  let armed=false,t=null;
+  btn.textContent=label;
+  btn.onclick=e=>{e.preventDefault();e.stopPropagation();
+    if(armed){clearTimeout(t);action();return}
+    armed=true;btn.textContent=confirmLabel;btn.classList.add("armed");
+    t=setTimeout(()=>{armed=false;btn.textContent=label;btn.classList.remove("armed")},3000)};
+}
+
+function renderToolbar(){
+  const w=WEEKS[cur],el=document.getElementById("daytools");el.innerHTML="";
+  const p=document.createElement("p");p.className="hint";
+  p.textContent="按住任务左边的 ⠿ 拖到本周任意一天；✎ 修改，✕ 删除，每天底部可以添加任务。只能在本周内移动。";
+  el.appendChild(p);
+  if(layout[w.id]){
+    const r=document.createElement("button");r.className="btn ghostbtn";r.type="button";
+    twoStep(r,"恢复本周原始安排","再点一次确认恢复",()=>{delete layout[w.id];editing=null;saveAll();render()});
+    el.appendChild(r);
+  }
+}
+
+function editorFor(w,di,task){
+  const f=document.createElement("form");f.className="editor";
+  const isNew=!task;
+  const row=document.createElement("div");row.className="erow";
+  const ks=document.createElement("select");ks.setAttribute("aria-label","类型");
+  Object.keys(KIND).forEach(k=>{const o=document.createElement("option");o.value=k;o.textContent=KIND[k];ks.appendChild(o)});
+  ks.value=task?task.k:"py";
+  const ds=document.createElement("select");ds.setAttribute("aria-label","放到哪一天");
+  DOW.forEach((d,i)=>{const o=document.createElement("option");o.value=i;o.textContent=d+" "+md(addDays(w.start,i));ds.appendChild(o)});
+  ds.value=di;
+  row.append(ks,ds);
+  const ti=document.createElement("input");ti.type="text";ti.placeholder="任务标题";ti.value=task?task.txt:"";ti.setAttribute("aria-label","任务标题");ti.required=true;
+  const nt=document.createElement("textarea");nt.placeholder="说明（可不填）";nt.rows=3;nt.value=task?task.note:"";nt.setAttribute("aria-label","说明");
+  const act=document.createElement("div");act.className="erow";
+  const ok=document.createElement("button");ok.type="submit";ok.className="btn primary";ok.textContent=isNew?"添加":"保存";
+  const cancel=document.createElement("button");cancel.type="button";cancel.className="btn";cancel.textContent="取消";
+  cancel.onclick=()=>{editing=null;render()};
+  act.append(ok,cancel);
+  f.append(row,ti,nt,act);
+  f.onsubmit=e=>{e.preventDefault();
+    const txt=ti.value.trim();if(!txt){ti.focus();return}
+    const days=editDays(w),nd=+ds.value;
+    if(isNew){days[nd].push({id:w.id+"-n"+Date.now().toString(36),k:ks.value,txt:txt,note:nt.value.trim(),links:[]})}
+    else{
+      let from=-1,idx=-1;days.forEach((d,i)=>{const j=d.findIndex(t=>t.id===task.id);if(j>=0){from=i;idx=j}});
+      if(from<0)return;
+      const t=days[from][idx];t.k=ks.value;t.txt=txt;t.note=nt.value.trim();
+      if(nd!==from){days[from].splice(idx,1);days[nd].push(t)}
+    }
+    editing=null;saveAll();render();
+  };
+  setTimeout(()=>ti.focus(),0);
+  return f;
+}
+
+function moveTask(w,id,dir){
+  const days=editDays(w);let di=-1,ti=-1;
+  days.forEach((d,i)=>{const j=d.findIndex(t=>t.id===id);if(j>=0){di=i;ti=j}});
+  if(di<0)return;
+  const [t]=days[di].splice(ti,1);
+  if(dir<0){if(ti>0)days[di].splice(ti-1,0,t);else if(di>0)days[di-1].push(t);else days[di].splice(0,0,t)}
+  else{if(ti<days[di].length)days[di].splice(ti+1,0,t);else if(di<6)days[di+1].unshift(t);else days[di].push(t)}
+  saveAll();render();
+  const h=document.querySelector('[data-id="'+id+'"] .handle');if(h)h.focus();
+}
+
+function renderDays(){
+  const w=WEEKS[cur],el=document.getElementById("days");el.innerHTML="";
+  renderToolbar();
+  daysOf(w).forEach((tasks,i)=>{
+    const date=addDays(w.start,i),ks=tasks.map(t=>t.id);
+    const card=document.createElement("article");card.dataset.day=i;
+    card.className="day"+(ymd(date)===todayStr?" today":"")+(ks.length&&ks.every(k=>done[k])?" alldone":"");
+    const head=document.createElement("div");head.className="dhead";
+    head.innerHTML="<h3></h3><span class='date'></span><span class='hrs'></span>";
+    head.children[0].textContent=DOW[i];head.children[1].textContent=md(date);head.children[2].textContent=HRS[i];
+    if(ymd(date)===todayStr){const t=document.createElement("span");t.className="tag-today";t.textContent="今天";head.insertBefore(t,head.children[2])}
+    card.appendChild(head);
+    const tl=document.createElement("div");tl.className="tlist";tl.dataset.day=i;
+    tasks.forEach(task=>{
+      if(editing===task.id){tl.appendChild(editorFor(w,i,task));return}
+      const key=task.id,row=document.createElement("div");row.className="task";row.dataset.id=key;
+      const hd=document.createElement("button");hd.type="button";hd.className="handle";hd.textContent="⠿";
+      hd.setAttribute("aria-label","拖动任务："+task.txt+"（也可以用上下方向键移动）");
+      hd.onpointerdown=e=>startDrag(e,w,row,key);
+      hd.onkeydown=e=>{if(e.key==="ArrowUp"){e.preventDefault();moveTask(w,key,-1)}else if(e.key==="ArrowDown"){e.preventDefault();moveTask(w,key,1)}};
+      const lab=document.createElement("label");lab.className="tbody";
+      const cb=document.createElement("input");cb.type="checkbox";cb.id="cb-"+key;cb.checked=!!done[key];
+      cb.onchange=()=>{if(cb.checked)done[key]=true;else delete done[key];saveAll();render()};
+      const kd=document.createElement("span");kd.className="kind k-"+task.k;kd.textContent=KIND[task.k]||task.k;
+      const tx=document.createElement("span");tx.className="txt";
+      const main=document.createElement("span");main.className="main";main.textContent=task.txt;tx.appendChild(main);
+      if(task.note){const n=document.createElement("span");n.className="note";n.textContent=task.note;tx.appendChild(n)}
+      if(task.links&&task.links.length){const lk=document.createElement("span");lk.className="links";
+        task.links.forEach(([t,u])=>{const a=document.createElement("a");a.href=u;a.target="_blank";a.rel="noopener";a.textContent=t;a.onclick=e=>e.stopPropagation();lk.appendChild(a)});tx.appendChild(lk)}
+      lab.append(cb,kd,tx);
+      const acts=document.createElement("span");acts.className="acts";
+      const ed=document.createElement("button");ed.type="button";ed.className="ibtn";ed.textContent="✎";ed.setAttribute("aria-label","修改任务");
+      ed.onclick=()=>{editing=key;render()};
+      const del=document.createElement("button");del.type="button";del.className="ibtn del";del.setAttribute("aria-label","删除任务");
+      twoStep(del,"✕","删除？",()=>{const days=editDays(w);days.forEach(d=>{const j=d.findIndex(t=>t.id===key);if(j>=0)d.splice(j,1)});delete done[key];saveAll();render()});
+      acts.append(ed,del);
+      row.append(hd,lab,acts);tl.appendChild(row);
+    });
+    if(!tasks.length&&editing!=="new:"+i){const em=document.createElement("p");em.className="empty";em.textContent="这天没有任务，可以拖一个过来";tl.appendChild(em)}
+    card.appendChild(tl);
+    if(editing==="new:"+i)card.appendChild(editorFor(w,i,null));
+    else{const add=document.createElement("button");add.type="button";add.className="add";add.textContent="＋ 添加任务";add.onclick=()=>{editing="new:"+i;render()};card.appendChild(add)}
+    el.appendChild(card);
+  });
+}
+
+let drag=null;
+function startDrag(e,w,row,id){
+  if(e.button!==undefined&&e.button!==0)return;
+  e.preventDefault();
+  const r=row.getBoundingClientRect();
+  const ghost=document.createElement("div");ghost.className="ghost";
+  const gk=row.querySelector(".kind").cloneNode(true),gt=document.createElement("span");gt.textContent=row.querySelector(".main").textContent;
+  ghost.append(gk,gt);ghost.style.width=Math.min(r.width,320)+"px";
+  const dx=Math.min(e.clientX-r.left,24),dy=18;
+  ghost.style.left=(e.clientX-dx)+"px";ghost.style.top=(e.clientY-dy)+"px";
+  document.body.appendChild(ghost);
+  const ph=document.createElement("div");ph.className="ph";
+  row.after(ph);row.style.display="none";
+  drag={w:w,row:row,id:id,ghost:ghost,ph:ph,dx:dx,dy:dy,y:e.clientY,x:e.clientX,raf:0};
+  document.body.classList.add("dragging");
+  window.addEventListener("pointermove",onDragMove);
+  window.addEventListener("pointerup",endDrag);
+  window.addEventListener("pointercancel",cancelDrag);
+  drag.raf=requestAnimationFrame(autoScroll);
+}
+function placePh(x,y){
+  const hit=document.elementFromPoint(x,y);if(!hit)return;
+  const card=hit.closest(".day");if(!card)return;
+  const tl=card.querySelector(".tlist");if(!tl)return;
+  const items=[...tl.querySelectorAll(":scope > .task")].filter(n=>n!==drag.row);
+  let before=null;for(const n of items){const b=n.getBoundingClientRect();if(y<b.top+b.height/2){before=n;break}}
+  const em=tl.querySelector(".empty");if(em)em.style.display="none";
+  if(before)tl.insertBefore(drag.ph,before);else tl.appendChild(drag.ph);
+}
+function onDragMove(e){
+  if(!drag)return;
+  drag.x=e.clientX;drag.y=e.clientY;
+  drag.ghost.style.left=(e.clientX-drag.dx)+"px";drag.ghost.style.top=(e.clientY-drag.dy)+"px";
+  placePh(e.clientX,e.clientY);
+}
+function autoScroll(){
+  if(!drag)return;
+  const m=70,y=drag.y,h=window.innerHeight;
+  if(y<m)window.scrollBy(0,-Math.ceil((m-y)/5));else if(y>h-m)window.scrollBy(0,Math.ceil((y-(h-m))/5));
+  if(y<m||y>h-m)placePh(drag.x,drag.y);
+  drag.raf=requestAnimationFrame(autoScroll);
+}
+function cleanupDrag(){
+  window.removeEventListener("pointermove",onDragMove);
+  window.removeEventListener("pointerup",endDrag);
+  window.removeEventListener("pointercancel",cancelDrag);
+  cancelAnimationFrame(drag.raf);drag.ghost.remove();document.body.classList.remove("dragging");
+}
+function endDrag(){
+  if(!drag)return;
+  const d=drag;cleanupDrag();drag=null;
+  const tl=d.ph.parentElement;
+  if(!tl||!tl.classList.contains("tlist")){render();return}
+  const nd=+tl.dataset.day;
+  let idx=0;for(const n of tl.children){if(n===d.ph)break;if(n.classList.contains("task")&&n!==d.row)idx++}
+  const days=editDays(d.w);
+  let from=-1,fi=-1;days.forEach((x,i)=>{const j=x.findIndex(t=>t.id===d.id);if(j>=0){from=i;fi=j}});
+  if(from<0){render();return}
+  if(from===nd&&fi===idx){if(!layoutChanged(d.w))delete layout[d.w.id];render();return}
+  const [t]=days[from].splice(fi,1);days[nd].splice(idx,0,t);
+  saveAll();render();
+}
+function cancelDrag(){if(!drag)return;cleanupDrag();drag=null;render()}
+function layoutChanged(w){return JSON.stringify(layout[w.id])!==JSON.stringify(baseDays(w))}
+
+function renderStats(){
+  const all=WEEKS.flatMap(keysOf),n=all.filter(k=>done[k]).length;
+  document.getElementById("totalPct").textContent=pct(all)+"%";
+  document.getElementById("totalCnt").textContent=n+"/"+all.length;
+  document.getElementById("totalBar").style.width=pct(all)+"%";
+  const end=new Date("2026-12-06T00:00:00"),t=new Date(todayStr+"T00:00:00");
+  document.getElementById("left").textContent=Math.max(0,Math.round((end-t)/864e5));
+}
+function render(){renderTabs();renderGoal();renderDays();renderStats()}
+
+let db=null,docRef=null,timer=null,pending=false;
+const saveEl=document.getElementById("saveState");
+function saveAll(){
+  try{localStorage.setItem("sprint50v4",JSON.stringify(done));localStorage.setItem("sprint50v5layout",JSON.stringify(layout))}catch(e){}
+  if(!docRef){saveEl.textContent="进度只保存在这台设备的浏览器里";return}
+  saveEl.textContent="保存中…";
+  clearTimeout(timer);pending=true;
+  timer=setTimeout(()=>{docRef.set({done:done,layoutJson:JSON.stringify(layout),updatedAt:new Date().toISOString()}).then(()=>{pending=false;saveEl.textContent="已保存，换设备也能看到"}).catch(()=>{pending=false;saveEl.textContent="云端保存失败，已先存在本机"})},600);
+}
+render();
+saveEl.textContent="进度保存在本机";
+(async()=>{
+  try{
+    db=window.claude&&window.claude.use?await window.claude.use("db"):null;
+    if(!db){saveEl.textContent="进度只保存在这台设备的浏览器里";return}
+    docRef=db.doc("progress/v4");
+    let first=true;
+    docRef.onSnapshot(snap=>{
+      const data=(snap.exists&&snap.data())||{};
+      const cloud=(typeof data.done==="object"&&data.done)||{};
+      let cl={};try{cl=data.layoutJson?JSON.parse(data.layoutJson)||{}:{}}catch(e){}
+      let extra=false;
+      if(first){
+        extra=Object.keys(done).some(k=>!cloud[k])||Object.keys(layout).some(k=>!cl[k]);
+        done=Object.assign({},cloud,done);layout=Object.assign({},cl,layout);
+        first=false;saveEl.textContent="已同步，换设备也能看到";if(extra)saveAll();
+      }else if(!pending){done=Object.assign({},cloud);layout=cl}
+      if(drag)return;
+      if(editing){dirtyWhileEditing=true;return}
+      render();
+    },()=>{saveEl.textContent="云端读取失败，进度先存在本机"});
+  }catch(e){saveEl.textContent="进度只保存在这台设备的浏览器里"}
+})();
+</script>
+
+</body></html>
